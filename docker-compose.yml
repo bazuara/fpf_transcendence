@@ -1,0 +1,21 @@
+services:
+  django:
+    build: ./django
+    container_name: django
+    env_file: .env
+    volumes:
+      - $PWD/django/srcs:/srcs
+    ports:
+      - 5000:443
+    networks:
+      - tran-net
+  
+  postgres:
+    build: ./postgres
+    container_name: postgres
+    env_file: .env
+    networks:
+      - tran-net
+
+networks:
+  tran-net:
