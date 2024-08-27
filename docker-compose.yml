@@ -4,11 +4,13 @@ services:
     container_name: django
     env_file: .env
     volumes:
-      - $PWD/django/srcs:/srcs
+      - django_volume:/srcs
     ports:
       - 5000:443
     networks:
       - tran-net
+    depends_on:
+      - postgres
   
   postgres:
     build: ./postgres
@@ -16,6 +18,23 @@ services:
     env_file: .env
     networks:
       - tran-net
+    volumes:
+      - postgres_volume:/var/lib/postgresql
+
+volumes:
+  django_volume:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $PWD/django/srcs
+
+  postgres_volume:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $PWD/postgres/dbdata
 
 networks:
   tran-net:
