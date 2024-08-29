@@ -1,5 +1,129 @@
-from django.shortcuts import render
+import os
+import random, string, requests, time, threading
+
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, logout
+from django.contrib.auth.models import User
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
+from queue import Queue
+from django.urls import reverse
+
+APP_UID = os.getenv("APP_UID")
+APP_SECRET = os.getenv("APP_SECRET")
+REDIRECT_URI = os.getenv("REDIRECT_URI")
+TOKEN_URL = 'https://api.intra.42.fr/oauth/token'
+
+# Rate limiting parameters
+MAX_REQUESTS_PER_SECOND = 2
+REQUEST_INTERVAL = 1 / MAX_REQUESTS_PER_SECOND
+
+# A simple queue to manage incoming requests
+request_queue = Queue()
+
+# Lock for synchronized access
+lock = threading.Lock()
+
+# Store user information based on session keys
+pending_requests = {}
+
+# Worker function to process the queue
+def process_queue():
+    while True:
+        # Get the next request from the queue
+        user_info_url, headers, session_key = request_queue.get()
+
+        # Process the request
+        user_info_response = requests.get(user_info_url, headers=headers)
+        user_info = user_info_response.json()
+
+        # Store the user info based on session key
+        with lock:
+            pending_requests[session_key] = user_info
+
+        # Wait to maintain the rate limit
+        time.sleep(REQUEST_INTERVAL)
+
+        # Mark the task as done
+        request_queue.task_done()
+
+# Start the queue processing thread
+thread = threading.Thread(target=process_queue, daemon=True)
+thread.start()
+
+# Function to add requests to the queue
+def add_request_to_queue(user_info_url, headers, session_key):
+    request_queue.put((user_info_url, headers, session_key))
+
+def handle_user_info_response(request, user_info):
+    username = user_info['login']
+    user, created = User.objects.get_or_create(username=username)
+    login(request, user)
+    return redirect('welcome')
 
 def login_view(request):
-    context = {}
-    return render(request, 'login.html', context)
+    if request.user.is_authenticated:
+        print(f"User {request.user} is already authenticated")
+        return redirect('welcome')
+    
+    state = generate_state()
+    print(f"REQUEST : {request.headers}")
+    request.session['oauth_state'] = state
+    authorize_url = (
+        f"https://api.intra.42.fr/oauth/authorize?client_id={APP_UID}"
+        f"&redirect_uri={REDIRECT_URI}&response_type=code&state={state}"
+    )
+    return redirect(authorize_url)
+
+def auth_callback_view(request):
+    print(f"REQUEST222 : {request.headers}")
+    state = request.GET.get('state')
+    sesion_state = request.session.pop('oauth_state', None)
+    print(f"State: {state}")
+    print(f"SSSSState: {sesion_state}")
+    if state != sesion_state:
+        return HttpResponseBadRequest('Invalid state parameter')
+
+    data = {
+        'grant_type': 'authorization_code',
+        'client_id': APP_UID,
+        'client_secret': APP_SECRET,
+        'code': request.GET.get('code'),
+        'redirect_uri': REDIRECT_URI,
+    }
+
+    response_data = requests.post(TOKEN_URL, data=data).json()
+    access_token = response_data.get('access_token')
+    print(f"Access token received: {access_token}")
+
+    # Use the access token to get user info
+    user_info_url = 'https://api.intra.42.fr/v2/me'
+    headers = {'Authorization': f'Bearer {access_token}'}
+    
+    # Add the request to the queue instead of directly making the request
+    session_key = request.session.session_key
+    add_request_to_queue(user_info_url, headers, session_key)
+    return render(request, 'auth_callback.html')
+
+
+def check_login_status_view(request):
+    session_key = request.session.session_key
+
+    with lock:
+        if session_key in pending_requests:
+            user_info = pending_requests.pop(session_key)
+            handle_user_info_response(request, user_info)
+            print("NOS VAMOS DE VUELTAAAA")
+            return JsonResponse({'status': 'complete', 'redirect_url': reverse('welcome')})
+
+    print("WAITINGGGG")
+    return JsonResponse({'status': 'pending'})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('landing')
+
+
+def generate_state():
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=40))
+
