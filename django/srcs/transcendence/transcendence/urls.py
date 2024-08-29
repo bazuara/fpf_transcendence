@@ -19,7 +19,9 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('', include('session_management.urls')),
     path('', include('static.urls')),
     path('', include('social.urls')),
-    # path('static/', include('static.urls'))
+
 ]
