@@ -44,10 +44,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'game',
-	'general',
+	'session_management',
+	'static',
 	'rooms',
 	'social',
-	'static',
 	'tournaments',
 ]
 
