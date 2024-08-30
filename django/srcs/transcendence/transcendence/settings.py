@@ -31,7 +31,18 @@ SECRET_KEY = 'django-insecure-otm3=!xw(s09l*+vjsg_acvro!un#f26-uprba_56j1&zxu!uc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Start with the base part of your hosts
+BASE_HOST = "42madrid.com"
+
+# Use list comprehension to generate all host combinations
+ALLOWED_HOSTS = [
+    f"c1r{row}s{seat}.{BASE_HOST}"
+    for row in range(1, 18)  # Rows from 1 to 17
+    for seat in range(1, 7)  # Seats from 1 to 6
+]
+
+# Optionally, add localhost and other hosts for development
+ALLOWED_HOSTS += ["localhost", "127.0.0.1", "::1"]
 
 
 # Application definition
@@ -59,7 +70,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Middleware to handle intra login
+    # 'session_management.middleware.LoginRequiredMiddleware',
 ]
+
+LOGIN_URL = '/landing/'
 
 ROOT_URLCONF = 'transcendence.urls'
 
