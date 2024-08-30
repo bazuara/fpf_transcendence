@@ -8,4 +8,6 @@ RUN chmod +w /requirements.txt
 
 RUN /setup.sh
 
+WORKDIR /srcs/transcendence
+
 CMD sleep infinity
