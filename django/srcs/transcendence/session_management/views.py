@@ -1,10 +1,9 @@
-import os
-import random, string, requests, time, threading
+import os, random, string, requests, time, threading
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
-from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from queue import Queue
 from django.urls import reverse
 
@@ -54,19 +53,14 @@ thread.start()
 def add_request_to_queue(user_info_url, headers, session_key):
     request_queue.put((user_info_url, headers, session_key))
 
-def handle_user_info_response(request, user_info):
-    username = user_info['login']
-    user, created = User.objects.get_or_create(username=username)
-    login(request, user)
-    return redirect('welcome')
+def generate_state():
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=40))
 
 def login_view(request):
     if request.user.is_authenticated:
-        print(f"User {request.user} is already authenticated")
         return redirect('welcome')
     
     state = generate_state()
-    print(f"REQUEST : {request.headers}")
     request.session['oauth_state'] = state
     authorize_url = (
         f"https://api.intra.42.fr/oauth/authorize?client_id={APP_UID}"
@@ -74,12 +68,10 @@ def login_view(request):
     )
     return redirect(authorize_url)
 
+
 def auth_callback_view(request):
-    print(f"REQUEST222 : {request.headers}")
     state = request.GET.get('state')
     sesion_state = request.session.pop('oauth_state', None)
-    print(f"State: {state}")
-    print(f"SSSSState: {sesion_state}")
     if state != sesion_state:
         return HttpResponseBadRequest('Invalid state parameter')
 
@@ -93,7 +85,6 @@ def auth_callback_view(request):
 
     response_data = requests.post(TOKEN_URL, data=data).json()
     access_token = response_data.get('access_token')
-    print(f"Access token received: {access_token}")
 
     # Use the access token to get user info
     user_info_url = 'https://api.intra.42.fr/v2/me'
@@ -105,6 +96,12 @@ def auth_callback_view(request):
     return render(request, 'auth_callback.html')
 
 
+def handle_user_info_response(request, user_info):
+    username = user_info['login']
+    user, created = User.objects.get_or_create(username=username)
+    login(request, user)
+    return redirect('welcome')
+
 def check_login_status_view(request):
     session_key = request.session.session_key
 
@@ -112,18 +109,11 @@ def check_login_status_view(request):
         if session_key in pending_requests:
             user_info = pending_requests.pop(session_key)
             handle_user_info_response(request, user_info)
-            print("NOS VAMOS DE VUELTAAAA")
             return JsonResponse({'status': 'complete', 'redirect_url': reverse('welcome')})
 
-    print("WAITINGGGG")
     return JsonResponse({'status': 'pending'})
 
 
 def logout_view(request):
     logout(request)
     return redirect('landing')
-
-
-def generate_state():
-    return ''.join(random.choices(string.ascii_letters + string.digits, k=40))
-
