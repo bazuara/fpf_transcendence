@@ -71,7 +71,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Add your custom middleware here
-    'session_management.middleware.LoginRequiredMiddleware',
+    # 'session_management.middleware.LoginRequiredMiddleware',
 ]
 
 LOGIN_URL = '/landing/'

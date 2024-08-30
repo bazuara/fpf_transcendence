@@ -37,7 +37,7 @@
     {% if user.is_authenticated %}
     <form action="{% url 'logout' %}" method="post" class="d-flex ms-auto">
     {% csrf_token %}
-        <button type="submit" class="btn btn-outline-light">Logout</button>
+        <button type="submit" class="btn btn-outline-dark">Logout</button>
     </form>
     {% endif %}
     <!-- Block to insert from another view -->
