@@ -1,5 +1,7 @@
 import os, random, string, requests, time, threading
+from django.core.exceptions import ObjectDoesNotExist
 
+from social.models import User as OurUser
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
@@ -96,6 +98,25 @@ def handle_user_info_response(request, user_info):
     username = user_info['login']
     user, created = User.objects.get_or_create(username=username)
     login(request, user)
+    user_data={
+            "user_id" : user_info.get("id"),
+            "name" : user_info.get("login"),
+            "alias" : user_info.get("login"),
+            "intra_image" : user_info.get("image").get("versions").get("medium"),
+        }
+    try:
+        existing_user = OurUser.objects.get(user_id=user_data.get("user_id"))
+        return redirect('welcome')
+    except ObjectDoesNotExist:
+        OurUser.objects.create(
+            user_id = user_info.get("id"),
+            name = user_info.get("login"),
+            alias = user_info.get("login"),
+            intra_image = user_info.get("image").get("versions").get("medium"),
+            wins = 0,
+            loses = 0,
+            games_played = 0,
+        )
     return redirect('welcome')
 
 def check_login_status_view(request):
