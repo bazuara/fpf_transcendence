@@ -152,12 +152,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" hx-get=" " hx-target="#content-div" hx-push-url="true">
+                    <a class="nav-link" hx-get="{% url 'profile' %}" hx-target="#content-div" hx-push-url="true">
                         <div button type="button" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">Profile</div>
                     </a>
                 </li>
             </ul>
-            <form action=" " method="post" class="d-flex ms-auto">
+            <form action="{% url 'logout' %}" method="post" class="d-flex ms-auto">
                 {% csrf_token %}
                 <button type="button" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">Logout</button>
             </form>
