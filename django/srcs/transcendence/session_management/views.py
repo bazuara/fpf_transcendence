@@ -49,10 +49,6 @@ def process_queue():
 thread = threading.Thread(target=process_queue, daemon=True)
 thread.start()
 
-# Function to add requests to the queue
-def add_request_to_queue(user_info_url, headers, session_key):
-    request_queue.put((user_info_url, headers, session_key))
-
 def generate_state():
     return ''.join(random.choices(string.ascii_letters + string.digits, k=40))
 
@@ -90,9 +86,9 @@ def auth_callback_view(request):
     user_info_url = 'https://api.intra.42.fr/v2/me'
     headers = {'Authorization': f'Bearer {access_token}'}
     
-    # Add the request to the queue instead of directly making the request
     session_key = request.session.session_key
-    add_request_to_queue(user_info_url, headers, session_key)
+    # Add the request to the queue instead of directly making the request
+    request_queue.put((user_info_url, headers, session_key))
     return render(request, 'auth_callback.html')
 
 
@@ -117,3 +113,9 @@ def check_login_status_view(request):
 def logout_view(request):
     logout(request)
     return redirect('landing')
+
+
+def landing_view(request):
+    if request.user.is_authenticated:
+        return 
+    return render(request, 'landing.html')

@@ -1,9 +1,4 @@
-from django.shortcuts import render, redirect
-
-def landing_view(request):
-    if request.user.is_authenticated:
-        return 
-    return render(request, 'landing.html')
+from django.shortcuts import render
 
 def welcome_view(request):
     context = {

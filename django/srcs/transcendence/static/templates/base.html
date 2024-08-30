@@ -34,12 +34,10 @@
         <i class="menu-icon tf-icons bx bx-home-circle"></i>
         <div data-i18n="Analytics">Friends</div>
     </a>
-    {% if user.is_authenticated %}
     <form action="{% url 'logout' %}" method="post" class="d-flex ms-auto">
     {% csrf_token %}
         <button type="submit" class="btn btn-outline-dark">Logout</button>
     </form>
-    {% endif %}
     <!-- Block to insert from another view -->
     <div class="content mt-5 pt-5">
         <div class="" id="content-div" hx-history-elt>
