@@ -1,1 +1,28 @@
-<h1>{{ user.name }}</h1>
+<!-- Display User Information -->
+<div class="user-profile">
+    <!-- Check if avatar is set, otherwise display intra_image -->
+    {% if user.avatar %}
+        <img src="{{ user.avatar.url }}" alt="{{ user.name }}'s avatar" class="user-avatar">
+    {% else %}
+        <img src="{{ user.intra_image }}" alt="{{ user.name }}'s default avatar" class="user-avatar">
+    {% endif %}
+    
+    <!-- Display user details -->
+    <h2>Name: {{ user.name }}</h2>
+    <p>Alias: {{ user.alias }}</p>
+    <p>Winrate: {{ user.win_ratio }}</p>
+    <p>Games: {{ user.wins }}W/{{ user.wins }}L/{{ user.games_played }}T</p>
+</div>
+
+<!-- Buttons to Change Alias and Avatar -->
+<div class="user-actions">
+    <!-- Link to change alias page or modal -->
+    <form action="" method="get">
+        <button type="submit" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">Change Alias</button>
+    </form>
+
+    <!-- Link to change avatar page or modal -->
+    <form action="" method="get">
+        <button type="submit" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">Change Avatar</button>
+    </form>
+</div>
