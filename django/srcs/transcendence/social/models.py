@@ -9,7 +9,7 @@ class User(models.Model):
     games_played = models.PositiveIntegerField()
     friends      = models.ManyToManyField('self', symmetrical=False, blank=True) #friendlist
     avatar       = models.ImageField(upload_to ='uploads/', null=True, blank=True) #custom avatar
-    intra_image  = models.URLField(max_length=255) #used as default avatar if none is provided by user
+    intra_image  = models.URLField(max_length=512) #used as default avatar if none is provided by user
     
     def __str__ (self):
         return f"{self.user_id} {self.name} {self.wins}W/{self.loses}L/{self.games_played}T"
