@@ -74,11 +74,11 @@ def auth_callback_view(request):
         return HttpResponseBadRequest('Invalid state parameter')
 
     data = {
-        'grant_type': 'authorization_code',
-        'client_id': APP_UID,
-        'client_secret': APP_SECRET,
-        'code': request.GET.get('code'),
-        'redirect_uri': REDIRECT_URI,
+        'grant_type'    : 'authorization_code',
+        'client_id'     : APP_UID,
+        'client_secret' : APP_SECRET,
+        'code'          : request.GET.get('code'),
+        'redirect_uri'  : REDIRECT_URI,
     }
 
     response_data = requests.post(TOKEN_URL, data=data).json()
@@ -98,23 +98,17 @@ def handle_user_info_response(request, user_info):
     username = user_info['login']
     user, created = User.objects.get_or_create(username=username)
     login(request, user)
-    user_data={
-            "user_id" : user_info.get("id"),
-            "name" : user_info.get("login"),
-            "alias" : user_info.get("login"),
-            "intra_image" : user_info.get("image").get("versions").get("medium"),
-        }
     try:
-        existing_user = OurUser.objects.get(user_id=user_data.get("user_id"))
+        existing_user = OurUser.objects.get(user_id = user_info.get("id"))
         return redirect('welcome')
     except ObjectDoesNotExist:
         OurUser.objects.create(
-            user_id = user_info.get("id"),
-            name = user_info.get("login"),
-            alias = user_info.get("login"),
-            intra_image = user_info.get("image").get("versions").get("medium"),
-            wins = 0,
-            loses = 0,
+            user_id      = user_info.get("id"),
+            name         = user_info.get("login"),
+            alias        = user_info.get("login"),
+            intra_image  = user_info.get("image").get("versions").get("medium"),
+            wins         = 0,
+            loses        = 0,
             games_played = 0,
         )
     return redirect('welcome')
