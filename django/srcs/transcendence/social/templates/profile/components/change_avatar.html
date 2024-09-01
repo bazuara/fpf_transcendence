@@ -1,6 +1,14 @@
-<form method="post" enctype="multipart/form-data" hx-post="{% url 'change_avatar' user.name %}" hx-target="#avatar-form-container" hx-swap="innerHTML">
+<!-- change_avatar_form.html -->
+<form method="post" enctype="multipart/form-data" 
+      hx-post="{% url 'change_avatar' user.name %}" 
+      hx-target="#form-container" 
+      hx-swap="innerHTML">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Update Avatar</button>
-    <button type="button" hx-get="{% url 'profile' user.name %}" hx-target="#avatar-form-container" hx-swap="innerHTML">Cancel</button>
+    <button type="submit" class="btn btn-outline-custom btn-lg">Update Avatar</button>
+    <button type="button" 
+            hx-get="{% url 'profile' user.name %}" 
+            hx-target="#form-container" 
+            hx-swap="innerHTML" 
+            class="btn btn-outline-custom btn-lg">Cancel</button>
 </form>
