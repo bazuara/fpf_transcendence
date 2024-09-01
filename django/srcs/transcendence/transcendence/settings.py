@@ -71,7 +71,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Middleware to handle intra login
-    # 'session_management.middleware.LoginRequiredMiddleware',
+    'session_management.middleware.LoginRequiredMiddleware',
 ]
 
 LOGIN_URL = '/landing/'
