@@ -1,0 +1,6 @@
+<form method="post" enctype="multipart/form-data" hx-post="{% url 'change_avatar' user.name %}" hx-target="#avatar-form-container" hx-swap="innerHTML">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update Avatar</button>
+    <button type="button" hx-get="{% url 'profile' user.name %}" hx-target="#avatar-form-container" hx-swap="innerHTML">Cancel</button>
+</form>

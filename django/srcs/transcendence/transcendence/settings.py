@@ -153,7 +153,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static_files/'
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Where files from "python manage.py collectstatic" will be stored 
+STATIC_URL = '/static_files/'  # This URL is used to refer to static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_files')  # Ensure this path exists and is used for collected static files
+
+# Where media will be stored, profile avatars will be stored in /media/upload/
+MEDIA_URL = '/media/'  # URL for accessing media files
+MEDIA_ROOT = os.path.join(STATIC_ROOT, 'media')  # Directory where uploaded files are stored
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

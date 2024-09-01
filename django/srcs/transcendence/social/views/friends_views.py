@@ -5,6 +5,6 @@ def friends_view(request):
         'title' : "friends",
     }
     if 'HX-Request' in request.headers:
-        return render(request, 'components/friends.html')
+        return render(request, 'friends/friends.html')
     else:
-        return render(request, 'components/friends_full.html', context)
+        return render(request, 'friends/friends_full.html', context)

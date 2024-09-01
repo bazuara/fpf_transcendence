@@ -1,0 +1,28 @@
+<!-- Display User Information -->
+<div class="user-profile">
+    {% if profile_user.avatar %}
+        <img src="{{ profile_user.avatar.url }}" alt="{{ profile_user.name }}'s avatar" class="user-avatar">
+    {% elif profile_user.intra_image %}
+        <img src="{{ profile_user.intra_image }}" alt="{{ profile_user.name }}'s default avatar" class="user-avatar">
+    {% else %}
+        <img src="https://static.wikia.nocookie.net/ousamaranking/images/4/4d/Bojji_2022_anime_ending.jpg" alt="Default avatar" class="user-avatar">
+    {% endif %}
+    
+    <!-- Display user details -->
+    <h2>Name: {{ profile_user.name }}</h2>
+    <p>Alias: {{ profile_user.alias }}</p>
+    <p>Winrate: {{ profile_user.win_ratio }}</p>
+    <p>Games: {{ profile_user.wins }}W/{{ profile_user.loses }}L/{{ profile_user.games_played }}T</p>
+</div>
+
+<div class="user-actions">
+{% if profile_user.name == authenticated_user.username %}
+    <form action="{% url 'change_alias' profile_user.name %}" method="get">
+        <button type="submit">Change Alias</button>
+    </form>
+
+    <form action="{% url 'change_avatar' profile_user.name %}" method="get">
+        <button type="submit">Change Avatar</button>
+    </form>
+{% endif %}
+</div>
