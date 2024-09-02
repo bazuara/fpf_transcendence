@@ -48,7 +48,12 @@ def change_alias(request, name):
     else:
         form = ChangeAliasForm(instance=profile_user)
 
-    return render(request, 'profile/components/change_alias.html', {'form': form, 'user': profile_user})
+    print("OurUser: ", profile_user.name)
+    print("DjangoUser: ", authenticated_user.username)
+    # if 'HX-Request' in request.headers:
+    return render(request, 'profile/alias/change_alias.html', {'form': form, 'user': profile_user})
+    # else:
+    return render(request, 'profile/alias/change_alias_full.html', {'form': form, 'user': profile_user})
 
 def change_avatar(request, name):
     profile_user = get_object_or_404(OurUser, name=name)
