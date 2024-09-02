@@ -1,0 +1,149 @@
+<div id="form-container">
+    {% if error_msg %}
+    <div class="alert alert-danger" role="alert" id="error-message">
+      {{ error_msg }}
+    </div>
+    {% endif %}
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Profile Information Column -->
+        <div class="col-md-3 d-flex flex-column align-items-center p-3 border-end">
+          <!-- Image Container -->
+          <div class="position-relative w-100" style="padding-top: 100%;">
+            {% if profile_user.avatar %}
+            <img src="{{ profile_user.avatar.url }}" alt="{{ profile_user.name }}'s avatar" class="user-avatar img-fluid position-absolute top-0 start-0 w-100 h-100">
+            {% elif profile_user.intra_image %}
+            <img src="{{ profile_user.intra_image }}" alt="{{ profile_user.name }}'s default avatar" class="user-avatar img-fluid position-absolute top-0 start-0 w-100 h-100">
+            {% else %}
+            <img src="https://static.wikia.nocookie.net/ousamaranking/images/4/4d/Bojji_2022_anime_ending.jpg" alt="Default avatar" class="user-avatar img-fluid position-absolute top-0 start-0 w-100 h-100">
+            {% endif %}
+          </div>
+  
+          <!-- Display user details -->
+          <h2 class="mt-3">Name: {{ profile_user.name }}</h2>
+          <p>Alias: {{ profile_user.alias }}</p>
+          <p>Winrate: {{ profile_user.win_ratio }}%</p>
+          <p>Games: {{ profile_user.wins }}W/{{ profile_user.loses }}L/{{ profile_user.games_played }}T</p>
+          <button class="btn btn-outline-custom btn-lg mb-2" hx-get="{% url 'change_alias' profile_user.name %}" hx-target="#form-container" hx-swap="innerHTML" hx-push-url="true">Change Alias</button>
+          <button class="btn btn-outline-custom btn-lg" hx-get="{% url 'change_avatar' profile_user.name %}" hx-target="#form-container" hx-swap="innerHTML" hx-push-url="true">Change Avatar</button>
+        </div>
+  
+        <!-- History Tables Column -->
+        <div class="col-md-9 p-3">
+          <div class="table-container">
+            <!-- Table 1 vs 1 -->
+            <h3>1 vs 1</h3>
+            <div class="table-responsive">
+              <table class="table table-hover custom-border-color table-bordered table-fixed">
+                <thead>
+                  <tr>
+                    <th>Winner Team</th>
+                    <th>Winner Score</th>
+                    <th>Loser Score</th>
+                    <th>Loser Team</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>psegura-</td>
+                    <td>3</td>
+                    <td>1</td>
+                    <td>sacorder</td>
+                  </tr>
+                  <tr>
+                    <td>mde-arpe</td>
+                    <td>3</td>
+                    <td>2</td>
+                    <td>psegura-</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+  
+            <!-- Table 2 vs 2 -->
+            <h3>2 vs 2</h3>
+            <div class="table-responsive">
+              <table class="table table-hover custom-border-color table-bordered table-fixed">
+                <thead>
+                  <tr>
+                    <th>Winner Team</th>
+                    <th>Winner Score</th>
+                    <th>Loser Score</th>
+                    <th>Loser Team</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>psegura- / agserran</td>
+                    <td>3</td>
+                    <td>2</td>
+                    <td>sacorder / bazuara</td>
+                  </tr>
+                  <tr>
+                    <td>mde-arpe / bazuara</td>
+                    <td>1</td>
+                    <td>3</td>
+                    <td>psegura- / sacorder</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+<style>
+    /* Custom border color for tables */
+.custom-border-color {
+  border-color: #28df28 !important;
+}
+
+/* Make the table layout fixed */
+.table-fixed {
+  table-layout: fixed; /* Ensures fixed table layout */
+  width: 100%; /* Ensure table uses full width */
+}
+
+/* Set equal width for each column */
+.table-fixed th,
+.table-fixed td {
+  width: 25%; /* Each column takes 25% of the table width */
+  word-wrap: break-word; /* Break words to avoid overflow */
+}
+
+    /* Full-height for container */
+    html,
+    body,
+    #form-container {
+    height: 100%;
+    }
+
+    /* Profile Image Container */
+    .position-relative {
+    padding-top: 100%; /* 1:1 Aspect Ratio */
+    }
+
+    .user-avatar {
+    object-fit: cover; /* Cover the container */
+    }
+
+    /* Adjust table margins */
+    .table-container {
+    padding-top: 20px;
+    }
+
+    .table-responsive {
+    margin-top: 15px;
+    }
+
+    /* Ensure profile column fills the height */
+    .profile-info {
+    overflow-y: auto; /* Scroll if content overflows */
+    }
+    .custom-border-color {
+        border: 1px solid #28df28;
+    }
+</style>
