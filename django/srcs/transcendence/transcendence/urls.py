@@ -23,5 +23,6 @@ urlpatterns = [
     path('', include('session_management.urls')),
     path('', include('static.urls')),
     path('', include('social.urls')),
+    path('', include('rooms.urls')),
 
 ]
