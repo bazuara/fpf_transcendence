@@ -106,10 +106,9 @@ def handle_user_info_response(request, user_info):
             user_id      = user_info.get("id"),
             name         = user_info.get("login"),
             alias        = user_info.get("login"),
-            intra_image  = user_info.get("image").get("versions").get("medium"),
+            intra_image  = user_info.get("image").get("link"),
             wins         = 0,
             loses        = 0,
-            games_played = 0,
         )
     return redirect('welcome')
 

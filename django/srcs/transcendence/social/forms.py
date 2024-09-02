@@ -13,9 +13,9 @@ class ChangeAvatarForm(forms.ModelForm):
         fields = ['avatar']
         widgets = {
             'avatar': forms.ClearableFileInput(attrs={
-                'class': 'custom-file-input',   # Custom CSS class
-                'accept': 'image/*',           # Restrict file types
-                'title': 'Error:',  # Tooltip text
+                'accept'        : 'image/*',            # Restrict file types
+                'title'         : 'Error:',             # Tooltip text
+                'class'         : 'form-control',       # Custom CSS class
             }),
         }
         labels = {
@@ -27,12 +27,3 @@ class ChangeAvatarForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Additional customization after initialization
-        self.fields['avatar'].widget.attrs.update({
-            'accept': 'image/*',  # Restrict file types to images
-            'class': 'form-control',  # Add additional CSS classes if needed
-        })
-        # Example: Set a custom placeholder for a text field if there were any
-        self.fields['avatar'].widget.attrs.update({
-            'placeholder': 'Enter asdasdasdtext here',
-        })
