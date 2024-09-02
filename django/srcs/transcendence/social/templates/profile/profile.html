@@ -1,4 +1,9 @@
 <div id="form-container">
+    {% if error_msg %}
+    <div class="alert alert-danger" role="alert" id="error-message">
+      {{ error_msg }}
+    </div>
+    {% endif %}
     <div class="container-fluid">
       <div class="row">
         <!-- Profile Information Column -->
@@ -19,8 +24,8 @@
           <p>Alias: {{ profile_user.alias }}</p>
           <p>Winrate: {{ profile_user.win_ratio }}%</p>
           <p>Games: {{ profile_user.wins }}W/{{ profile_user.loses }}L/{{ profile_user.games_played }}T</p>
-          <button class="btn btn-outline-custom btn-lg mb-2" hx-get="{% url 'change_alias' profile_user.name %}" hx-target="#form-container" hx-swap="innerHTML">Change Alias</button>
-          <button class="btn btn-outline-custom btn-lg" hx-get="{% url 'change_avatar' profile_user.name %}" hx-target="#form-container" hx-swap="innerHTML">Change Avatar</button>
+          <button class="btn btn-outline-custom btn-lg mb-2" hx-get="{% url 'change_alias' profile_user.name %}" hx-target="#form-container" hx-swap="innerHTML" hx-push-url="true">Change Alias</button>
+          <button class="btn btn-outline-custom btn-lg" hx-get="{% url 'change_avatar' profile_user.name %}" hx-target="#form-container" hx-swap="innerHTML" hx-push-url="true">Change Avatar</button>
         </div>
   
         <!-- History Tables Column -->

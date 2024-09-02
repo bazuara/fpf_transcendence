@@ -24,9 +24,21 @@ def profile_view(request, name):
 def change_alias(request, name):
     profile_user = get_object_or_404(OurUser, name=name)
 
+    authenticated_user = request.user
+    
+    context = {
+        'profile_user'      : profile_user,         # OurUser instance
+        'authenticated_user': authenticated_user,   # DjangoUser instance
+        'error_msg'         : None
+    }
+
     # Ensure the logged-in user can only change their own alias
-    if request.user.username != profile_user.name:
-        return HttpResponseForbidden("You are not allowed to change this user's alias.")
+    if authenticated_user.username != profile_user.name:
+        context['error_msg'] = "You are not allowed to change this user's alias."
+        if 'HX-Request' in request.headers:
+            return render(request, 'profile/profile.html', context)
+        else:
+            return render(request, 'profile/profile_full.html', context)
 
     if request.method == 'POST':
         form = ChangeAliasForm(request.POST, instance=profile_user)
@@ -40,10 +52,22 @@ def change_alias(request, name):
 
 def change_avatar(request, name):
     profile_user = get_object_or_404(OurUser, name=name)
+
+    authenticated_user = request.user
     
+    context = {
+        'profile_user'      : profile_user,         # OurUser instance
+        'authenticated_user': authenticated_user,   # DjangoUser instance
+        'error_msg'         : None
+    }
+
     # Ensure the logged-in user can only change their own avatar
-    if request.user.username != profile_user.name:
-        return HttpResponseForbidden("You are not allowed to change this user's avatar.")
+    if authenticated_user.username != profile_user.name:
+        context['error_msg'] = "You are not allowed to change this user's avatar."
+        if 'HX-Request' in request.headers:
+            return render(request, 'profile/profile.html', context)
+        else:
+            return render(request, 'profile/profile_full.html', context)
     
     if request.method == 'POST':
         form = ChangeAvatarForm(request.POST, request.FILES, instance=profile_user)
