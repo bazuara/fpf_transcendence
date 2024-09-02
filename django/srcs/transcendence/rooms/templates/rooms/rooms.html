@@ -2,8 +2,12 @@
     <div class="row w-100 justify-content-center">
         <div class="col-auto">
             <div class="d-flex gap-3"> <!-- Usar gap para espacio entre botones -->
-                <button type="button" class="btn btn-outline-custom btn-lg">CREATE ROOM</button>
-                <button type="button" class="btn btn-outline-custom btn-lg">JOIN ROOM</button>
+                <a hx-get="{% url 'rooms_create' %}" hx-target="#content-div" hx-push-url="true">
+                    <button type="button" class="btn btn-outline-custom btn-lg"><h1>CREATE ROOM</h1></button>
+                </a>
+                <a hx-get="{% url 'rooms_join' %}" hx-target="#content-div" hx-push-url="true">
+                    <button type="button" class="btn btn-outline-custom btn-lg"><h1>JOIN ROOM</h1></button>
+                </a>
             </div>
         </div>
     </div>
