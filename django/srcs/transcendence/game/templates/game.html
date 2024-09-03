@@ -1,0 +1,249 @@
+	<!-- 
+		"score1"
+		"score2"
+		"paddle1"
+		"paddle2"
+		"ball"
+	 -->
+	<div id="canvasContainer">
+		<canvas id="pongCanvas"> </canvas> 
+	</div>
+	<script>
+
+		const canvas = document.getElementById("pongCanvas");
+		const canvasContainer = document.getElementById("canvasContainer");
+		const ctx = canvas.getContext("2d");
+
+		//colors for background and objects
+
+		const backgroundColor = 'black';
+		const decorColor = 'green';
+
+		//default values of the gamespace
+		const defaultPaddleHeight = 50;
+		const defaultPaddleWidth = 10;
+		const defaultBallRadius = 5;
+		const fieldHeight = 500;
+		const fieldWidth = 800;
+		const defaultFontSize = 32;
+
+		//scaled values variables (initialized here, modified upon window resize)
+		let paddleHeight = defaultPaddleHeight;
+		let paddleWidth = 10;
+		let leftPaddleX = 0;
+		let rightPaddleX = canvas.width - paddleWidth;
+		let scoreHeight = 550;
+		let	relativeHeight = 1;
+		let relativeWidth = 1;
+		let ballRadius = defaultBallRadius;
+		let fontSize = defaultFontSize + 'px';
+
+		//global variable for stroing the gamestate
+		let gameState = {
+			"score1": 0,
+			"score2": 0,
+			"paddle1": (fieldHeight - paddleHeight) / 2,
+			"paddle2": (fieldHeight - paddleHeight) / 2,
+			"ball": [
+				fieldWidth / 2,
+				fieldHeight / 2
+			]
+		};
+
+		//key delay
+		const repeatDelay = 16; //delay in millis
+		let activeKey = null; //tracks the currently active key (either 'w' or 's')
+		let keyPressed = {};  //tracks which keys are pressed
+		let keyInterval = null; //stores the interval for the active key
+	
+		const chatSocket = new WebSocket(
+			'ws://'
+			+ window.location.host
+			+ '/ws/keylog'
+		);
+		
+		chatSocket.onopen = function(e) {
+			console.log("Connection opened");
+		}
+
+		chatSocket.onmessage = function(e) {	
+			//gameState = JSON.parse(e.data); //parse from JSON
+			decodeState(e.data) //parse from raw data (score1, score2, paddle1, paddle2, ball[0], ball[1])
+			renderGame(gameState);
+		}
+
+		chatSocket.onclose = function(e) {
+			console.error('Connection closed');
+		}
+
+		chatSocket.onerror = function(error) {
+			console.log("WebSocket error: ", error);
+		}
+
+		function startSendingKey(key) {
+			if (keyInterval) {
+				clearInterval(keyInterval);
+			}
+			keyInterval = setInterval(() => {
+				chatSocket.send(key);
+			}, repeatDelay);
+		}
+
+		//this will detect when the window loses focus, clearing intervals and keypresses.
+		window.addEventListener('blur', function() {
+			if (keyInterval)
+				clearInterval(keyInterval);
+			keyInterval = null;
+			activeKey = null;
+			keyPressed['w'] = false;
+			keyPressed['s'] = false;
+		});
+
+		document.addEventListener('keyup', function(event) {
+			const key = event.key;
+
+			if (key === 'w' || key === 's') {
+				keyPressed[key] = false;
+				clearInterval(keyInterval);
+				keyInterval = null;
+				activeKey = null;
+
+				//check if the other key is still pressed, and start sending its keylogs
+				const otherKey = key === 'w' ? 's' : 'w';
+				if (keyPressed[otherKey]) {
+					activeKey = otherKey;
+					chatSocket.send(otherKey);
+					startSendingKey(otherKey);
+				}
+			}
+		});
+
+		document.addEventListener('keydown', (event) => {
+			const key = event.key;
+
+			if ((key === 'w' || key === 's') && !keyPressed[key]) {
+				keyPressed[key] = true;
+
+				if (activeKey === null) { //start sending keylogs if no other key is active
+					activeKey = key;
+					chatSocket.send(key);
+					startSendingKey(key);
+				} else if (activeKey !== key) { //stop sending keylogs if another key is pressed
+					clearInterval(keyInterval);
+					keyInterval = null;
+				}
+			}
+		});
+
+		function decodeState(rawState) {
+			values = rawState.split(' ');
+			gameState = {
+				"score1": parseInt(values[0], 10),
+				"score2": parseInt(values[1], 10),
+				"paddle1": parseInt(values[2], 10),
+				"paddle2": parseInt(values[3], 10),
+				"ball": [
+					parseInt(values[4], 10),
+					parseInt(values[5], 10)
+				]
+			};
+		}
+
+		function drawPaddle1(paddle) {
+			const paddleY = paddle * relativeHeight;
+			ctx.fillRect(leftPaddleX, paddleY, paddleWidth, paddleHeight);
+		}
+
+		function drawPaddle2(paddle) {
+			const paddleY = paddle * relativeHeight;
+			ctx.fillRect(rightPaddleX, paddleY, paddleWidth, paddleHeight);
+		}
+		
+		function drawBall(ball) {
+			ctx.beginPath();
+			const ballPosX = paddleWidth + (ball[0] * relativeWidth);
+			const ballPosY = ball[1] * relativeHeight;
+			ctx.arc(ballPosX, ballPosY, ballRadius, 0, 2 * Math.PI);
+			ctx.fill();
+			ctx.closePath();
+		}
+
+		function drawScore1(score1) {
+			ctx.font = fontSize + ' Arial';
+			ctx.fillText(score1, canvas.width / 4, scoreHeight);
+		}
+
+		function drawScore2(score2) {
+			ctx.font = fontSize + ' Arial';
+			ctx.fillText(score2, 3 * canvas.width / 4, scoreHeight);
+		}
+
+		function drawField() {
+			//draw goal lines
+			ctx.fillRect(paddleWidth, 0, 1, 5 * canvas.height / 6);
+			ctx.fillRect(rightPaddleX, 0, 1, 5 * canvas.height / 6);
+
+			//draw middle line
+			ctx.fillRect(canvas.width / 2, 0, 1, 5 * canvas.height / 6);
+
+			//draw top and bottom limits
+			ctx.fillRect(0, 0, canvas.width, 1);
+			ctx.fillRect(0, 5 * canvas.height / 6, canvas.width, 1);
+		}
+
+		function renderGame(gameState) {
+			ctx.fillStyle = backgroundColor;
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			
+			ctx.fillStyle = decorColor;
+			drawField();
+			drawPaddle1(gameState.paddle1);
+			drawPaddle2(gameState.paddle2);
+			drawBall(gameState.ball);
+			drawScore1(gameState.score1);
+			drawScore2(gameState.score2);
+		}
+
+		function resizeCanvas() {
+			const navHeight = document.getElementById("navbar").clientHeight;
+			console.log(navHeight);
+			const windowAspectRatio = window.innerWidth / (window.innerHeight - navHeight);
+			const canvasAspectRatio = 9 / 6;
+			let canvasWidth, canvasHeight;
+
+			if (windowAspectRatio > canvasAspectRatio) {
+				// Window is wider than the canvas ratio
+				canvasHeight = window.innerHeight - navHeight;
+				canvasWidth = canvasHeight * canvasAspectRatio;
+			} else {
+				// Window is taller than the canvas ratio
+				canvasWidth = window.innerWidth;
+				canvasHeight = canvasWidth / canvasAspectRatio - navHeight;
+			}
+
+			canvasContainer.style.width = canvasWidth + 'px';
+			canvasContainer.style.height = canvasHeight + 'px';
+
+			canvas.width = canvasWidth;
+			canvas.height = canvasHeight;
+
+			relativeWidth = (canvas.width - (2 * paddleWidth)) / fieldWidth;
+			relativeHeight = (5 * canvas.height / 6) / fieldHeight;
+			scoreHeight = 5.5 * canvasHeight / 6;
+			paddleWidth =  defaultPaddleWidth * relativeWidth;
+			relativeWidth = (canvas.width - (2 * paddleWidth)) / fieldWidth;
+			//leftPaddleX = 0; //its always on the left
+			rightPaddleX = canvas.width - paddleWidth;
+			ballRadius = defaultBallRadius * relativeHeight;
+			paddleHeight = defaultPaddleHeight * relativeHeight;
+			fontSize = (defaultFontSize * relativeHeight) + 'px';
+
+			//redraw content after resizing
+			renderGame(gameState)
+		}
+
+		window.addEventListener('resize', resizeCanvas);
+
+		resizeCanvas();
+
+	</script>
