@@ -12,36 +12,36 @@ def rooms_view(request):
         return render(request, 'rooms/rooms_full.html')
 
 def generate_room_id():
-    """Genera un identificador único para la sala (ejemplo básico)."""
-    return ''.join(random.choices(string.digits, k=6))
+    while True:
+        room_id = ''.join(random.choices(string.digits, k=6))
+        if not Room.objects.filter(room_id=room_id).exists():
+            return room_id 
 
 def rooms_create(request):
     if request.method == 'POST':
         form = RoomForm(request.POST)
         if form.is_valid():
-            # Obtener los datos del formulario
             game_mode = form.cleaned_data['game_mode']
-            is_public = form.cleaned_data['is_public'] == 'Public'
-            
-            # Generar un room_id único
+            is_public = form.cleaned_data['is_public'] == True
+
             room_id = generate_room_id()
-            
-            # Crear una nueva sala
+
             new_room = Room.objects.create(
                 game_mode=game_mode,
                 room_id=room_id,
                 is_public=is_public
             )
-            
-            # Redirigir a la nueva sala creada
-            return redirect('rooms_detail', new_room.room_id)
-        else:
-            return HttpResponseBadRequest("Datos del formulario inválidos.")
+            context = {
+                'room' : new_room,
+            }
+            if 'HX-Request' in request.headers:
+                return render(request, 'rooms/room_created.html', context)
+            else:
+                return render(request, 'rooms/room_created_full.html', context)
     
     else:
         form = RoomForm()
-    
-    # Renderizar el formulario de creación de sala
+
     if 'HX-Request' in request.headers:
         return render(request, 'rooms/rooms_create.html', {'form': form})
     else:
@@ -64,15 +64,3 @@ def rooms_join_private(request):
         return render(request, 'rooms/rooms_join_private.html')
     else:
         return render(request, 'rooms/rooms_join_private_full.html')
-
-def rooms_detail(request, room_id):
-    room = get_object_or_404(Room, room_id=room_id)
-    context = {
-        'room_id' : room.room_id,
-        'game_mode' : room.game_mode,
-        'is_public' : room.is_public,
-    }
-    if 'HX-Request' in request.headers:
-        return render(request, 'rooms/rooms_detail.html', context)
-    else:
-        return render(request, 'rooms/rooms_detail_full.html', context)
