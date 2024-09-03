@@ -17,6 +17,11 @@
            min-height: 100vh;
         }
 
+        .h1-custom{
+            color: #28df28;
+            font-family: 'Handjet';
+        }
+
         .btn-outline-custom {
             border-color: #28df28; 
             color: #28df28;
@@ -111,6 +116,11 @@
             border-radius: 50%;
             object-fit: cover;
         }
+
+        .full-height {
+            height: 75vh;
+        }
+
      </style>
      <link rel="preconnect" href="https://fonts.googleapis.com">
      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -133,7 +143,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" hx-get=" " hx-target="#content-div" hx-push-url="true">
+                    <a class="nav-link" hx-get="{% url 'rooms' %}" hx-target="#content-div" hx-push-url="true">
                         <div button type="button" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">Rooms</div>
                     </a>
                 </li>

@@ -1,0 +1,14 @@
+<div class="container-fluid full-height d-flex align-items-center">
+    <div class="row w-100 justify-content-center">
+        <div class="col-auto">
+            <div class="d-flex gap-3"> <!-- Usar gap para espacio entre botones -->
+                <a hx-get="{% url 'rooms_join_public' %}" hx-target="#content-div" hx-push-url="true">
+                    <button type="button" class="btn btn-outline-custom btn-lg"><h1>JOIN PUBLIC ROOM</h1></button>
+                </a>
+                <a hx-get="{% url 'rooms_join_private' %}" hx-target="#content-div" hx-push-url="true">
+                    <button type="button" class="btn btn-outline-custom btn-lg"><h1>JOIN PRIVATE ROOM</h1></button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
