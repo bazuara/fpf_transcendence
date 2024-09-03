@@ -1,14 +1,80 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseForbidden
+from social.forms import ChangeAliasForm, ChangeAvatarForm
 from social.models import User as OurUser
 
+def profile_view(request, name):
+    # Fetch OurUser from social.models
+    profile_user = get_object_or_404(OurUser, name=name)
 
-def profile_view(request):
-    context = {}
+    # Get the authenticated user from the request (session user)
+    authenticated_user = request.user
+    
+    context = {
+        'profile_user'      : profile_user,         # OurUser instance
+        'authenticated_user': authenticated_user    # DjangoUser instance
+    }
 
-    login = request.GET.get('user', request.user.username)
-    user = OurUser.objects.filter(name=login).first()
-    context['user'] = user
+    # Return different templates based on whether it's an HTMX request
     if 'HX-Request' in request.headers:
-        return render(request, 'components/profile.html', context)
+        return render(request, 'profile/profile.html', context)
     else:
-        return render(request, 'components/profile_full.html', context)
+        return render(request, 'profile/profile_full.html', context)
+
+def change_alias(request, name):
+    profile_user = get_object_or_404(OurUser, name=name)
+
+    authenticated_user = request.user
+    
+    context = {
+        'profile_user'      : profile_user,         # OurUser instance
+        'authenticated_user': authenticated_user,   # DjangoUser instance
+        'error_msg'         : None
+    }
+
+    # Ensure the logged-in user can only change their own alias
+    if authenticated_user.username != profile_user.name:
+        context['error_msg'] = "You are not allowed to change this user's alias."
+        if 'HX-Request' in request.headers:
+            return render(request, 'profile/profile.html', context)
+        else:
+            return render(request, 'profile/profile_full.html', context)
+
+    if request.method == 'POST':
+        form = ChangeAliasForm(request.POST, instance=profile_user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile', name=profile_user.name)
+    else:
+        form = ChangeAliasForm(instance=profile_user)
+
+    return render(request, 'profile/components/change_alias.html', {'form': form, 'user': profile_user})
+
+def change_avatar(request, name):
+    profile_user = get_object_or_404(OurUser, name=name)
+
+    authenticated_user = request.user
+    
+    context = {
+        'profile_user'      : profile_user,         # OurUser instance
+        'authenticated_user': authenticated_user,   # DjangoUser instance
+        'error_msg'         : None
+    }
+
+    # Ensure the logged-in user can only change their own avatar
+    if authenticated_user.username != profile_user.name:
+        context['error_msg'] = "You are not allowed to change this user's avatar."
+        if 'HX-Request' in request.headers:
+            return render(request, 'profile/profile.html', context)
+        else:
+            return render(request, 'profile/profile_full.html', context)
+    
+    if request.method == 'POST':
+        form = ChangeAvatarForm(request.POST, request.FILES, instance=profile_user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile', name=profile_user.name)
+    else:
+        form = ChangeAvatarForm(instance=profile_user)
+    
+    return render(request, 'profile/components/change_avatar.html', {'form': form, 'user': profile_user})

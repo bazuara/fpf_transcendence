@@ -68,8 +68,8 @@
             white-space: nowrap;
             width: 7ch; 
             position: absolute;
-            top: 45%;
-            left: 53%;
+            top: 50%;
+            left: 50%;
             font-size: 600%;
             transform: translate(-50%, -50%);
             animation: typing 2s steps(12), blink .5s infinite step-end alternate;
@@ -134,7 +134,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top px-3">
         <a class="navbar-brand"  hx-get="{% url 'welcome' %}" hx-target="#content-div" hx-push-url="true">
             <div button type="button" class="btn btn-outline-custom btn-lg" data-i18n="Analytics">
-                Home
+                Welcome
             </div>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -142,21 +142,6 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" hx-get="{% url 'how_to_play' %}" hx-target="#content-div" hx-push-url="true">
-                        <div button type="button" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">How To Play</div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" hx-get="{% url 'about' %}" hx-target="#content-div" hx-push-url="true">
-                        <div button type="button" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">About</div>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" hx-get=" " hx-target="#content-div" hx-push-url="true">
-                        <div button type="button" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">Friends</div>
-                    </a>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" hx-get="{% url 'rooms' %}" hx-target="#content-div" hx-push-url="true">
                         <div button type="button" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">Rooms</div>
@@ -168,8 +153,23 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" hx-get="{% url 'profile' %}" hx-target="#content-div" hx-push-url="true">
+                    <a class="nav-link" hx-get=" " hx-target="#content-div" hx-push-url="true">
+                        <div button type="button" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">Friends</div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" hx-get="{% url 'profile' user.username %}" hx-target="#content-div" hx-push-url="true">
                         <div button type="button" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">Profile</div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" hx-get="{% url 'how_to_play' %}" hx-target="#content-div" hx-push-url="true">
+                        <div button type="button" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">How To Play</div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" hx-get="{% url 'about' %}" hx-target="#content-div" hx-push-url="true">
+                        <div button type="button" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">About</div>
                     </a>
                 </li>
             </ul>
