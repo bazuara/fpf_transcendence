@@ -1,4 +1,7 @@
+DATADB = $(PWD)/postgres/dbdata
+
 up:
+	@mkdir -p $(DATADB)
 	docker compose build 
 	docker compose up
 
@@ -19,6 +22,5 @@ remove:
 
 clean:
 	docker stop $$(docker ps -aq); docker rm $$(docker ps -aq); docker volume rm $$(docker volume ls -q)
-	
 
-.PHONY: postgres django up down
+.PHONY: postgres django up down clean remove
