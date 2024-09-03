@@ -11,6 +11,9 @@ postgres:
 django:
 	docker exec -it django bash
 
+redis:
+	docker exec -it redis bash
+
 remove:
 	docker run --rm -v ./postgres/dbdata:/var/lib/postgresql -v $(PWD)/rmall.sh:/rmall.sh debian:bullseye-20240612 bash /rmall.sh
 
