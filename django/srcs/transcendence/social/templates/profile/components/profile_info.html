@@ -1,0 +1,27 @@
+<!-- Image Container -->
+<div class="position-relative w-100" style="padding-top: 100%;">
+    {% if profile_user.avatar %}
+    <img src="{{ profile_user.avatar.url }}" alt="{{ profile_user.name }}'s avatar" class="user-avatar img-fluid position-absolute top-0 start-0 w-100 h-100">
+    {% elif profile_user.intra_image %}
+    <img src="{{ profile_user.intra_image }}" alt="{{ profile_user.name }}'s default avatar" class="user-avatar img-fluid position-absolute top-0 start-0 w-100 h-100">
+    {% else %}
+    <img src="https://static.wikia.nocookie.net/ousamaranking/images/4/4d/Bojji_2022_anime_ending.jpg" alt="Default avatar" class="user-avatar img-fluid position-absolute top-0 start-0 w-100 h-100">
+{% endif %}
+</div>
+
+<!-- Display user details -->
+<h2 class="mt-3">Name: {{ profile_user.name }}</h2>
+<p>Alias: {{ profile_user.alias }}</p>
+<p>Winrate: {{ profile_user.win_ratio }}%</p>
+<p>Games: {{ profile_user.wins }}W/{{ profile_user.loses }}L/{{ profile_user.games_played }}T</p>
+
+{% if profile_user.name == authenticated_user.username %}
+<button class="btn btn-outline-custom btn-lg mb-2"
+        hx-get="{% url 'change_alias' profile_user.name %}"
+        hx-target="#profile-div"
+        hx-push-url="true">Change Alias</button>
+<button class="btn btn-outline-custom btn-lg"
+        hx-get="{% url 'change_avatar' profile_user.name %}"
+        hx-target="#profile-div"
+        hx-push-url="true">Change Avatar</button>
+{% endif %}
