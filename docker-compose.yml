@@ -10,20 +10,37 @@ services:
     networks:
       - tran-net
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
   
   postgres:
-    build: ./postgres
+    image: postgres:16.4
     container_name: postgres
     env_file: .env
     networks:
       - tran-net
     volumes:
       - postgres_volume:/var/lib/postgresql
+    healthcheck:
+      test: pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+      start_interval: 5s
 
   redis:
     image: redis:7.4.0
     container_name: redis
+    healthcheck:
+      test: redis-cli PING
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+      start_interval: 5s
 
 volumes:
   django_volume:
