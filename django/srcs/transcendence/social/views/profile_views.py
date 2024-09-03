@@ -65,7 +65,7 @@ def change_avatar(request, name):
     context = {
         'profile_user'      : profile_user,         # OurUser instance
         'authenticated_user': authenticated_user,   # DjangoUser instance
-        'error_msg'         : None
+        'error_msg'         : None,
     }
 
     # Ensure the logged-in user can only change their own avatar
