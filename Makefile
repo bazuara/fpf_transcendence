@@ -1,6 +1,7 @@
 DATADB = $(PWD)/postgres/dbdata
 
-up: $(DATADB)
+up:
+	@mkdir -p $(DATADB)
 	docker compose build 
 	docker compose up
 
@@ -16,12 +17,7 @@ django:
 redis:
 	docker exec -it redis bash
 
-$(DATADB):
-	echo "Dir $(DATADB) does not exist; creating dir..."
-	@mkdir -p $(DATADB)
-	echo Dir created!
-
 remove:
 	docker run --rm -v ./postgres/dbdata:/var/lib/postgresql -v $(PWD)/rmall.sh:/rmall.sh debian:bullseye-20240612 bash /rmall.sh
 
-.PHONY: postgres django up down $(DATADB)
+.PHONY: postgres django up down clean remove
