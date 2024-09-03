@@ -1,6 +1,15 @@
-<form method="post" hx-post="{% url 'change_alias' user.name %}" hx-target="#form-container" hx-swap="innerHTML" hx-push-url="true">
+<form method="post"
+      hx-post="{% url 'change_alias' profile_user.name %}"
+      hx-target="#form-container"
+      hx-swap="innerHTML"
+      hx-push-url="true">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Update Alias</button>
-    <button type="button" hx-get="{% url 'profile' user.name %}" hx-target="#form-container" hx-swap="innerHTML" hx-push-url="true">Cancel</button>
+    <button type="submit" class="btn btn-outline-custom btn-lg">Update Alias</button>
+    <button type="button"
+            hx-get="{% url 'profile' profile_user.name %}"
+            hx-target="#form-container"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+            class="btn btn-outline-custom btn-lg">Cancel</button>
 </form>

@@ -1,6 +1,6 @@
 <!-- change_avatar_form.html -->
 <form method="post" enctype="multipart/form-data" 
-      hx-post="{% url 'change_avatar' user.name %}" 
+      hx-post="{% url 'change_avatar' profile_user.name %}" 
       hx-target="#form-container" 
       hx-swap="innerHTML"
       hx-push-url="true">
@@ -8,7 +8,7 @@
     {{ form.as_p }}
     <button type="submit" class="btn btn-outline-custom btn-lg">Update Avatar</button>
     <button type="button" 
-            hx-get="{% url 'profile' user.name %}" 
+            hx-get="{% url 'profile' profile_user.name %}" 
             hx-target="#form-container" 
             hx-swap="innerHTML"
             hx-push-url="true"
