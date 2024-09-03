@@ -21,6 +21,10 @@ services:
     volumes:
       - postgres_volume:/var/lib/postgresql
 
+  redis:
+    image: redis:7.4.0
+    container_name: redis
+
 volumes:
   django_volume:
     driver: local
