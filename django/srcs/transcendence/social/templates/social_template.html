@@ -9,7 +9,6 @@
         <!-- Profile Information Column -->
         <div class="col-md-3 d-flex flex-column p-3 border-end" id="profile-left">
           {% block leftside %}
-          {% include "profile/profile_info.html" %}
           {% endblock leftside %}
         </div>
   
@@ -27,7 +26,7 @@
                     <button type="button"
                             class="btn btn-outline-custom btn-lg w-100"
                             hx-get="{% url 'friends' profile_user.name %}"
-                            hx-target="#content-div"
+                            hx-target="#profile-right"
                             hx-push-url="true">Friends</button>
                 </div>
             </div>
