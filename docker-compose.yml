@@ -19,10 +19,10 @@ services:
     image: postgres:16.4
     container_name: postgres
     env_file: .env
-    networks:
-      - tran-net
     volumes:
       - postgres_volume:/var/lib/postgresql
+    networks:
+      - tran-net
     healthcheck:
       test: pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}
       interval: 5s
@@ -34,6 +34,8 @@ services:
   redis:
     image: redis:7.4.0
     container_name: redis
+    networks:
+      - tran-net
     healthcheck:
       test: redis-cli PING
       interval: 5s
