@@ -15,23 +15,23 @@
                 <tr>
                     <td>{{ room.room_id }}</td>
                     <td>
-						{{ room.user_count }}
-						{% if room.game_mode == '1' %}
-							/ 2
-						{% else %}
-							/ 4
-						{% endif %}
+                        {{ room.user_count }}
+                        {% if room.game_mode == '1' %}
+                            / 2
+                        {% else %}
+                            / 4
+                        {% endif %}
                     </td>
                     <td>{% if room.game_mode == '1' %}
-							1vs1
-						{% elif room.game_mode == '2' %}
-							2vs2
-						{% else %}
-							Tournament
-						{% endif %}
-					</td>
+                            1vs1
+                        {% elif room.game_mode == '2' %}
+                            2vs2
+                        {% else %}
+                            Tournament
+                        {% endif %}
+                    </td>
                     <td>
-						<!-- This button should do an hx-get to url 'rooms' room.room_id -->
+                        <!-- This button should do an hx-get to url 'rooms' room.room_id -->
                         <button type="button" class="btn btn-primary" hx-get="{% url 'welcome' %}" hx-target="#content-div" hx-push-url="true">Join</button>
                     </td>
                 </tr>
