@@ -15,7 +15,7 @@
         <tbody>
             {% for friend in friend_list %}
             <tr>
-                <td>{{ friend.name }}</td>
+                <td><a href="" hx-get="{% url 'profile' friend.name %}" hx-target="#content-div" hx-push-url="true">{{ friend.name }}</a></td>
                 <td>{{ friend.win_ratio }}</td>
                 <td>Online</td>
                 <td>{{ friend.wins }}/{{ friend.loses }}/{{ friend.games_played }}</td>
