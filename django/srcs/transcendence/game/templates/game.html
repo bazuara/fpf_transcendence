@@ -1,10 +1,3 @@
-	<!-- 
-		"score1"
-		"score2"
-		"paddle1"
-		"paddle2"
-		"ball"
-	 -->
 	<div id="canvasContainer">
 		<canvas id="pongCanvas"> </canvas> 
 	</div>
@@ -17,7 +10,7 @@
 		//colors for background and objects
 
 		const backgroundColor = 'black';
-		const decorColor = 'green';
+		const decorColor = '#28df28';
 
 		//default values of the gamespace
 		const defaultPaddleHeight = 50;
@@ -67,8 +60,7 @@
 		}
 
 		chatSocket.onmessage = function(e) {	
-			//gameState = JSON.parse(e.data); //parse from JSON
-			decodeState(e.data) //parse from raw data (score1, score2, paddle1, paddle2, ball[0], ball[1])
+			decodeState(e.data);
 			renderGame(gameState);
 		}
 
@@ -211,12 +203,10 @@
 			const canvasAspectRatio = 9 / 6;
 			let canvasWidth, canvasHeight;
 
-			if (windowAspectRatio > canvasAspectRatio) {
-				// Window is wider than the canvas ratio
+			if (windowAspectRatio > canvasAspectRatio) { // window is wider than the canvas ratio
 				canvasHeight = window.innerHeight - navHeight;
 				canvasWidth = canvasHeight * canvasAspectRatio;
-			} else {
-				// Window is taller than the canvas ratio
+			} else { // window is taller than the canvas ratio
 				canvasWidth = window.innerWidth;
 				canvasHeight = canvasWidth / canvasAspectRatio - navHeight;
 			}
@@ -232,7 +222,6 @@
 			scoreHeight = 5.5 * canvasHeight / 6;
 			paddleWidth =  defaultPaddleWidth * relativeWidth;
 			relativeWidth = (canvas.width - (2 * paddleWidth)) / fieldWidth;
-			//leftPaddleX = 0; //its always on the left
 			rightPaddleX = canvas.width - paddleWidth;
 			ballRadius = defaultBallRadius * relativeHeight;
 			paddleHeight = defaultPaddleHeight * relativeHeight;
