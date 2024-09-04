@@ -28,6 +28,3 @@ class User(models.Model):
     class Meta:
         ordering = ['user_id']
 
-    
-
-# Create your models here.

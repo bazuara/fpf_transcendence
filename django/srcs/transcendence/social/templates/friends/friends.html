@@ -1,1 +1,27 @@
-<p>THIS IS FRIENDS<p>
+{% extends "social_template.html" %}
+
+{% block rightside %}
+<h3>Friends</h3>
+<div class="table-responsive">
+    <table class="table table-hover custom-border-color table-bordered table-fixed">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Winrate</th>
+                <th>Online Status</th>
+                <th>Wins/Lose/Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for friend in friend_list %}
+            <tr>
+                <td>{{ friend.name }}</td>
+                <td>{{ friend.win_ratio }}</td>
+                <td>Online</td>
+                <td>{{ friend.wins }}/{{ friend.loses }}/{{ friend.games_played }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock rightside %}

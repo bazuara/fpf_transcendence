@@ -17,9 +17,9 @@ def profile_view(request, name):
 
     # Return different templates based on whether it's an HTMX request
     if 'HX-Request' in request.headers:
-        return render(request, 'profile/profile.html', context)
+        return render(request, 'social.html', context)
     else:
-        return render(request, 'profile/profile_full.html', context)
+        return render(request, 'social_full.html', context)
 
 def change_alias(request, name):
     profile_user = get_object_or_404(OurUser, name=name)
@@ -36,18 +36,18 @@ def change_alias(request, name):
     if authenticated_user.username != profile_user.name:
         context['error_msg'] = "You are not allowed to change this user's alias."
         if 'HX-Request' in request.headers:
-            return render(request, 'profile/profile.html', context)
+            return render(request, 'social.html', context)
         else:
-            return render(request, 'profile/profile_full.html', context)
+            return render(request, 'social_full.html', context)
 
     if request.method == 'POST':
         form = ChangeAliasForm(request.POST, instance=profile_user)
         if form.is_valid():
             form.save()
             if 'HX-Request' in request.headers:
-                return render(request, 'profile/profile.html', context)
+                return render(request, 'social.html', context)
             else:
-                return render(request, 'profile/profile_full.html', context)
+                return render(request, 'social_full.html', context)
     else:
         form = ChangeAliasForm(instance=profile_user)
 
@@ -72,18 +72,18 @@ def change_avatar(request, name):
     if authenticated_user.username != profile_user.name:
         context['error_msg'] = "You are not allowed to change this user's avatar."
         if 'HX-Request' in request.headers:
-            return render(request, 'profile/profile.html', context)
+            return render(request, 'social.html', context)
         else:
-            return render(request, 'profile/profile_full.html', context)
+            return render(request, 'social_full.html', context)
     
     if request.method == 'POST':
         form = ChangeAvatarForm(request.POST, request.FILES, instance=profile_user)
         if form.is_valid():
             form.save()
             if 'HX-Request' in request.headers:
-                return render(request, 'profile/profile.html', context)
+                return render(request, 'social.html', context)
             else:
-                return render(request, 'profile/profile_full.html', context)
+                return render(request, 'social_full.html', context)
     else:
         form = ChangeAvatarForm(instance=profile_user)
 
@@ -92,3 +92,20 @@ def change_avatar(request, name):
         return render(request, 'profile/avatar/change_avatar.html', context)
     else:
         return render(request, 'profile/avatar/change_avatar_full.html', context)
+
+
+def game_history_view(request, name):
+    profile_user = get_object_or_404(OurUser, name=name)
+
+    authenticated_user = request.user
+
+    context = {
+        'profile_user'      : profile_user,         # OurUser instance
+        'authenticated_user': authenticated_user,   # DjangoUser instance
+        'error_msg'         : None,
+    }
+
+    if 'HX-Request' in request.headers:
+        return render(request, 'profile/game_history/game_history.html', context)
+    else:
+        return render(request, 'profile/game_history/game_history_full.html', context)

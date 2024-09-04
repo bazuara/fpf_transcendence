@@ -6,5 +6,6 @@ urlpatterns = [
     path('profile/<str:name>/change_alias/', change_alias, name='change_alias'),
     path('profile/<str:name>/change_avatar/', change_avatar, name='change_avatar'),
     
-    path('friends/', friends_view, name='friends'),
+    path('profile/<str:name>/friends/', friends_view, name='friends'),
+    path('profile/<str:name>/game_history/', game_history_view, name='game_history'),
 ]
