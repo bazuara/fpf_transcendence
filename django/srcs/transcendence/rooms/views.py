@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from rooms.models import Room
-from django.http import HttpResponseBadRequest
 import random
 import string
 from .forms import RoomForm
+from django.http import HttpResponseForbidden
+
+room_ids = {}
 
 def rooms_view(request):
     if 'HX-Request' in request.headers:
@@ -18,34 +20,60 @@ def generate_room_id():
             return room_id 
 
 def rooms_create(request):
+    global room_ids
+
     if request.method == 'POST':
+        try:
+            room_id = room_ids[request.user.username]
+        except:
+            return HttpResponseForbidden()
+
         form = RoomForm(request.POST)
+
         if form.is_valid():
             game_mode = form.cleaned_data['game_mode']
-            is_public = form.cleaned_data['is_public'] == True
+            is_public = form.cleaned_data['is_public']
 
-            room_id = generate_room_id()
+            if (Room.objects.filter(room_id=room_id).exists()):
+                return HttpResponseForbidden()
 
-            new_room = Room.objects.create(
+            del room_ids[request.user.username]
+            
+            room = Room.objects.create(
                 game_mode=game_mode,
                 room_id=room_id,
-                is_public=is_public
+                is_public=is_public,
             )
             context = {
-                'room' : new_room,
+                'room' : room,
             }
             if 'HX-Request' in request.headers:
-                return render(request, 'rooms/room_created.html', context)
+                return render(request, 'rooms/rooms_detail.html', context)
             else:
-                return render(request, 'rooms/room_created_full.html', context)
-    
-    else:
-        form = RoomForm()
+                return render(request, 'rooms/rooms_detail_full.html', context)
+        else:
+            return HttpResponseForbidden()
+
+    form = RoomForm()
+    room_id = generate_room_id()
+    room_ids[request.user.username] = room_id
+
 
     if 'HX-Request' in request.headers:
-        return render(request, 'rooms/rooms_create.html', {'form': form})
+        return render(request, 'rooms/rooms_create.html', {'form': form, 'room_id': room_id})
     else:
-        return render(request, 'rooms/rooms_create_full.html', {'form': form})
+        return render(request, 'rooms/rooms_create_full.html', {'form': form, 'room_id': room_id})
+
+def rooms_detail(request, room_id):
+    room = get_object_or_404(Room, room_id=room_id)
+    context = {
+        'room' : room,
+    }
+
+    if 'HX-Request' in request.headers:
+        return render(request, 'rooms/rooms_detail.html', context)
+    else:
+        return render(request, 'rooms/rooms_detail_full.html', context)
 
 def rooms_join(request):
     if 'HX-Request' in request.headers:

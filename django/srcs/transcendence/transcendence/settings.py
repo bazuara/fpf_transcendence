@@ -36,9 +36,10 @@ BASE_HOST = "42madrid.com"
 
 # Use list comprehension to generate all host combinations
 ALLOWED_HOSTS = [
-    f"c1r{row}s{seat}.{BASE_HOST}"
-    for row in range(1, 18)  # Rows from 1 to 17
-    for seat in range(1, 7)  # Seats from 1 to 6
+    f"c{cluster}r{row}s{seat}.{BASE_HOST}"
+	for cluster in range(1, 4) #Clusters from 1 to 3
+    for row in range(1, 20)    # Rows from 1 to 17
+    for seat in range(1, 7)    # Seats from 1 to 6
 ]
 
 # Optionally, add localhost and other hosts for development

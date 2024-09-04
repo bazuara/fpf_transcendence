@@ -1,8 +1,8 @@
 <div class="container-fluid full-height d-flex align-items-center">
     <div class="row w-100 justify-content-center">
         <h1 class="text-center mb-4 h1-custom">Create Room</h1>
-        <form method="post" action="{% url 'rooms_create' %}">            
-            {% csrf_token %} 
+        <form hx-post="{% url 'rooms_create' %}" hx-target="#content-div" hx-push-url="{% url 'rooms_detail' room_id=room_id %}">
+            {% csrf_token %}
             <div class="row mb-3 justify-content-center">
                 <div class="col-md-4">
                     <p class="p-custom">{{ form.game_mode.label_tag }}</p>
