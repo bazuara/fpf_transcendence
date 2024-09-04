@@ -6,7 +6,7 @@
                 <th>Room ID</th>
                 <th>Joined</th>
                 <th>Game Mode</th>
-                <th>Users:</th>
+                <th>Users</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -14,7 +14,7 @@
             {% if rooms %}
                 {% for room in rooms %}
                 <tr>
-                    <td>Room #{{ room.room_id }}</td>
+                    <td>#{{ room.room_id }}</td>
                     <td>
                         {{ room.user_count }}
                         {% if room.game_mode == '1' %}
@@ -40,8 +40,7 @@
                         {% endfor %}
                     </td>
                     <td>
-                        <!-- This button should do an hx-get to url 'rooms' room.room_id -->
-                        <button type="button" class="btn btn-primary" hx-get="{% url 'welcome' %}" hx-target="#content-div" hx-push-url="true">Join</button>
+                        <button type="button" class="btn btn-primary" hx-get="{% url 'rooms_detail' room_id=room.room_id %}" hx-target="#content-div" hx-push-url="true">Join</button>
                     </td>
                 </tr>
                 {% endfor %}
