@@ -5,7 +5,7 @@ from .views import (
     rooms_join,
     rooms_join_public,
     rooms_join_private,
-	rooms_detail,
+    rooms_detail,
 )
 
 urlpatterns = [

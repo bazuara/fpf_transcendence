@@ -30,12 +30,12 @@ def rooms_create(request):
 
         form = RoomForm(request.POST)
 
+        if (Room.objects.filter(room_id=room_id).exists()):
+            return HttpResponseForbidden()
+    
         if form.is_valid():
             game_mode = form.cleaned_data['game_mode']
             is_public = form.cleaned_data['is_public']
-
-            if (Room.objects.filter(room_id=room_id).exists()):
-                return HttpResponseForbidden()
 
             del room_ids[request.user.username]
             
