@@ -25,16 +25,11 @@ def rooms_join_public(request):
 
     for room in context['rooms']:
         ctr = 0
-        if room.user1:
-            ctr += 1
-        if room.user2:
-            ctr += 1
-        if room.user3:
-            ctr += 1
-        if room.user4:
-            ctr += 1
+        for user in [room.user1, room.user2, room.user3, room.user4]:
+            if user:
+                ctr += 1
         room.user_count = ctr
-    
+        room.users = [room.user1, room.user2, room.user3, room.user4]
 
     if 'HX-Request' in request.headers:
         return render(request, 'rooms/rooms_join_public.html', context)

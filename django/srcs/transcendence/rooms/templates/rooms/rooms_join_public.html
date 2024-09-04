@@ -6,6 +6,7 @@
                 <th>Room ID</th>
                 <th>Joined</th>
                 <th>Game Mode</th>
+                <th>Users:</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -13,7 +14,7 @@
             {% if rooms %}
                 {% for room in rooms %}
                 <tr>
-                    <td>{{ room.room_id }}</td>
+                    <td>Room #{{ room.room_id }}</td>
                     <td>
                         {{ room.user_count }}
                         {% if room.game_mode == '1' %}
@@ -22,13 +23,21 @@
                             / 4
                         {% endif %}
                     </td>
-                    <td>{% if room.game_mode == '1' %}
+                    <td>
+                        {% if room.game_mode == '1' %}
                             1vs1
                         {% elif room.game_mode == '2' %}
                             2vs2
                         {% else %}
                             Tournament
                         {% endif %}
+                    </td>
+                    <td>
+                        {% for user in room.users %}
+                            {% if user %}
+                                {{ user.name }}; 
+                            {% endif %}
+                        {% endfor %}
                     </td>
                     <td>
                         <!-- This button should do an hx-get to url 'rooms' room.room_id -->
