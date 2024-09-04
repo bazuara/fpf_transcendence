@@ -1,0 +1,14 @@
+<!-- change_avatar_form.html -->
+<form method="post" enctype="multipart/form-data" 
+      hx-post="{% url 'change_avatar' profile_user.name %}" 
+      hx-target="#form-container" 
+      hx-swap="innerHTML"
+      hx-push-url="{% url 'profile' profile_user.name %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit"
+            class="btn btn-outline-custom btn-lg">Update Avatar</button>
+    <button type="button" 
+            onclick="history.back()"
+            class="btn btn-outline-custom btn-lg">Cancel</button>
+</form>

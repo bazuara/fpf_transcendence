@@ -29,7 +29,7 @@ def change_alias(request, name):
     context = {
         'profile_user'      : profile_user,         # OurUser instance
         'authenticated_user': authenticated_user,   # DjangoUser instance
-        'error_msg'         : None
+        'error_msg'         : None,
     }
 
     # Ensure the logged-in user can only change their own alias
@@ -44,11 +44,18 @@ def change_alias(request, name):
         form = ChangeAliasForm(request.POST, instance=profile_user)
         if form.is_valid():
             form.save()
-            return redirect('profile', name=profile_user.name)
+            if 'HX-Request' in request.headers:
+                return render(request, 'profile/profile.html', context)
+            else:
+                return render(request, 'profile/profile_full.html', context)
     else:
         form = ChangeAliasForm(instance=profile_user)
 
-    return render(request, 'profile/components/change_alias.html', {'form': form, 'user': profile_user})
+    context['form'] = form
+    if 'HX-Request' in request.headers:
+        return render(request, 'profile/alias/change_alias.html', context)
+    else:
+        return render(request, 'profile/alias/change_alias_full.html', context)
 
 def change_avatar(request, name):
     profile_user = get_object_or_404(OurUser, name=name)
@@ -58,7 +65,7 @@ def change_avatar(request, name):
     context = {
         'profile_user'      : profile_user,         # OurUser instance
         'authenticated_user': authenticated_user,   # DjangoUser instance
-        'error_msg'         : None
+        'error_msg'         : None,
     }
 
     # Ensure the logged-in user can only change their own avatar
@@ -73,8 +80,15 @@ def change_avatar(request, name):
         form = ChangeAvatarForm(request.POST, request.FILES, instance=profile_user)
         if form.is_valid():
             form.save()
-            return redirect('profile', name=profile_user.name)
+            if 'HX-Request' in request.headers:
+                return render(request, 'profile/profile.html', context)
+            else:
+                return render(request, 'profile/profile_full.html', context)
     else:
         form = ChangeAvatarForm(instance=profile_user)
-    
-    return render(request, 'profile/components/change_avatar.html', {'form': form, 'user': profile_user})
+
+    context['form'] = form
+    if 'HX-Request' in request.headers:
+        return render(request, 'profile/avatar/change_avatar.html', context)
+    else:
+        return render(request, 'profile/avatar/change_avatar_full.html', context)

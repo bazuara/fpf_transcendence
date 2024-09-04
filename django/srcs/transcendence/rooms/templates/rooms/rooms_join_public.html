@@ -6,28 +6,51 @@
                 <th>Room ID</th>
                 <th>Joined</th>
                 <th>Game Mode</th>
+                <th>Users:</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            <!-- Ejemplo de fila -->
-            <tr>
-                <td>12345</td>
-                <td>5/10</td>
-                <td>1vs1</td>
-                <td>
-                    <button type="button" class="btn btn-primary">Join</button>
-                </td>
-            </tr>
-            <!-- Repetir filas según sea necesario -->
-            <tr>
-                <td>67890</td>
-                <td>3/10</td>
-                <td>2vs2</td>
-                <td>
-                    <button type="button" class="btn btn-primary">Join</button>
-                </td>
-            </tr>
+            {% if rooms %}
+                {% for room in rooms %}
+                <tr>
+                    <td>Room #{{ room.room_id }}</td>
+                    <td>
+                        {{ room.user_count }}
+                        {% if room.game_mode == '1' %}
+                            / 2
+                        {% else %}
+                            / 4
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if room.game_mode == '1' %}
+                            1vs1
+                        {% elif room.game_mode == '2' %}
+                            2vs2
+                        {% else %}
+                            Tournament
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% for user in room.users %}
+                            {% if user %}
+                                {{ user.name }}; 
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <!-- This button should do an hx-get to url 'rooms' room.room_id -->
+                        <button type="button" class="btn btn-primary" hx-get="{% url 'welcome' %}" hx-target="#content-div" hx-push-url="true">Join</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">No public rooms available</td>
+                </tr>
+            {% endif %}
         </tbody>
     </table>
 </div>
+
