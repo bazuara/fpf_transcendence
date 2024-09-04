@@ -1,6 +1,6 @@
 from django.db import models
 from social.models import User as OurUser
-# Create your models here.
+
 class Room(models.Model):
     GAME_MODES = [
         ("1", "1vs1"),

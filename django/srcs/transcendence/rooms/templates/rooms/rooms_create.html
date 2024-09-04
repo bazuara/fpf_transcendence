@@ -1,31 +1,22 @@
 <div class="container-fluid full-height d-flex align-items-center">
     <div class="row w-100 justify-content-center">
         <h1 class="text-center mb-4 h1-custom">Create Room</h1>
-        <form method="post" action="{% url 'rooms_create' %}">            
+        <form hx-post="{% url 'rooms_create' %}" hx-target="#content-div" hx-push-url="{% url 'rooms_detail' room_id=room_id %}">
+            {% csrf_token %}
             <div class="row mb-3 justify-content-center">
-                <!-- Columna para el primer desplegable -->
                 <div class="col-md-4">
-                    <label for="gameMode" class="form-label"><h2 class="h1-custom">Game Mode</h2></label>
-                    <select class="form-select" id="gameMode" name="game_mode" required>
-                        <option value="1vs1">1vs1</option>
-                        <option value="2vs2">2vs2</option>
-                        <option value="Tournament">Tournament</option>
-                    </select>
+                    <p class="p-custom">{{ form.game_mode.label_tag }}</p>
+                    {{ form.game_mode }}
                 </div>
                 
-                <!-- Columna para el segundo desplegable -->
                 <div class="col-md-4">
-                    <label for="privacy" class="form-label"><h2 class="h1-custom">Privacy</h2></label>
-                    <select class="form-select" id="privacy" name="privacy" required>
-                        <option value="public">Public</option>
-                        <option value="private">Private</option>
-                    </select>
+                    <p class="p-custom">{{ form.is_public.label_tag }}</p>
+                    {{ form.is_public }}
                 </div>
             </div>
             
-            <!-- Botón centrado debajo de los desplegables -->
             <div class="text-center">
-                <button class="btn btn-outline-custom btn-lg"><h2>Create</h2></button>
+                <button type="submit" class="btn btn-outline-custom btn-lg"><h2>Create</h2></button>
             </div>
         </form>
     </div>
