@@ -1,8 +1,8 @@
-<div class="container-fluid full-height d-flex align-items-center">
-    <div class="d-flex gap-2 mx-auto">
-        <!-- Barra de entrada de texto -->
-        <input type="text" class="form-control input-custom" id="roomCode" placeholder="Enter the room code">
-        <!-- Botón Join -->
-        <button type="button" class="btn btn-outline-custom btn-lg"><h1>Join</h1></button>
-    </div>
-</div>
+<form method="post"
+    hx-post="{% url 'rooms_join_private'%}"
+    hx-target="#content-div"
+    hx-push-url="false">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-outline-custom btn-lg">Submit</button>
+</form>

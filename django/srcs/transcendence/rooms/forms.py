@@ -21,3 +21,6 @@ class RoomForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+class RoomIDForm(forms.Form):
+    number = forms.IntegerField(label='ENTER A ROOM ID')
