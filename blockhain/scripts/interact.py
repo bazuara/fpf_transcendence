@@ -16,7 +16,7 @@ with open('build/contracts/Tournament.json') as f:
     contract_json = json.load(f)
     contract_abi = contract_json['abi']
 
-contract_address = '0x8188A51472a1cd36a80d94b547c1154443ED1bA0' # get from deploying with truffle
+contract_address = '0x6B130A87fD200bEb185Eb5426144E7f473AF9Ef9' # get from deploying with truffle
 contract = web3.eth.contract(address=contract_address, abi=contract_abi)
 
 # Set the default account
@@ -32,10 +32,6 @@ def save_tournament(data):
         data["player_id_4"],
         data["score_match_1_2"],
         data["score_match_3_4"],
-        data["final_player_1"],
-        data["final_player_2"],
-        data["final_score"],
-        data["winner"]
     ).transact()
 
     # Wait for transaction to be mined
@@ -56,15 +52,33 @@ tournament_data = {
     "player_id_3": "player_id_3",
     "player_id_4": "player_id_4",
     "score_match_1_2": "1-0",
-    "score_match_3_4": "1-0",
-    "final_player_1": "player_id_1",
-    "final_player_2": "player_id_2",
-    "final_score": "1-0",
-    "winner": "player_id_1"
+    "score_match_3_4": "1-0"
+}
+
+tournament_data_2 = {
+    "tournament_id": "2xxxxxx",
+    "player_id_1": "player_id_1",
+    "player_id_2": "player_id_2",
+    "player_id_3": "player_id_3",
+    "player_id_4": "player_id_4",
+    "score_match_1_2": "1-0",
+    "score_match_3_4": "1-0"
+}
+
+tournament_data_3 = {
+    "tournament_id": "3xxxxxx",
+    "player_id_1": "player_id_1",
+    "player_id_2": "player_id_2",
+    "player_id_3": "player_id_3",
+    "player_id_4": "player_id_4",
+    "score_match_1_2": "1-0",
+    "score_match_3_4": "1-0"
 }
 
 # Save the tournament data
 save_tournament(tournament_data)
+save_tournament(tournament_data_2)
+save_tournament(tournament_data_3)
 
 # Get all matches
 matches = get_tournaments()
