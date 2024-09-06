@@ -1,0 +1,14 @@
+# Use an official Node.js runtime as a parent image
+FROM node:16
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Install Truffle globally
+RUN npm install -g truffle
+
+# Expose ports if necessary (not needed in this case)
+EXPOSE 8545
+
+# Default command to run Truffle commands
+CMD ["truffle"]

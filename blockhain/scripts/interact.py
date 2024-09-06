@@ -2,7 +2,7 @@ from web3 import Web3
 import json
 
 # Connect to Ganache
-ganache_url = "http://127.0.0.1:8545"
+ganache_url = "http://ganache:8545"
 web3 = Web3(Web3.HTTPProvider(ganache_url))
 
 # Check if connection is successful
@@ -16,7 +16,7 @@ with open('build/contracts/Tournament.json') as f:
     contract_json = json.load(f)
     contract_abi = contract_json['abi']
 
-contract_address = '0xD4c9f34fFD16F72B6D442461D219bD1c66A48867' # get from deploying with truffle
+contract_address = '0x8188A51472a1cd36a80d94b547c1154443ED1bA0' # get from deploying with truffle
 contract = web3.eth.contract(address=contract_address, abi=contract_abi)
 
 # Set the default account

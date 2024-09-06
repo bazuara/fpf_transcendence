@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  ganache:
+    image: trufflesuite/ganache-cli
+    command: ganache-cli -h 0.0.0.0 -p 8545 -i 5777
+    ports:
+      - "8545:8545"
+    networks:
+      - mynetwork
+    volumes:
+      - ganache_data:/ganache_data
+    restart: always
+
+  truffle:
+    build:
+      context: .
+      dockerfile: Dockerfile.truffle
+    command: truffle migrate --network development
+    volumes:
+      - ./contracts:/app/contracts
+      - ./migrations:/app/migrations
+      - ./build:/app/build
+      - ./truffle-config.js:/app/truffle-config.js
+    depends_on:
+      - ganache
+    networks:
+      - mynetwork
+    working_dir: /app
+    restart: on-failure
+    environment:
+      - HOST=ganache
+      - PORT=8545
+      - NETWORK_ID=5777
+
+  python:
+    image: python:3.9-slim
+    volumes:
+      - ./scripts:/app/scripts
+      - ./output:/app/output
+      - ./build:/app/build
+    depends_on:
+      - ganache
+      - truffle
+    networks:
+      - mynetwork
+    working_dir: /app
+    command: tail -f /dev/null # Keep the container running, debugging purposes only
+    restart: on-failure
+
+volumes:
+  ganache_data:
+
+networks:
+  mynetwork:
+    driver: bridge
