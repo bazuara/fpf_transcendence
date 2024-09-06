@@ -3,7 +3,7 @@ from django.http import HttpResponseForbidden
 from social.forms import ChangeAliasForm, ChangeAvatarForm
 from social.models import User as OurUser
 
-def profile_view(request, name):
+def social_view(request, name):
     # Fetch OurUser from social.models
     profile_user = get_object_or_404(OurUser, name=name)
 
@@ -18,6 +18,21 @@ def profile_view(request, name):
     # Return different templates based on whether it's an HTMX request
     if 'HX-Request' in request.headers:
         return render(request, 'social_template_full.html', context)
+    else:
+        return render(request, 'social_template_full_full.html', context)
+
+def profile_view(request, name):
+    profile_user = get_object_or_404(OurUser, name=name)
+
+    authenticated_user = request.user
+    
+    context = {
+        'profile_user'      : profile_user,         # OurUser instance
+        'authenticated_user': authenticated_user,   # DjangoUser instance
+    }
+    
+    if 'HX-Request' in request.headers:
+        return render(request, 'profile/profile_info.html', context)
     else:
         return render(request, 'social_template_full_full.html', context)
 
@@ -36,7 +51,7 @@ def change_alias(request, name):
     if authenticated_user.username != profile_user.name:
         context['error_msg'] = "You are not allowed to change this user's alias."
         if 'HX-Request' in request.headers:
-            return render(request, 'social_template_full.html', context)
+            return render(request, 'profile/profile_info.html', context)
         else:
             return render(request, 'social_template_full_full.html', context)
 
@@ -45,7 +60,7 @@ def change_alias(request, name):
         if form.is_valid():
             form.save()
             if 'HX-Request' in request.headers:
-                return render(request, 'social_template_full.html', context)
+                 return render(request, 'profile/profile_info.html', context)
             else:
                 return render(request, 'social_template_full_full.html', context)
     else:
@@ -69,11 +84,10 @@ def change_avatar(request, name):
         'error_msg'         : None,
     }
 
-    # Ensure the logged-in user can only change their own avatar
     if authenticated_user.username != profile_user.name:
         context['error_msg'] = "You are not allowed to change this user's avatar."
         if 'HX-Request' in request.headers:
-            return render(request, 'social_template_full.html', context)
+            return render(request, 'profile/profile_info.html', context)
         else:
             return render(request, 'social_template_full_full.html', context)
     
@@ -82,7 +96,7 @@ def change_avatar(request, name):
         if form.is_valid():
             form.save()
             if 'HX-Request' in request.headers:
-                return render(request, 'social_template_full.html', context)
+                return render(request, 'profile/profile_info.html', context)
             else:
                 return render(request, 'social_template_full_full.html', context)
     else:
@@ -103,7 +117,6 @@ def game_history_view(request, name):
     context = {
         'profile_user'      : profile_user,         # OurUser instance
         'authenticated_user': authenticated_user,   # DjangoUser instance
-        'error_msg'         : None,
     }
 
     if 'HX-Request' in request.headers:
@@ -122,7 +135,6 @@ def friends_view(request, name):
     context = {
         'profile_user'      : profile_user,         # OurUser instance
         'authenticated_user': authenticated_user,   # DjangoUser instance
-        'error_msg'         : None,
         'friend_list'       : friend_list,
     }
 

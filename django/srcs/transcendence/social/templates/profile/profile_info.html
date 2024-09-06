@@ -10,10 +10,10 @@
 </div>
 
 <!-- Display user details -->
-<h2 class="mt-3">Name: {{ profile_user.name }}</h2>
-<p>Alias: {{ profile_user.alias }}</p>
-<p>Winrate: {{ profile_user.win_ratio }}%</p>
-<p>Games: {{ profile_user.wins }}W/{{ profile_user.loses }}L/{{ profile_user.games_played }}T</p>
+<h2 class="mt-3 our-green">Name: {{ profile_user.name }}</h2>
+<p class="our-green">Alias: {{ profile_user.alias }}</p>
+<p class="our-green">Winrate: {{ profile_user.win_ratio }}%</p>
+<p class="our-green">Games: {{ profile_user.wins }}W/{{ profile_user.loses }}L/{{ profile_user.games_played }}T</p>
 
 {% if profile_user.name == authenticated_user.username %}
 <button class="btn btn-outline-custom btn-lg mb-2"
