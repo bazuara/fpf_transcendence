@@ -19,9 +19,10 @@ services:
     command: truffle migrate --network development
     volumes:
       - ./contracts:/app/contracts
-      - ./migrations:/app/migrations
+      - ./bc_migrations:/app/migrations
       - ./build:/app/build
       - ./truffle-config.js:/app/truffle-config.js
+      - ./output:/app/output
     depends_on:
       - ganache
     networks:

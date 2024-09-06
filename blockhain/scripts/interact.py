@@ -5,6 +5,7 @@ import json
 ganache_url = "http://ganache:8545"
 web3 = Web3(Web3.HTTPProvider(ganache_url))
 
+
 # Check if connection is successful
 if web3.is_connected():
     print("Connected to Ethereum")
@@ -16,7 +17,10 @@ with open('build/contracts/Tournament.json') as f:
     contract_json = json.load(f)
     contract_abi = contract_json['abi']
 
-contract_address = '0x6B130A87fD200bEb185Eb5426144E7f473AF9Ef9' # get from deploying with truffle
+# contract_address = '0x6B130A87fD200bEb185Eb5426144E7f473AF9Ef9' # get from deploying with truffle
+# read contract adrress from file
+with open('/app/output/contract_address.txt', 'r') as file:
+    contract_address = file.read().replace('\n', '')
 contract = web3.eth.contract(address=contract_address, abi=contract_abi)
 
 # Set the default account
