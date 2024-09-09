@@ -27,3 +27,12 @@ class ChangeAvatarForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class AddFriendForm(forms.ModelForm):
+    user_id = forms.IntegerField(widget=forms.HiddenInput())
+    action = forms.ChoiceField(choices=[('add', 'Add'), ('delete', 'Delete')], widget=forms.HiddenInput())
+
+    class Meta:
+        model = OurUser
+        fields = ['name', 'friends']

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
-from social.forms import ChangeAliasForm, ChangeAvatarForm
+from social.forms import ChangeAliasForm, ChangeAvatarForm, AddFriendForm
 from social.models import User as OurUser
 
 def social_view(request, name):
@@ -137,6 +137,21 @@ def friends_view(request, name):
         'authenticated_user': authenticated_user,   # DjangoUser instance
         'friend_list'       : friend_list,
     }
+
+    if request.method == 'POST':
+        form = AddFriendForm(request.POST, instance=profile_user)
+        if 'action' in request.POST:
+            action = request.POST.get('action')
+            if action == 'add':
+                new_friend_name = request.POST.get('new_friend_name')
+                new_friend_name = str(new_friend_name).lower().strip()
+                new_friend = get_object_or_404(OurUser, name=new_friend_name)
+                if new_friend != profile_user:
+                    profile_user.friends.add(new_friend)
+            elif action == 'delete':
+                friend_id = request.POST.get('user_id')
+                friend = get_object_or_404(OurUser, id=friend_id)
+                profile_user.friends.remove(friend)
 
     if 'HX-Request' in request.headers:
         return render(request, 'friends/friends.html', context)
