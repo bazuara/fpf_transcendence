@@ -29,7 +29,7 @@ class ChangeAvatarForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
 
-class AddFriendForm(forms.ModelForm):
+class ManageFriendsForm(forms.ModelForm):
     user_id = forms.IntegerField(widget=forms.HiddenInput())
     action = forms.ChoiceField(choices=[('add', 'Add'), ('delete', 'Delete')], widget=forms.HiddenInput())
 

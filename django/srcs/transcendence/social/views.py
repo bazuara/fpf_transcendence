@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
-from social.forms import ChangeAliasForm, ChangeAvatarForm, AddFriendForm
+from social.forms import ChangeAliasForm, ChangeAvatarForm, ManageFriendsForm
 from social.models import User as OurUser
 
 def social_view(request, name):
@@ -139,7 +139,7 @@ def friends_view(request, name):
     }
 
     if request.method == 'POST':
-        form = AddFriendForm(request.POST, instance=profile_user)
+        form = ManageFriendsForm(request.POST, instance=profile_user)
         if 'action' in request.POST:
             action = request.POST.get('action')
             if action == 'add':
