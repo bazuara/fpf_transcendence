@@ -22,12 +22,19 @@
     </div>
 </div>
 <script>
-	const roomSocket = new WebSocket(
-			'ws://'
-			+ window.location.host
-			+ '/ws/rooms/'
-			+ window.location.pathname.split('/').pop()
-			+ '/'
+	console.log(window.location.pathname)
+	setTimeout(() => {console.log(window.location.pathname)}, 50)
+
+	document.addEventListener('htmx:pushedIntoHistory', function(evt) {
+        console.log(window.location.pathname);
+    });
+
+	var roomSocket = new WebSocket(
+		'ws://'
+		+ window.location.host
+		+ '/ws/rooms/'
+		+ window.location.pathname.split('/').pop()
+		+ '/'
 	);
 	
 	roomSocket.onmessage = function(e) {	

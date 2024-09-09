@@ -12,5 +12,5 @@ class Room(models.Model):
     user2     = models.ForeignKey(OurUser, on_delete=models.PROTECT, null=True, blank=True, related_name='rooms_as_user2')
     user3     = models.ForeignKey(OurUser, on_delete=models.PROTECT, null=True, blank=True, related_name='rooms_as_user3')
     user4     = models.ForeignKey(OurUser, on_delete=models.PROTECT, null=True, blank=True, related_name='rooms_as_user4')
-    room_id   = models.CharField(max_length=6, unique=True) #should be base 32 code
+    room_id   = models.CharField(max_length=6, unique=True) #should be base 10 code
     is_public = models.BooleanField(default=False)
