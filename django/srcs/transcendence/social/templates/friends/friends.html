@@ -2,9 +2,9 @@
 <form   method="post"
         hx-post="{% url 'friends' profile_user.name %}"
         hx-target="#profile-right">
-    <div id="add-friend" class="d-flex justify-content-between align-items-center btn btn-outline-custom">
+    <div id="add-friend" class="d-flex justify-content-between align-items-center btn {% if error_msg %}btn-outline-error{% else %}btn-outline-custom{% endif %}">
         {% csrf_token %}
-        <input type="text" class="form-control mr-2" id="new-friend-name" name="new_friend_name" placeholder="Add friends" required>
+        <input type="text" class="form-control mr-2" id="new-friend-name" name="new_friend_name" placeholder="{% if error_msg %}{{ error_msg }}{% else %}Add friends{% endif %}" required>
         <input type="hidden" name="action" value="add">
         <button formnovalidate type="submit" class="btn btn-lg btn-custom">Add</button>
     </div>
