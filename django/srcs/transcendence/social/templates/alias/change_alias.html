@@ -1,7 +1,7 @@
 <!-- change_alias_form.html -->
 <form method="post"
       hx-post="{% url 'change_alias' profile_user.name %}"
-      hx-target="#form-container"
+      hx-target="#profile-left"
       hx-swap="innerHTML"
       hx-push-url="{% url 'profile' profile_user.name %}">
     {% csrf_token %}
@@ -9,6 +9,8 @@
     <button type="submit"
             class="btn btn-outline-custom btn-lg">Update Alias</button>
     <button type="button"
-            onclick="history.back()"
+            hx-get="{% url 'profile_view' profile_user.name %}"
+            hx-target="#profile-left"
+            hx-swap="innerHTML"
             class="btn btn-outline-custom btn-lg">Cancel</button>
 </form>

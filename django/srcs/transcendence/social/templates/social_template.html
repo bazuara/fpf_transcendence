@@ -1,0 +1,92 @@
+<div id="form-container">
+    {% if error_msg %}
+    <div class="alert alert-danger" role="alert" id="error-message">
+      {{ error_msg }}
+    </div>
+    {% endif %}
+    <div class="container-fluid">
+        <div class="row">
+        <!-- Profile Information Column -->
+        <div class="col-md-3 d-flex flex-column p-3 border-end" id="profile-left">
+          {% block leftside %}
+          {% endblock leftside %}
+        </div>
+  
+        <!-- History Tables Column -->
+        <div class="col-md-9 p-3">
+            <div class="row">
+                <div class="col-6 p-2">
+                    <button type="button"
+                            class="btn btn-outline-custom btn-lg w-100"
+                            hx-get="{% url 'game_history' profile_user.name %}"
+                            hx-target="#profile-right"
+                            hx-push-url="true">Game History</button>
+                </div>
+                <div class="col-6 p-2">
+                    <button type="button"
+                            class="btn btn-outline-custom btn-lg w-100"
+                            hx-get="{% url 'friends' profile_user.name %}"
+                            hx-target="#profile-right"
+                            hx-push-url="true">Friends</button>
+                </div>
+            </div>
+            <div class="table-container" id="profile-right">
+            {% block rightside %}
+            {% endblock rightside %}
+            </div>
+        </div>
+    </div>
+</div>
+  
+<style>
+    /* Custom border color for tables */
+    .custom-border-color {
+    border-color: #28df28 !important;
+    }
+
+    /* Make the table layout fixed */
+    .table-fixed {
+    table-layout: fixed; /* Ensures fixed table layout */
+    width: 100%; /* Ensure table uses full width */
+    }
+
+    /* Set equal width for each column */
+    .table-fixed th,
+    .table-fixed td {
+    width: 25%; /* Each column takes 25% of the table width */
+    word-wrap: break-word; /* Break words to avoid overflow */
+    }
+
+    /* Full-height for container */
+    html,
+    body,
+    #form-container {
+    height: 100%;
+    }
+
+    /* Profile Image Container */
+    .position-relative {
+    padding-top: 100%; /* 1:1 Aspect Ratio */
+    }
+
+    .user-avatar {
+    object-fit: cover; /* Cover the container */
+    }
+
+    /* Adjust table margins */
+    .table-container {
+    padding-top: 20px;
+    }
+
+    .table-responsive {
+    margin-top: 15px;
+    }
+
+    /* Ensure profile column fills the height */
+    .profile-info {
+    overflow-y: auto; /* Scroll if content overflows */
+    }
+    .custom-border-color {
+        border: 1px solid #28df28;
+    }
+</style>

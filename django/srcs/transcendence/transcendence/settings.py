@@ -42,6 +42,13 @@ ALLOWED_HOSTS = [
     for seat in range(1, 7)    # Seats from 1 to 6
 ]
 
+ALLOWED_HOSTS += [
+    f"c3r{row}s{seat}.{BASE_HOST}"
+    for row in range(1, 15)  # Rows from 1 to 14
+    for seat in range(1, 7)  # Seats from 1 to 6
+]
+
+
 # Optionally, add localhost and other hosts for development
 ALLOWED_HOSTS += ["localhost", "127.0.0.1", "::1"]
 
