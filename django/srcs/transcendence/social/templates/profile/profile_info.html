@@ -18,10 +18,10 @@
 {% if profile_user.name == authenticated_user.username %}
 <button class="btn btn-outline-custom btn-lg mb-2"
         hx-get="{% url 'change_alias' profile_user.name %}"
-        hx-target="#profile-left"
+        hx-target="#social-left"
         hx-push-url="true">Change Alias</button>
 <button class="btn btn-outline-custom btn-lg"
         hx-get="{% url 'change_avatar' profile_user.name %}"
-        hx-target="#profile-left"
+        hx-target="#social-left"
         hx-push-url="true">Change Avatar</button>
 {% endif %}

@@ -1,16 +1,16 @@
 <!-- change_alias_form.html -->
 <form method="post"
       hx-post="{% url 'change_alias' profile_user.name %}"
-      hx-target="#profile-left"
+      hx-target="#social-left"
       hx-swap="innerHTML"
-      hx-push-url="{% url 'profile' profile_user.name %}">
+      hx-push-url="{% url 'social' profile_user.name %}">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit"
             class="btn btn-outline-custom btn-lg">Update Alias</button>
     <button type="button"
             hx-get="{% url 'profile_view' profile_user.name %}"
-            hx-target="#profile-left"
+            hx-target="#social-left"
             hx-swap="innerHTML"
             class="btn btn-outline-custom btn-lg">Cancel</button>
 </form>

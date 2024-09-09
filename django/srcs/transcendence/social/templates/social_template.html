@@ -7,7 +7,7 @@
     <div class="container-fluid">
         <div class="row">
         <!-- Profile Information Column -->
-        <div class="col-md-3 d-flex flex-column p-3 border-end" id="profile-left">
+        <div class="col-md-3 d-flex flex-column p-3 border-end" id="social-left">
           {% block leftside %}
           {% endblock leftside %}
         </div>
@@ -19,18 +19,18 @@
                     <button type="button"
                             class="btn btn-outline-custom btn-lg w-100"
                             hx-get="{% url 'game_history' profile_user.name %}"
-                            hx-target="#profile-right"
+                            hx-target="#social-right"
                             hx-push-url="true">Game History</button>
                 </div>
                 <div class="col-6 p-2">
                     <button type="button"
                             class="btn btn-outline-custom btn-lg w-100"
                             hx-get="{% url 'friends' profile_user.name %}"
-                            hx-target="#profile-right"
+                            hx-target="#social-right"
                             hx-push-url="true">Friends</button>
                 </div>
             </div>
-            <div class="table-container" id="profile-right">
+            <div class="table-container" id="social-right">
             {% block rightside %}
             {% endblock rightside %}
             </div>
@@ -82,8 +82,8 @@
     margin-top: 15px;
     }
 
-    /* Ensure profile column fills the height */
-    .profile-info {
+    /* Ensure social column fills the height */
+    .social-info {
     overflow-y: auto; /* Scroll if content overflows */
     }
     .custom-border-color {
