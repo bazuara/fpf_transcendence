@@ -1,3 +1,15 @@
+{% if profile_user.name == authenticated_user.username %}
+<form   method="post"
+        hx-post="{% url 'friends' profile_user.name %}"
+        hx-target="#profile-right">
+    <div id="add-friend" class="d-flex justify-content-between align-items-center btn {% if error_msg %}btn-outline-error{% else %}btn-outline-custom{% endif %}">
+        {% csrf_token %}
+        <input type="text" class="form-control mr-2" id="new-friend-name" name="new_friend_name" placeholder="{% if error_msg %}{{ error_msg }}{% else %}Add friends{% endif %}" required>
+        <input type="hidden" name="action" value="add">
+        <button formnovalidate type="submit" class="btn btn-lg btn-custom">Add</button>
+    </div>
+</form>
+
 <div class="table-responsive">
     <table class="table table-hover custom-border-color table-bordered table-fixed">
         <thead>
@@ -5,7 +17,41 @@
                 <th>Name</th>
                 <th>Winrate</th>
                 <th>Status</th>
-                <th>Wins/Lose/Total</th>
+                <th>Wins/Losses/Total</th>
+                <th>Remove Friend</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for friend in friend_list %}
+            <tr>
+                <td><a href="" hx-get="{% url 'profile' friend.name %}" hx-target="#content-div" hx-push-url="true">{{ friend.name }}</a></td>
+                <td>{{ friend.win_ratio }}%</td>
+                <td>Online</td>
+                <td>{{ friend.wins }}W/{{ friend.loses }}L/{{ friend.games_played }}T</td>
+                <td>
+                    <form   method="post"
+                            hx-post="{% url 'friends' profile_user.name %}"
+                            hx-target="#profile-right">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_id" value="{{ friend.id }}">
+                        <input type="hidden" name="action" value="delete">
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>	
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="table-responsive">
+    <table class="table table-hover custom-border-color table-bordered table-fixed">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Winrate</th>
+                <th>Status</th>
+                <th>Wins/Losses/Total</th>
             </tr>
         </thead>
         <tbody>
@@ -20,3 +66,4 @@
         </tbody>
     </table>
 </div>
+{% endif %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
-from social.forms import ChangeAliasForm, ChangeAvatarForm
+from social.forms import ChangeAliasForm, ChangeAvatarForm, ManageFriendsForm
 from social.models import User as OurUser
 
 def social_view(request, name):
@@ -136,7 +136,31 @@ def friends_view(request, name):
         'profile_user'      : profile_user,         # OurUser instance
         'authenticated_user': authenticated_user,   # DjangoUser instance
         'friend_list'       : friend_list,
+        'error_msg'         : None,
     }
+
+    try:
+        if request.method == 'POST':
+            form = ManageFriendsForm(request.POST, instance=profile_user)
+            if 'action' in request.POST:
+                action = request.POST.get('action')
+                if action == 'add':
+                    new_friend_name = request.POST.get('new_friend_name')
+                    if not new_friend_name:
+                        raise ValueError("Empty user")
+                    new_friend_name = str(new_friend_name).lower().strip()
+                    new_friend = OurUser.objects.filter(name=new_friend_name).first()
+                    if not new_friend:
+                        raise ValueError(f"User {new_friend_name} not found.")
+                    if new_friend == profile_user:
+                        raise ValueError("You cannot add yourself as a friend.")
+                    profile_user.friends.add(new_friend)
+                elif action == 'delete':
+                    friend_id = request.POST.get('user_id')
+                    friend = get_object_or_404(OurUser, id=friend_id)
+                    profile_user.friends.remove(friend)
+    except Exception as e:
+        context['error_msg'] = str(e)
 
     if 'HX-Request' in request.headers:
         return render(request, 'friends/friends.html', context)
