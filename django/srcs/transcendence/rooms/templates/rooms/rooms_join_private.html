@@ -6,3 +6,8 @@
     {{ form.as_p }}
     <button type="submit" class="btn btn-outline-custom btn-lg">Submit</button>
 </form>
+{% if room_id %}
+<div hx-get="{% url 'rooms_detail' room_id %}" hx-trigger="load"
+hx-target="#content-div" hx-push-url="{% url 'rooms_detail' room_id %}">
+</div>
+{% endif %}

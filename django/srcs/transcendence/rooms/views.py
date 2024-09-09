@@ -112,9 +112,9 @@ def rooms_join_private(request):
             context['room_id'] = room_id
             print(room_id)
             if 'HX-Request' in request.headers:
-                return render(request, 'rooms/rooms_bridge.html', context)
+                return render(request, 'rooms/rooms_join_private.html', context)
             else:
-                return render(request, 'rooms/rooms_bridge_full.html', context)
+                return render(request, 'rooms/rooms_join_private_full.html', context)
     else:
         form = RoomIDForm()
     context['form'] = form
