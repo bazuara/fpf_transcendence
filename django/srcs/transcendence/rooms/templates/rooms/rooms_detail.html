@@ -21,4 +21,24 @@
         <p class="p-custom">{{ room.is_public }}</p>
     </div>
 </div>
-</div>
+<script>
+	const roomSocket = new WebSocket(
+			'ws://'
+			+ window.location.host
+			+ '/ws/rooms/'
+			+ window.location.pathname.split('/').pop()
+			+ '/'
+	);
+	
+	roomSocket.onmessage = function(e) {	
+		console.log(e.data)
+	}
+
+	roomSocket.onclose = function(e) {
+		console.error('Connection closed');
+	}
+
+	document.addEventListener('keydown', (event) => {
+		roomSocket.send(event.key)
+	});
+</script>

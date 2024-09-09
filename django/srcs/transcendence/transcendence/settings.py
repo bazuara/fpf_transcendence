@@ -56,6 +56,7 @@ ALLOWED_HOSTS += ["localhost", "127.0.0.1", "::1"]
 # Application definition
 
 INSTALLED_APPS = [
+	'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -176,3 +177,6 @@ MEDIA_ROOT = os.path.join(STATIC_ROOT, 'media')  # Directory where uploaded file
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Daphne
+ASGI_APPLICATION = "transcendence.asgi.application"
