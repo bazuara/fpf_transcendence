@@ -152,7 +152,6 @@ def friends_view(request, name):
                     new_friend = OurUser.objects.filter(name=new_friend_name).first()
                     if not new_friend:
                         raise ValueError(f"User {new_friend_name} not found.")
-                    # new_friend = get_object_or_404(OurUser, name=new_friend_name)
                     if new_friend == profile_user:
                         raise ValueError("You cannot add yourself as a friend.")
                     profile_user.friends.add(new_friend)
