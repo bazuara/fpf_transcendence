@@ -11,5 +11,5 @@ urlpatterns = [
     path('social/<str:name>/friends/', friends_view, name='friends'),
     path('social/<str:name>/game_history/', game_history_view, name='game_history'),
 
-    path('social/<str:name>/anonymize', anonymize_view, name='anonymize'),
+    path('anonymize/<str:name>/', anonymize_view, name='anonymize'),
 ]

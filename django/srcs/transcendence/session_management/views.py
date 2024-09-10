@@ -99,11 +99,10 @@ def handle_user_info_response(request, user_info):
     user, created = User.objects.get_or_create(username=username)
     login(request, user)
     try:
-        existing_user = OurUser.objects.get(user_id = user_info.get("id"))
+        existing_user = OurUser.objects.get(name = user_info.get("login"))
         return redirect('welcome')
     except ObjectDoesNotExist:
         OurUser.objects.create(
-            user_id      = user_info.get("id"),
             name         = user_info.get("login"),
             alias        = user_info.get("login"),
             intra_image  = user_info.get("image").get("link"),

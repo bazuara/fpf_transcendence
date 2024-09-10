@@ -5,7 +5,7 @@
     {% elif profile_user.intra_image %}
     <img src="{{ profile_user.intra_image }}" alt="{{ profile_user.name }}'s default avatar" class="user-avatar img-fluid position-absolute top-0 start-0 w-100 h-100">
     {% else %}
-    <img src="https://static.wikia.nocookie.net/ousamaranking/images/4/4d/Bojji_2022_anime_ending.jpg" alt="Default avatar" class="user-avatar img-fluid position-absolute top-0 start-0 w-100 h-100">
+    <img src="https://img.freepik.com/foto-gratis/textura-cemento_1194-5331.jpg" alt="Default avatar" class="user-avatar img-fluid position-absolute top-0 start-0 w-100 h-100">
 {% endif %}
 </div>
 
@@ -24,8 +24,7 @@
         hx-get="{% url 'change_avatar' profile_user.name %}"
         hx-target="#social-left"
         hx-push-url="true">Change Avatar</button>
-<button class="btn btn-outline-custom btn-lg mb-2"
-        hx-get="{% url 'anonymize' profile_user.name %}"
-        hx-target="#content-div"
-        hx-push-url="true">Delete Profile</button>
+<a      class="btn btn-outline-error btn-lg mb-2"
+        href="{% url 'anonymize' profile_user.name %}">Delete Profile</a>
+
 {% endif %}
