@@ -166,3 +166,12 @@ def friends_view(request, name):
         return render(request, 'friends/friends.html', context)
     else:
         return render(request, 'friends/friends_full_full.html', context)
+
+
+def anonymize_view(request, name):
+    profile_user = get_object_or_404(OurUser, name=name)
+    print("HOLAAAA")
+
+    authenticated_user = request.user
+    # logout(request)
+    return redirect('landing')
