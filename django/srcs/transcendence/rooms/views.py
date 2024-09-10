@@ -43,6 +43,10 @@ def rooms_create(request):
                 game_mode=game_mode,
                 room_id=room_id,
                 is_public=is_public,
+                user1=None,
+                user2=None,
+                user3=None,
+                user4=None,
             )
             context = {
                 'room' : room,

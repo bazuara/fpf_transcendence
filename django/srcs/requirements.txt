@@ -5,6 +5,7 @@ Automat==24.8.1
 certifi==2024.7.4
 cffi==1.17.1
 channels==4.1.0
+channels-redis==4.2.0
 charset-normalizer==3.3.2
 constantly==23.10.4
 cryptography==43.0.1
@@ -13,12 +14,14 @@ Django==4.2.15
 hyperlink==21.0.0
 idna==3.8
 incremental==24.7.2
+msgpack==1.1.0
 pillow==10.4.0
 psycopg2==2.9.9
 pyasn1==0.6.0
 pyasn1_modules==0.4.0
 pycparser==2.22
 pyOpenSSL==24.2.1
+redis==5.0.8
 requests==2.32.3
 service-identity==24.1.0
 setuptools==74.1.2
