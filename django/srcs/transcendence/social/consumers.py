@@ -51,6 +51,3 @@ class OnlineConsumer(AsyncWebsocketConsumer):
                 await release_lock(self.user.username)
             except OurUser.DoesNotExist:
                 pass
-
-    async def receive(self, text_data):
-        pass
