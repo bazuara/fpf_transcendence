@@ -100,25 +100,7 @@ def rooms_join_public(request):
      
     
 def rooms_join_private(request):
-    
-    context = {
-        'form' : None,
-        'room_id' : None,
-    }
-    if request.method == 'POST':
-        form = RoomIDForm(request.POST)
-        if form.is_valid():
-            room_id = form.cleaned_data['number']
-            context['room_id'] = room_id
-            print(room_id)
-            if 'HX-Request' in request.headers:
-                return render(request, 'rooms/rooms_join_private.html', context)
-            else:
-                return render(request, 'rooms/rooms_join_private_full.html', context)
-    else:
-        form = RoomIDForm()
-    context['form'] = form
     if 'HX-Request' in request.headers:
-        return render(request, 'rooms/rooms_join_private.html', context)
+        return render(request, 'rooms/rooms_join_private.html')
     else:
-        return render(request, 'rooms/rooms_join_private_full.html', context)
+        return render(request, 'rooms/rooms_join_private_full.html')

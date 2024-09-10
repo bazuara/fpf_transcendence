@@ -1,13 +1,134 @@
-<form method="post"
-    hx-post="{% url 'rooms_join_private'%}"
-    hx-target="#content-div"
-    hx-push-url="false">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-outline-custom btn-lg">Submit</button>
-</form>
-{% if room_id %}
-<div hx-get="{% url 'rooms_detail' room_id %}" hx-trigger="load"
-hx-target="#content-div" hx-push-url="{% url 'rooms_detail' room_id %}">
-</div>
-{% endif %}
+<div id="form-container"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        handlePageLoad();
+
+        // Observador de mutaciones para detectar cambios en el DOM
+        const observer = new MutationObserver(() => {
+            handlePageLoad();
+        });
+
+        // Configuración del observador: observa cambios en el árbol de descendientes del body
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        window.addEventListener('popstate', function () {
+            handlePageLoad();
+        });
+    });
+
+    function setupForm() {
+        let formContainer = document.getElementById('form-container');
+        
+        // Si el contenedor del formulario no se encuentra, intenta crear uno nuevo
+        if (!formContainer) {
+            console.error('Form container not found, trying to create it.');
+            formContainer = document.createElement('div');
+            formContainer.id = 'form-container';
+            document.body.appendChild(formContainer);
+        }
+
+        // Verifica si el formulario ya existe para evitar duplicados
+        if (document.getElementById('room-form')) return;
+
+        const form = document.createElement('form');
+        form.id = 'room-form';
+        form.method = 'post';
+
+        const label = document.createElement('label');
+        label.htmlFor = 'room-id-input';
+        label.textContent = 'Enter Room ID:';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = 'room-id-input';
+        input.placeholder = 'Room ID';
+        input.required = true;
+
+        const button = document.createElement('button');
+        button.type = 'submit';
+        button.textContent = 'Submit';
+
+        form.appendChild(label);
+        form.appendChild(input);
+        form.appendChild(button);
+
+        const contentDiv = document.createElement('div');
+        contentDiv.id = 'content-div';
+        contentDiv.innerHTML = '<p>Please enter a Room ID to view details.</p>';
+
+        formContainer.innerHTML = ''; // Limpia el contenedor antes de añadir nuevos elementos
+        formContainer.appendChild(form);
+        formContainer.appendChild(contentDiv);
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const roomId = input.value.trim();
+            if (roomId && /^\d+$/.test(roomId)) {
+                navigateToRoom(roomId);
+            } else {
+                alert('Please enter a valid numeric Room ID');
+            }
+        });
+    }
+
+    function navigateToRoom(roomId) {
+        const url = `/rooms/${roomId}`;
+        history.pushState({}, '', url);
+        fetchRoomDetails(roomId);
+    }
+
+    function fetchRoomDetails(roomId) {
+        fetch(`/rooms/${roomId}`, {
+            method: 'GET',
+            headers: {
+                'HX-Request': 'true' // Encabezado para manejar solicitudes htmx si es necesario
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch room details');
+            }
+            return response.text();
+        })
+        .then(html => {
+            const contentDiv = document.querySelector('#content-div');
+            if (contentDiv) {
+                contentDiv.innerHTML = html;
+            } else {
+                console.error('#content-div not found');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching room details:', error);
+            const contentDiv = document.querySelector('#content-div');
+            if (contentDiv) {
+                contentDiv.innerHTML = '<p>Failed to load room details. Please try again.</p>';
+            }
+        });
+    }
+
+    function handlePageLoad() {
+    if (window.location.pathname === '/rooms/join/private') {
+        setupForm();
+        // Limpia o actualiza #content-div específicamente para /rooms/join/private
+        const contentDiv = document.querySelector('#content-div');
+        if (contentDiv) {
+            contentDiv.innerHTML = ''; // Limpia el contenido previo
+            // Opcionalmente, puedes cargar contenido específico para esta página aquí
+        }
+    } else {
+        const formContainer = document.getElementById('form-container');
+        if (formContainer) {
+            formContainer.innerHTML = ''; // Limpia el contenedor si no estamos en la página de formulario
+        }
+        // Asegúrate de manejar el contenido de #content-div para otras rutas si es necesario
+    }
+}
+
+// Asegúrate de que handlePageLoad se llama en el evento popstate
+window.addEventListener('popstate', handlePageLoad);
+
+// Llama a handlePageLoad inicialmente para manejar la carga inicial de la página
+document.addEventListener('DOMContentLoaded', handlePageLoad);
+</script>
