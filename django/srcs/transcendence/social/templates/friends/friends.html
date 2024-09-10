@@ -26,7 +26,7 @@
             <tr>
                 <td><a href="" hx-get="{% url 'social' friend.name %}" hx-target="#content-div" hx-push-url="true">{{ friend.name }}</a></td>
                 <td>{{ friend.win_ratio }}%</td>
-                <td>Online</td>
+                <td>{% if friend.socket_ctr != 0 %}Online{% else %}Offline{% endif %}</td>
                 <td>{{ friend.wins }}W/{{ friend.loses }}L/{{ friend.games_played }}T</td>
                 <td>
                     <form   method="post"
@@ -59,7 +59,7 @@
             <tr>
                 <td><a href="" hx-get="{% url 'social' friend.name %}" hx-target="#content-div" hx-push-url="true">{{ friend.name }}</a></td>
                 <td>{{ friend.win_ratio }}%</td>
-                <td>Online</td>
+                <td>{% if friend.socket_ctr != 0 %}Online{% else %}Offline{% endif %}</td>
                 <td>{{ friend.wins }}W/{{ friend.loses }}L/{{ friend.games_played }}T</td>
             </tr>
             {% endfor %}
