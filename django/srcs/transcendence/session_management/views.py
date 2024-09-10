@@ -108,6 +108,7 @@ def handle_user_info_response(request, user_info):
             intra_image  = user_info.get("image").get("link"),
             wins         = 0,
             loses        = 0,
+            socket_ctr   = 0,
         )
     return redirect('welcome')
 
