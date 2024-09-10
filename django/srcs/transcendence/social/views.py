@@ -1,5 +1,7 @@
+import random, string
+from django.contrib.auth import logout
+from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponseForbidden
 from social.forms import ChangeAliasForm, ChangeAvatarForm, ManageFriendsForm
 from social.models import User as OurUser
 
@@ -166,3 +168,52 @@ def friends_view(request, name):
         return render(request, 'friends/friends.html', context)
     else:
         return render(request, 'friends/friends_full_full.html', context)
+
+
+def anonymize_view(request, name):
+    def generate_random_string_with_uppercase():
+        uppercase_letter = random.choice(string.ascii_uppercase)
+        remaining_characters = ''.join(random.choices(string.ascii_letters + string.digits, k=9))
+        random_position = random.randint(0, 9)
+        random_text = remaining_characters[:random_position] + uppercase_letter + remaining_characters[random_position:]
+        return random_text
+
+    def gen_random_name():
+        random_text = generate_random_string_with_uppercase()
+        user = OurUser.objects.filter(name=random_text).first()
+        if not user:
+            return random_text
+        else:
+            gen_random_name()
+
+    def clear_user_data(user):
+        new_name = gen_random_name()
+        if user.avatar:
+            user.avatar.delete()
+            user.avatar = None
+        user.intra_image = None
+        user.name = new_name
+        user.alias = new_name
+
+        users_with_user_as_friend = OurUser.objects.filter(friends=user)
+        for foreign_user in users_with_user_as_friend:
+            foreign_user.friends.remove(user)
+        user.friends.clear()
+        user.save()
+
+    profile_user = get_object_or_404(OurUser, name=name)
+    authenticated_user = request.user
+
+    context = {
+        'profile_user'      : profile_user,         # OurUser instance
+        'authenticated_user': authenticated_user,   # DjangoUser instance
+        'error_msg' : None,
+    }
+
+    if profile_user.name != authenticated_user.username:
+        context['error_msg'] = "Unauthorized: You can only delete your own profile."
+        return render(request, 'friends/friends_full_full.html', context)
+
+    clear_user_data(profile_user)
+    logout(request)
+    return redirect('landing')

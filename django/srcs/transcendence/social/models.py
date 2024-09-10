@@ -1,18 +1,18 @@
 from django.db import models
 
 class User(models.Model):
-    user_id      = models.PositiveIntegerField(unique=True) #intra uid (maybe not needed)
     name         = models.CharField(max_length=10, unique=True) #intra username
     alias        = models.CharField(max_length=10) #alias for tournaments
     wins         = models.PositiveIntegerField()
     loses        = models.PositiveIntegerField()
     friends      = models.ManyToManyField('self', symmetrical=False, blank=True) #friendlist
     avatar       = models.ImageField(upload_to ='uploads/', null=True, blank=True) #custom avatar
-    intra_image  = models.URLField(max_length=512) #used as default avatar if none is provided by user
+    intra_image  = models.URLField(max_length=512, null=True, blank=True) #used as default avatar if none is provided by user
     socket_ctr   = models.PositiveIntegerField()
+
     
     def __str__(self):
-        return f"{self.user_id} {self.name} {self.wins}W/{self.loses}L/{self.games_played}T"
+        return f"{self.id} {self.name} {self.wins}W/{self.loses}L/{self.games_played}T"
 
     @property
     def games_played(self):
@@ -27,5 +27,4 @@ class User(models.Model):
         return round((self.wins / self.games_played) * 100.0, 2)
 
     class Meta:
-        ordering = ['user_id']
-
+        ordering = ['id']
