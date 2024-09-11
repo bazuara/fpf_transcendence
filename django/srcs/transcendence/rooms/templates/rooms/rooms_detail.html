@@ -1,64 +1,79 @@
 <h1 class="h1-custom text-center mb-4">Room Details</h1>
 <div class="row">
-	<div class="col-md-6">
-		<h2 class="h2-custom">Room ID</h2>
-		<p class="p-custom">{{ room.room_id }}</p>
-	</div>
-	<div class="col-md-6">
-		<h2 class="h2-custom">Game Mode</h2>
-		<p class="p-custom">{{ game_mode_human }}</p>
-	</div>
-	<div class="col-md-6">
-		<h2 class="h2-custom">Team 1</h2>
-		<p id = "team1" class = "p-custom"></p>
-	</div>
-	<div class="col-md-6">
-		<h2 class="h2-custom">Team 2</h2>
-		<p id = "team2" class = "p-custom"></p>
-	</div>
+    <div class="col-md-6">
+        <h2 class="h2-custom">Room ID</h2>
+        <p class="p-custom">{{ room.room_id }}</p>
+    </div>
+    <div class="col-md-6">
+        <h2 class="h2-custom">Game Mode</h2>
+        <p class="p-custom">{{ game_mode_human }}</p>
+    </div>
+    <div class="col-md-6">
+        <h2 class="h2-custom">Team 1</h2>
+        <p id = "team1" class = "p-custom"></p>
+    </div>
+    <div class="col-md-6">
+        <h2 class="h2-custom">Team 2</h2>
+        <p id = "team2" class = "p-custom"></p>
+    </div>
+    <div class="col-md-6">
+        <button id = "buttonReady" class="btn btn-outline-custom btn-lg w-100">Ready</button>
+    </div>
 </div>
 <script>
-	async function waitPathname() {
-		while (window.location.pathname === "/rooms/create")
-			await setTimeout(()=>{}, 1)
-	}
-	
-	async function start() {
-		await waitPathname()
+    async function waitPathname() {
+        while (window.location.pathname === "/rooms/create")
+            await setTimeout(()=>{}, 1)
+    }
+    
+    async function start() {
+        await waitPathname()
 
-		const team1 = document.getElementById("team1")
-		const team2 = document.getElementById("team2")
+        const team1 = document.getElementById("team1")
+        const team2 = document.getElementById("team2")
+        const readyButton = document.getElementById("buttonReady")
 
-		const roomSocket = new WebSocket(
-			'ws://'
-			+ window.location.host
-			+ '/ws/rooms/'
-			+ window.location.pathname.split('/').pop()
-			+ '/'
-		);
+        const roomSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/rooms/'
+            + window.location.pathname.split('/').pop()
+            + '/'
+        );
 
-		roomSocket.onmessage = function(e) {
-			state = JSON.parse(e.data)
-			data1 = "" + (state.user1 ? state.user1 + "\n" : "") + (state.user2 ? state.user2 : "")
-			data2 = "" + (state.user3 ? state.user3 + "\n" : "") + (state.user4 ? state.user4 : "")
-			team1.textContent = data1
-			team2.textContent = data2
-		}
-	
-		roomSocket.onerror = function(error) {
-			console.log("WebSocket error: ", error);
-		}
-			
-		function move_away(event) {
-			roomSocket.close()
-			document.body.removeEventListener('htmx:beforeRequest', move_away)
-			window.removeEventListener('popstate', move_away)
-		}
+        readyButton.addEventListener('click', function() {
+            if (readyButton.textContent === "Ready") {
+                readyButton.textContent = "Cancel"
+                roomSocket.send("ready")
+            }
+            else {
+                readyButton.textContent = "Ready"
+                roomSocket.send("cancel")
+            }
+        });
 
-		document.body.addEventListener('htmx:beforeRequest', move_away)
-		window.addEventListener('popstate', move_away);
-	}
+        roomSocket.onmessage = function(e) {
+            state = JSON.parse(e.data)
+            data1 = "" + (state.user1 ? state.user1 + "\n" : "") + (state.user2 ? state.user2 : "")
+            data2 = "" + (state.user3 ? state.user3 + "\n" : "") + (state.user4 ? state.user4 : "")
+            team1.textContent = data1
+            team2.textContent = data2
+        }
+    
+        roomSocket.onerror = function(error) {
+            console.log("WebSocket error: ", error);
+        }
+            
+        function move_away(event) {
+            roomSocket.close()
+            document.body.removeEventListener('htmx:beforeRequest', move_away)
+            window.removeEventListener('popstate', move_away)
+        }
 
-	start()
+        document.body.addEventListener('htmx:beforeRequest', move_away)
+        window.addEventListener('popstate', move_away);
+    }
+
+    start()
 
 </script>
