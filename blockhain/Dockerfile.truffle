@@ -7,6 +7,11 @@ WORKDIR /app
 # Install Truffle globally
 RUN npm install -g truffle
 
+#copy necesary files
+COPY ./bc_migrations /app/migrations
+COPY ./truffle-config.js /app/truffle-config.js
+COPY ./contracts /app/contracts
+
 # Expose ports if necessary (not needed in this case)
 EXPOSE 8545
 

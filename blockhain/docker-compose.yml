@@ -27,13 +27,11 @@ services:
       dockerfile: Dockerfile.truffle
     command: truffle migrate --network development
     volumes:
-      - ./contracts:/app/contracts
-      - ./bc_migrations:/app/migrations
       - ./build:/app/build
-      - ./truffle-config.js:/app/truffle-config.js
       - ./output:/app/output
     depends_on:
-      - ganache
+      ganache:
+        condition: service_healthy
     networks:
       - mynetwork
     working_dir: /app
@@ -50,8 +48,8 @@ services:
       - ./output:/app/output
       - ./build:/app/build
     depends_on:
-      - ganache
-      - truffle
+      ganache:
+        condition: service_healthy
     networks:
       - mynetwork
     working_dir: /app
