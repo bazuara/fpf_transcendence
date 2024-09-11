@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   ganache:
-    image: trufflesuite/ganache-cli
+    build:
+      context: .
+      dockerfile: Dockerfile.ganache
     command: ganache-cli -h 0.0.0.0 -p 8545 -i 5777
     ports:
       - "8545:8545"
@@ -10,6 +12,13 @@ services:
       - mynetwork
     volumes:
       - ganache_data:/ganache_data
+    healthcheck:
+      test: ["CMD", "curl", "-s", "http://localhost:8545"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+      start_interval: 5s
     restart: always
 
   truffle:
