@@ -21,3 +21,16 @@ class RoomForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+class JoinPrivateForm(forms.ModelForm):
+    class Meta:
+        model = Room
+        fields = ['room_id']
+
+        room_id = forms.CharField(
+            max_length=6,
+			label='Room id',
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

@@ -1,8 +1,17 @@
 <div class="container-fluid full-height d-flex align-items-center">
     <div class="d-flex gap-2 mx-auto">
-        <!-- Barra de entrada de texto -->
-        <input type="text" class="form-control input-custom" id="roomCode" placeholder="Enter the room code">
-        <!-- Botón Join -->
-        <button type="button" class="btn btn-outline-custom btn-lg"><h1>Join</h1></button>
+        <form hx-post="{% url 'rooms_join_private' %}" hx-target="#content-div" hx-push-url="{% url 'rooms_detail' room_id='fakeid' %}">
+            {% csrf_token %}
+            <div class="row mb-3 justify-content-center">
+                <div class="col-md-4">
+                    <p class="p-custom">{{ form.room_id.label }}</p>
+                    {{ form.room_id }}
+                </div>	
+            </div>
+            
+            <div class="text-center">
+                <button type="submit" class="btn btn-outline-custom btn-lg"><h2>Join Room</h2></button>
+            </div>
+        </form>
     </div>
 </div>
