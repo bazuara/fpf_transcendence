@@ -8,7 +8,7 @@ class User(models.Model):
     friends      = models.ManyToManyField('self', symmetrical=False, blank=True) #friendlist
     avatar       = models.ImageField(upload_to ='uploads/', null=True, blank=True) #custom avatar
     intra_image  = models.URLField(max_length=512, null=True, blank=True) #used as default avatar if none is provided by user
-    socket_ctr   = models.PositiveIntegerField()
+    socket_ctr   = models.PositiveIntegerField(default=0)
 
     
     def __str__(self):

@@ -8,4 +8,5 @@ RUN chmod +x /setup.sh && chmod +w /requirements.txt && /setup.sh
 
 WORKDIR /srcs/transcendence
 
-CMD bash /entrypoint.sh
+# CMD bash /entrypoint.sh
+CMD sleep infinity

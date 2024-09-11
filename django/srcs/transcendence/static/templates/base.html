@@ -21,15 +21,15 @@
 
             onlineSocket.onopen = function(e) {}
 
-            onlineSocket.onclose = function(e) {
+            onlineSocket.onclose = async function(e) {
                 reconnectOnlineWs();
             }
     
             onlineSocket.onerror = function(error) {}
         }
 
-        function reconnectOnlineWs() {
-            setTimeout(() => {
+        async function reconnectOnlineWs() {
+            await setTimeout(() => {
                 connectOnlineWs();
               }, reconnectInterval);
         }
