@@ -4,12 +4,10 @@
     document.addEventListener("DOMContentLoaded", function () {
         handlePageLoad();
 
-        // Observador de mutaciones para detectar cambios en el DOM
         const observer = new MutationObserver(() => {
             handlePageLoad();
         });
 
-        // Configuración del observador: observa cambios en el árbol de descendientes del body
         observer.observe(document.body, { childList: true, subtree: true });
 
         window.addEventListener('popstate', function () {
@@ -20,7 +18,6 @@
     function setupForm() {
         let formContainer = document.getElementById('form-container');
         
-        // Si el contenedor del formulario no se encuentra, intenta crear uno nuevo
         if (!formContainer) {
             console.error('Form container not found, trying to create it.');
             formContainer = document.createElement('div');
@@ -28,7 +25,6 @@
             document.body.appendChild(formContainer);
         }
 
-        // Verifica si el formulario ya existe para evitar duplicados
         if (document.getElementById('room-form')) return;
 
         const form = document.createElement('form');
@@ -57,7 +53,7 @@
         contentDiv.id = 'content-div';
         contentDiv.innerHTML = '<p>Please enter a Room ID to view details.</p>';
 
-        formContainer.innerHTML = ''; // Limpia el contenedor antes de añadir nuevos elementos
+        formContainer.innerHTML = '';
         formContainer.appendChild(form);
         formContainer.appendChild(contentDiv);
 
@@ -82,7 +78,7 @@
         fetch(`/rooms/${roomId}`, {
             method: 'GET',
             headers: {
-                'HX-Request': 'true' // Encabezado para manejar solicitudes htmx si es necesario
+                'HX-Request': 'true'
             }
         })
         .then(response => {
@@ -103,7 +99,7 @@
             console.error('Error fetching room details:', error);
             const contentDiv = document.querySelector('#content-div');
             if (contentDiv) {
-                contentDiv.innerHTML = '<p>Failed to load room details. Please try again.</p>';
+                contentDiv.innerHTML = '<span class="span-titulo2">Failed to load room details. Please try again.</span>';
             }
         });
     }
@@ -111,24 +107,19 @@
     function handlePageLoad() {
     if (window.location.pathname === '/rooms/join/private') {
         setupForm();
-        // Limpia o actualiza #content-div específicamente para /rooms/join/private
         const contentDiv = document.querySelector('#content-div');
         if (contentDiv) {
-            contentDiv.innerHTML = ''; // Limpia el contenido previo
-            // Opcionalmente, puedes cargar contenido específico para esta página aquí
+            contentDiv.innerHTML = '';
         }
     } else {
         const formContainer = document.getElementById('form-container');
         if (formContainer) {
-            formContainer.innerHTML = ''; // Limpia el contenedor si no estamos en la página de formulario
+            formContainer.innerHTML = '';
         }
-        // Asegúrate de manejar el contenido de #content-div para otras rutas si es necesario
     }
 }
 
-// Asegúrate de que handlePageLoad se llama en el evento popstate
 window.addEventListener('popstate', handlePageLoad);
 
-// Llama a handlePageLoad inicialmente para manejar la carga inicial de la página
 document.addEventListener('DOMContentLoaded', handlePageLoad);
 </script>
