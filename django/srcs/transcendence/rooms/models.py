@@ -7,13 +7,13 @@ class Room(models.Model):
 		("2", "2vs2"),
 		("T", "Torneo")
 	]
-	game_mode = models.CharField(max_length=10, choices=GAME_MODES)
-	user1	 = models.ForeignKey(OurUser, on_delete=models.PROTECT, null=True, blank=True, related_name='rooms_as_user1')
-	user2	 = models.ForeignKey(OurUser, on_delete=models.PROTECT, null=True, blank=True, related_name='rooms_as_user2')
-	user3	 = models.ForeignKey(OurUser, on_delete=models.PROTECT, null=True, blank=True, related_name='rooms_as_user3')
-	user4	 = models.ForeignKey(OurUser, on_delete=models.PROTECT, null=True, blank=True, related_name='rooms_as_user4')
-	room_id   = models.CharField(primary_key=True, max_length=6) #should be base 10 code #make primary key
+	room_id   = models.CharField(primary_key=True, max_length=6) #should be base 10 code
 	is_public = models.BooleanField(default=False)
+	game_mode = models.CharField(max_length=10, choices=GAME_MODES)
+	user1	  = models.ForeignKey(OurUser, on_delete=models.PROTECT, null=True, blank=True, related_name='rooms_as_user1')
+	user2	  = models.ForeignKey(OurUser, on_delete=models.PROTECT, null=True, blank=True, related_name='rooms_as_user2')
+	user3	  = models.ForeignKey(OurUser, on_delete=models.PROTECT, null=True, blank=True, related_name='rooms_as_user3')
+	user4	  = models.ForeignKey(OurUser, on_delete=models.PROTECT, null=True, blank=True, related_name='rooms_as_user4')
 
 	def __str__(self):
 		return f"{self.room_id} {self.user1} {self.user2}"

@@ -50,6 +50,7 @@ def rooms_create(request):
             )
             context = {
                 'room' : room,
+                'game_mode_human' : room.get_game_mode_display(),
             }
             if 'HX-Request' in request.headers:
                 return render(request, 'rooms/rooms_detail.html', context)
@@ -72,6 +73,7 @@ def rooms_detail(request, room_id):
     room = get_object_or_404(Room, room_id=room_id)
     context = {
         'room' : room,
+		'game_mode_human' : room.get_game_mode_display(),
     }
 
     if 'HX-Request' in request.headers:
