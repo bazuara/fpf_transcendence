@@ -110,22 +110,24 @@ def rooms_join_private(request):
     
         if form.is_valid():
             room_id = form.cleaned_data['room_id']
-            if (Room.objects.filter(room_id=room_id).exists()):
-                room = Room.objects.filter(room_id=room_id).first()
+            try:
+                room = Room.objects.get(room_id=room_id)
                 context = {
                     'room' : room,
                     'game_mode_human' : room.get_game_mode_display(),
                 }
                 if 'HX-Request' in request.headers:
-                    return render(request, 'rooms/rooms_detail.html', context)
+                    response = render(request, 'rooms/rooms_detail.html', context)
+                    response['HX-Push-Url'] = f"/rooms/{room_id}"
+                    return response
                 else:
-                    return render(request, 'rooms/rooms_detail_full.html', context)
-            else:
-                return HttpResponseForbidden()
-        else:
-            return HttpResponseForbidden()
-
-    form = JoinPrivateForm()
+                    response = render(request, 'rooms/rooms_detail_full.html', context)
+                    response['HX-Push-Url'] = f"/rooms/{room_id}"
+                    return response
+            except Room.DoesNotExist:
+                form.add_error('room_id', "Invalid room id")
+    else:
+        form = JoinPrivateForm()
 
     if 'HX-Request' in request.headers:
         return render(request, 'rooms/rooms_join_private.html', {'form': form})
