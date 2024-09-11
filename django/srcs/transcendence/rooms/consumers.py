@@ -121,7 +121,3 @@ class RoomConsumer(WebsocketConsumer):
 			self.send(json.dumps(state))
 		finally:
 			release_lock(self.room_id)
-
-
-	def receive(self, text_data):
-		self.send(text_data)
