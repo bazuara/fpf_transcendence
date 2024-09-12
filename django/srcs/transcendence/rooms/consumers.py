@@ -161,9 +161,9 @@ class RoomConsumer(WebsocketConsumer):
                     self.assignUserReady(False, ourUser, room)
             room.save()
 
-            global_games_lock.acquire()
-            try:
-                if self.allUsersReady(room):
+            if self.allUsersReady(room):
+                global_games_lock.acquire()
+                try:
                     Game.objects.create(
                         game_id=generate_game_id(),
                         user1=room.user1,
@@ -172,7 +172,8 @@ class RoomConsumer(WebsocketConsumer):
                         user4=room.user4,
                     )
                     Room.objects.get(room_id=self.room_id).delete()
-            finally:
-                global_games_lock.release()
+                    del lock_dict[self.room_id]
+                finally:
+                    global_games_lock.release()
         finally:
             release_lock(self.room_id)
