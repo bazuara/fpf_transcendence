@@ -7,7 +7,7 @@ from django.http import HttpResponseForbidden
 
 rooms_lock = threading.Lock()
 # This error msg will be used when joining both private/public rooms
-room_full_err_msg = 'Room is full! :('
+ROOM_FULL_ERR_MSG = 'Room is full! :('
 
 def rooms_view(request):
     if 'HX-Request' in request.headers:
@@ -23,13 +23,8 @@ def generate_room_id():
 
 def roomIsFull(room):
     if room.game_mode == '1':
-        if room.user1 is not None and room.user3 is not None:
-            return True
-        return False
-    else:
-        if room.user1 is not None and room.user2 is not None and room.user3 is not None and room.user4 is not None:
-            return True
-        return False
+        return room.user1 is not None and room.user3 is not None
+    return room.user1 is not None and room.user2 is not None and room.user3 is not None and room.user4 is not None
 
 def rooms_create(request):
     if request.method == 'POST':
@@ -85,7 +80,7 @@ def rooms_detail(request, room_id):
     else:
         context = {}
         context['rooms'] = Room.objects.filter(is_public=True).all()
-        context['error'] = room_full_err_msg
+        context['error'] = ROOM_FULL_ERR_MSG
 
         for room in context['rooms']:
             ctr = 0
@@ -100,7 +95,7 @@ def rooms_detail(request, room_id):
             response['HX-Push-Url'] = '/rooms/join/public'
             return response
         else:
-            raise HttpResponseForbidden()
+            return HttpResponseForbidden(ROOM_FULL_ERR_MSG)
 
 def rooms_join(request):
     if 'HX-Request' in request.headers:
@@ -146,7 +141,7 @@ def rooms_join_private(request):
                     response['HX-Push-Url'] = f"/rooms/{room_id}"
                     return response
                 else:
-                    form.add_error('room_id', room_full_err_msg)
+                    form.add_error('room_id', ROOM_FULL_ERR_MSG)
             except Room.DoesNotExist:
                 form.add_error('room_id', 'Invalid room id')
     else:
