@@ -54,8 +54,6 @@ def rooms_create(request):
     else:
         form = RoomForm()
 
-    
-
     if 'HX-Request' in request.headers:
         return render(request, 'rooms/rooms_create.html', {'form': form})
     else:
