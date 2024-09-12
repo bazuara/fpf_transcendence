@@ -19,6 +19,7 @@
     <div class="col-md-6">
         <button id = "buttonReady" class="btn btn-outline-custom btn-lg w-100">Ready</button>
     </div>
+    <div id="redirector" hx-target="#content-div" hx-push-url="true" hx-trigger="redirectEvent" hx-get=""></div>
 </div>
 <script>
     async function waitPathname() {
@@ -32,6 +33,7 @@
         const team1 = document.getElementById("team1")
         const team2 = document.getElementById("team2")
         const readyButton = document.getElementById("buttonReady")
+        const redirector = document.getElementById("redirector")
 
         const roomSocket = new WebSocket(
             'ws://'
@@ -54,6 +56,12 @@
 
         roomSocket.onmessage = function(e) {
             state = JSON.parse(e.data)
+            if (state.redirect === true) {
+                redirector.setAttribute("hx-get", "/game/" + state.game_id)
+                htmx.process(redirector)
+                redirector.dispatchEvent(new Event('redirectEvent'));
+                return
+            }
             data1 = "" + (state.user1 ? state.user1 + "\n" : "") + (state.user2 ? state.user2 : "")
             data2 = "" + (state.user3 ? state.user3 + "\n" : "") + (state.user4 ? state.user4 : "")
             team1.textContent = data1

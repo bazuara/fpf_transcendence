@@ -130,6 +130,9 @@ class RoomConsumer(WebsocketConsumer):
         finally:
             release_lock(self.room_id)
 
+    def ready(self, event):
+        self.send(json.dumps({"redirect": True, "game_id": event["game_id"]}))
+
     def assignUserReady(self, ready, ourUser, room):
         match ourUser:
             case room.user1:
@@ -163,9 +166,10 @@ class RoomConsumer(WebsocketConsumer):
 
             if self.allUsersReady(room):
                 global_games_lock.acquire()
+                game_id = generate_game_id()
                 try:
                     Game.objects.create(
-                        game_id=generate_game_id(),
+                        game_id=game_id,
                         user1=room.user1,
                         user2=room.user2,
                         user3=room.user3,
@@ -173,6 +177,9 @@ class RoomConsumer(WebsocketConsumer):
                     )
                     Room.objects.get(room_id=self.room_id).delete()
                     del lock_dict[self.room_id]
+                    async_to_sync(self.channel_layer.group_send) (
+                        self.group_name, {"type": "ready", "game_id": game_id}
+                    )
                 finally:
                     global_games_lock.release()
         finally:
