@@ -18,6 +18,7 @@ class Room(models.Model):
     user3_ready = models.BooleanField(default=False)
     user4       = models.ForeignKey(OurUser, on_delete=models.PROTECT, null=True, blank=True, related_name='rooms_as_user4')
     user4_ready = models.BooleanField(default=False)
+    updated_at  = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.room_id} {self.user1} {self.user2}"
