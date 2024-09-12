@@ -4,8 +4,25 @@ import random, threading
 import string
 from .forms import RoomForm, JoinPrivateForm
 from django.http import HttpResponseForbidden
+from datetime import datetime
+from django.utils import timezone
+from apscheduler.schedulers.background import BackgroundScheduler
 
 rooms_lock = threading.Lock()
+
+def start():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(delete_empty_rooms, 'interval', minutes=5)
+    scheduler.start()
+
+def delete_empty_rooms():
+    print("Deleting empty rooms...")
+    time_now = timezone.now()
+    empty_rooms = Room.objects.filter(user1__isnull=True, user2__isnull=True, user3__isnull=True, user4__isnull=True)
+
+    for room in empty_rooms:
+        if (time_now - room.updated_at).total_seconds() > 30:
+            room.delete()
 
 def rooms_view(request):
     if 'HX-Request' in request.headers:
