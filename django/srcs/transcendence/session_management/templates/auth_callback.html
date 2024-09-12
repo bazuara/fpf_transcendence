@@ -1,66 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-    		<title>Authenticating...</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="preload" href='https://fonts.googleapis.com/css?family=Lato:100,300' as="style" onload="this.rel='stylesheet'">
-		<style>
-			* {
-				transition: all 0.6s;
-			} 
-			html {
-				height: 100%;
-			}
-			body {
-				background-color: #000000;
-				margin: 0;
-				padding: 0;
-				position: relative;
-				min-height: 100vh;
-			}
-			#main {
-				display: table; width: 100%; height: 100vh; text-align: center;
-			}
-			.fof {
-				display: table-cell; vertical-align: middle;
-			}
-			.fof h1 { 
-				font-size: 50px; font-family: "Handjet"; display: inline-block; padding-right: 12px; animation: type .5s alternate infinite; color: #28df28;
-			}
-			@keyframes type {
-				from {
-					box-shadow: inset -3px 0px 0px #888;
-				}
-				to {
-					box-shadow: inset -3px 0px 0px transparent;
-				}
-			}
-		</style>
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <head>
+        <meta charset="UTF-8">
+            <title>Authenticating...</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="preload" href='https://fonts.googleapis.com/css?family=Lato:100,300' as="style" onload="this.rel='stylesheet'">
+        <style>
+            * {
+                transition: all 0.6s;
+            }
+            html {
+                height: 100%;
+            }
+            body {
+                background-color: #000000;
+                margin: 0;
+                padding: 0;
+                position: relative;
+                min-height: 100vh;
+            }
+            #main {
+                display: table; width: 100%; height: 100vh; text-align: center;
+            }
+            .fof {
+                display: table-cell; vertical-align: middle;
+            }
+            .fof h1 {
+                font-size: 50px; font-family: "Handjet"; display: inline-block; padding-right: 12px; animation: type .5s alternate infinite; color: #28df28;
+            }
+            @keyframes type {
+                from {
+                    box-shadow: inset -3px 0px 0px #888;
+                }
+                to {
+                    box-shadow: inset -3px 0px 0px transparent;
+                }
+            }
+        </style>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="preload" href="https://fonts.googleapis.com/css2?family=Handjet:wght@100..900&display=swap" as="style" onload="this.rel='stylesheet'">
-	</head>
-		<body>
-			<div id="main">
-				<div class="fof">
-    				<h1>Loading...</h1>
-			</div>
-		</div>
-    	<script>
-    		function checkLoginStatus() {
-        	fetch('/check_login_status/')
-            	.then(response => response.json())
-            	.then(data => {
-                	if (data.status === 'pending') {
-                    		setTimeout(checkLoginStatus, 300); // Poll again after 1 second
-                	} else {
-                    	window.location.href = data.redirect_url; // Redirect on success
-                	}
-            	});
-    		}
+    </head>
+    <body>
+        <div id="main">
+            <div class="fof">
+                <h1>Loading...</h1>
+            </div>
+        </div>
+        <script>
+                function checkLoginStatus() {
+                fetch('/check_login_status/')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'pending') {
+                                setTimeout(checkLoginStatus, 300); // Poll again after 1 second
+                        } else {
+                            if (data.res_msg !== 'all_good')
+                            {
+                                var errorParam = encodeURIComponent(data.res_msg);
+                                var newUrl = `${data.redirect_url}?error_msg=${errorParam}`;
+                                // Redirect to the new URL
+                                window.location.href = newUrl;
+                            }
+                            else
+                            {
+                                window.location.href = data.redirect_url;
+                            }
+                        }
+                    });
+                }
 
-    checkLoginStatus();
-    </script>
-	</body>
+        checkLoginStatus();
+        </script>
+    </body>
 </html>
