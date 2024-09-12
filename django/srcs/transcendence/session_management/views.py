@@ -95,12 +95,13 @@ def auth_callback_view(request):
 
 
 def handle_user_info_response(request, user_info):
+    if 'error' in user_info:
+        return 'error', 'error', f"{user_info['status']}: {user_info['error']}"
     username = user_info['login']
     user, created = User.objects.get_or_create(username=username)
     login(request, user)
     try:
         existing_user = OurUser.objects.get(name = user_info.get("login"))
-        return redirect('welcome')
     except ObjectDoesNotExist:
         OurUser.objects.create(
             name         = user_info.get("login"),
@@ -110,7 +111,7 @@ def handle_user_info_response(request, user_info):
             loses        = 0,
             socket_ctr   = 0,
         )
-    return redirect('welcome')
+    return 'complete', 'welcome', 'all_good'
 
 def check_login_status_view(request):
     session_key = request.session.session_key
@@ -118,8 +119,8 @@ def check_login_status_view(request):
     with lock:
         if session_key in pending_requests:
             user_info = pending_requests.pop(session_key)
-            handle_user_info_response(request, user_info)
-            return JsonResponse({'status': 'complete', 'redirect_url': reverse('welcome')})
+            status, url, res_msg = handle_user_info_response(request, user_info)
+            return JsonResponse({'status': status,'redirect_url': reverse(url), 'res_msg' : res_msg})
 
     return JsonResponse({'status': 'pending'})
 
@@ -131,5 +132,8 @@ def logout_view(request):
 
 def landing_view(request):
     if request.user.is_authenticated:
-        return 
+        return redirect('welcome')
     return render(request, 'landing.html')
+
+def error_view(request):
+    return render(request, 'error.html', {'error_msg' : request.GET.get('error_msg')})

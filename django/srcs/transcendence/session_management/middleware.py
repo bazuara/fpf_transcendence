@@ -4,7 +4,7 @@ from django.urls import resolve
 
 EXEMPT_URLS = [
     # Add any URL paths here that should be exempt from the login requirement
-    '/landing/', '/login/', '/auth/callback/', '/check_login_status/'
+    '/landing/', '/login/', '/auth/callback/', '/check_login_status/', '/error/'
 ]
 
 class LoginRequiredMiddleware:
