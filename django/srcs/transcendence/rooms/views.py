@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_object_or_404
 from rooms.models import Room
-import random
+import random, threading
 import string
 from .forms import RoomForm, JoinPrivateForm
 from django.http import HttpResponseForbidden
 
+rooms_lock = threading.Lock()
 
 def rooms_view(request):
     if 'HX-Request' in request.headers:
@@ -26,11 +27,8 @@ def rooms_create(request):
             game_mode = form.cleaned_data['game_mode']
             is_public = form.cleaned_data['is_public']
 
+            rooms_lock.acquire()
             room_id = generate_room_id()
-
-            if (Room.objects.filter(room_id=room_id).exists()):
-                return HttpResponseForbidden()
-            
             room = Room.objects.create(
                 game_mode=game_mode,
                 room_id=room_id,
@@ -40,6 +38,8 @@ def rooms_create(request):
                 user3=None,
                 user4=None,
             )
+            rooms_lock.release()
+
             context = {
                 'room' : room,
                 'game_mode_human' : room.get_game_mode_display(),
