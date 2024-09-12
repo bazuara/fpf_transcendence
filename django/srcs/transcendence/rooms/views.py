@@ -18,7 +18,7 @@ def start():
 def delete_empty_rooms():
     print("Deleting empty rooms...")
     time_now = timezone.now()
-    empty_rooms = Room.objects.filter(user1__isnull=True, user2__isnull=True, user3__isnull=True, user4__isnull=True)
+    empty_rooms = Room.objects.filter(user1=None, user2=None, user3=None, user4=None)
 
     for room in empty_rooms:
         if (time_now - room.updated_at).total_seconds() > 30:
