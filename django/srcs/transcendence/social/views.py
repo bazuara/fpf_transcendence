@@ -4,6 +4,7 @@ from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from social.forms import ChangeAliasForm, ChangeAvatarForm, ManageFriendsForm
 from social.models import User as OurUser
+from game.models import Game
 
 def social_view(request, name):
     # Fetch OurUser from social.models
@@ -115,10 +116,22 @@ def game_history_view(request, name):
     profile_user = get_object_or_404(OurUser, name=name)
 
     authenticated_user = request.user
+    games = Game.objects.filter(
+        Q(user1=profile_user) | 
+        Q(user2=profile_user) | 
+        Q(user3=profile_user) | 
+        Q(user4=profile_user)
+    )
+
+    games1v1 = games.objects.filter(game_mode='1')
+
+    games2v2 = games.objects.filter(game_mode='2')
 
     context = {
         'profile_user'      : profile_user,         # OurUser instance
         'authenticated_user': authenticated_user,   # DjangoUser instance
+        'games1v1'          : games1v1,
+        'games2v2'          : games2v2,
     }
 
     if 'HX-Request' in request.headers:
