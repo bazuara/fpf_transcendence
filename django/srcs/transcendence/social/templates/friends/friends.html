@@ -4,7 +4,7 @@
         hx-target="#social-right">
     <div id="add-friend" class="d-flex justify-content-between align-items-center btn {% if error_msg %}btn-outline-error{% else %}btn-outline-custom{% endif %}">
         {% csrf_token %}
-        <input type="text" class="form-control mr-2" id="new-friend-name" name="new_friend_name" placeholder="{% if error_msg %}{{ error_msg }}{% else %}Add friends{% endif %}" required>
+        <input type="text" class="form-control mr-2" id="new-friend-name" name="new_friend_name" placeholder="{% if error_msg %}{{ error_msg }}{% else %}Add friends{% endif %} " required>
         <input type="hidden" name="action" value="add">
         <button formnovalidate type="submit" class="btn btn-lg btn-custom">Add</button>
     </div>
@@ -14,11 +14,11 @@
     <table class="table table-hover custom-border-color table-bordered table-fixed">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Winrate</th>
-                <th>Status</th>
-                <th>Wins/Losses/Total</th>
-                <th>Remove Friend</th>
+                <th style="background-color: black; font-family: Bebas Neue; font-size: 125%; color: #28df28;">Name</th>
+                <th style="background-color: black; font-family: Bebas Neue; font-size: 125%; color: #28df28;">Winrate</th>
+                <th style="background-color: black; font-family: Bebas Neue; font-size: 125%; color: #28df28;">Status</th>
+                <th style="background-color: black; font-family: Bebas Neue; font-size: 125%; color: #28df28;">Wins/Losses/Total</th>
+                <th style="background-color: black; font-family: Bebas Neue; font-size: 125%; color: #28df28;">Remove Friend</th>
             </tr>
         </thead>
         <tbody>

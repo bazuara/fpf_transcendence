@@ -1,21 +1,21 @@
 <div class="container mt-5">
     <h1 class="mb-4 h1-custom">Available Rooms</h1>
-    <table class="table table-bordered">
+    <table class="table table-hover custom-border-color table-bordered table-fixed">
         <thead>
             <tr>
-                <th>Room ID</th>
-                <th>Joined</th>
-                <th>Game Mode</th>
-                <th>Users</th>
-                <th>Action</th>
+                <th  style="background-color: black; font-family: Bebas Neue; font-size: 125%; color: #28df28;">Room ID</th>
+                <th style="background-color: black; font-family: Bebas Neue; font-size: 125%; color: #28df28;">Joined</th>
+                <th style="background-color: black; font-family: Bebas Neue; font-size: 125%; color: #28df28;">Game Mode</th>
+                <th style="background-color: black; font-family: Bebas Neue; font-size: 125%; color: #28df28;">Users</th>
+                <th style="background-color: black; font-family: Bebas Neue; font-size: 125%; color: #28df28;">Action</th>
             </tr>
         </thead>
         <tbody>
             {% if rooms %}
                 {% for room in rooms %}
                 <tr>
-                    <td>#{{ room.room_id }}</td>
-                    <td>
+                    <td style="background-color: black; font-family: Bebas Neue; font-size: 125%; color: #28df28;">#{{ room.room_id }}</td>
+                    <td style="background-color: black; font-family: Bebas Neue; font-size: 125%; color: #28df28;">
                         {{ room.user_count }}
                         {% if room.game_mode == '1' %}
                             / 2
@@ -23,7 +23,7 @@
                             / 4
                         {% endif %}
                     </td>
-                    <td>
+                    <td  style="background-color: black; font-family: Bebas Neue; font-size: 125%; color: #28df28;">
                         {% if room.game_mode == '1' %}
                             1vs1
                         {% elif room.game_mode == '2' %}
@@ -32,20 +32,20 @@
                             Tournament
                         {% endif %}
                     </td>
-                    <td>
+                    <td style="background-color: black; font-family: Bebas Neue; font-size: 125%; color: #28df28;">
                         {% for user in room.users %}
                             {% if user %}
                                 {{ user.name }}; 
                             {% endif %}
                         {% endfor %}
                     </td>
-                    <td>
-                        <button type="button" class="btn btn-primary" hx-get="{% url 'rooms_detail' room_id=room.room_id %}" hx-target="#content-div" hx-push-url="true">Join</button>
+                    <td  style="background-color: black; font-family: Bebas Neue; font-size: 125%; color: #28df28;">
+                        <button type="button" class="btn btn-outline-custom btn-lg" hx-get="{% url 'rooms_detail' room_id=room.room_id %}" hx-target="#content-div" hx-push-url="true">Join</button>
                     </td>
                 </tr>
                 {% endfor %}
             {% else %}
-                <tr>
+                <tr  style="background-color: black; font-family: Bebas Neue; font-size: 125%; color: #28df28;">
                     <td colspan="5" class="text-center">No public rooms available</td>
                 </tr>
             {% endif %}
