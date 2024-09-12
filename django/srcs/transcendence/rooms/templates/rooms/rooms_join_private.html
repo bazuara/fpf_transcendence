@@ -1,15 +1,15 @@
-<div class="container-fluid full-height d-flex align-items-center">
-    <div class="d-flex gap-2 mx-auto">
+<div class="container-fluid full-height d-flex justify-content-center align-items-center">
+    <div class="d-flex flex-column mx-auto align-items-center gap-2">
         <form hx-post="{% url 'rooms_join_private' %}" hx-target="#content-div">
             {% csrf_token %}
-            <div class="row mb-3 justify-content-center">
-                <div class="col-md-4">
+            <div class="row mb-3">
+                <div class="w-100 justify-content-center">
                     <p class="p-custom">{{ form.room_id.label }}</p>
                     {{ form.room_id }}
                     {% if form.room_id.errors %}
-                        <div class="errorlist p-custom">
+                        <div class="h2-custom text-center w-100">
                             {% for error in form.room_id.errors %}
-                                <p>{{ error }}</p>
+                                <h2>{{ error }}</h2>
                             {% endfor %}
                         </div>
                     {% endif %}
@@ -21,5 +21,3 @@
         </form>
     </div>
 </div>
-
-

@@ -6,6 +6,8 @@ from .forms import RoomForm, JoinPrivateForm
 from django.http import HttpResponseForbidden
 
 rooms_lock = threading.Lock()
+# This error msg will be used when joining both private/public rooms
+ROOM_FULL_ERR_MSG = 'Room is full! :('
 
 def rooms_view(request):
     if 'HX-Request' in request.headers:
@@ -17,7 +19,12 @@ def generate_room_id():
     while True:
         room_id = ''.join(random.choices(string.digits, k=6))
         if not Room.objects.filter(room_id=room_id).exists():
-            return room_id 
+            return room_id
+
+def roomIsFull(room):
+    if room.game_mode == '1':
+        return room.user1 is not None and room.user3 is not None
+    return room.user1 is not None and room.user2 is not None and room.user3 is not None and room.user4 is not None
 
 def rooms_create(request):
     if request.method == 'POST':
@@ -61,15 +68,34 @@ def rooms_create(request):
 
 def rooms_detail(request, room_id):
     room = get_object_or_404(Room, room_id=room_id)
-    context = {
-        'room' : room,
-        'game_mode_human' : room.get_game_mode_display(),
-    }
-
-    if 'HX-Request' in request.headers:
-        return render(request, 'rooms/rooms_detail.html', context)
+    if roomIsFull(room) is False:
+        context = {
+            'room' : room,
+            'game_mode_human' : room.get_game_mode_display(),
+        }
+        if 'HX-Request' in request.headers:
+            return render(request, 'rooms/rooms_detail.html', context)
+        else:
+            return render(request, 'rooms/rooms_detail_full.html', context)
     else:
-        return render(request, 'rooms/rooms_detail_full.html', context)
+        context = {}
+        context['rooms'] = Room.objects.filter(is_public=True).all()
+        context['error'] = ROOM_FULL_ERR_MSG
+
+        for room in context['rooms']:
+            ctr = 0
+            for user in [room.user1, room.user2, room.user3, room.user4]:
+                if user:
+                    ctr += 1
+            room.user_count = ctr
+            room.users = [room.user1, room.user2, room.user3, room.user4]
+
+        if 'HX-Request' in request.headers:
+            response = render(request, 'rooms/rooms_join_public.html', context)
+            response['HX-Push-Url'] = '/rooms/join/public'
+            return response
+        else:
+            return HttpResponseForbidden(ROOM_FULL_ERR_MSG)
 
 def rooms_join(request):
     if 'HX-Request' in request.headers:
@@ -80,6 +106,7 @@ def rooms_join(request):
 def rooms_join_public(request):
     context = {}
     context['rooms'] = Room.objects.filter(is_public=True).all()
+    context['error'] = None
 
     for room in context['rooms']:
         ctr = 0
@@ -106,14 +133,17 @@ def rooms_join_private(request):
                     'room' : room,
                     'game_mode_human' : room.get_game_mode_display(),
                 }
-                if 'HX-Request' in request.headers:
-                    response = render(request, 'rooms/rooms_detail.html', context)
+                if roomIsFull(room) is False:
+                    if 'HX-Request' in request.headers:
+                        response = render(request, 'rooms/rooms_detail.html', context)
+                    else:
+                        response = render(request, 'rooms/rooms_detail_full.html', context)
+                    response['HX-Push-Url'] = f"/rooms/{room_id}"
+                    return response
                 else:
-                    response = render(request, 'rooms/rooms_detail_full.html', context)
-                response['HX-Push-Url'] = f"/rooms/{room_id}"
-                return response
+                    form.add_error('room_id', ROOM_FULL_ERR_MSG)
             except Room.DoesNotExist:
-                form.add_error('room_id', "Invalid room id")
+                form.add_error('room_id', 'Invalid room id')
     else:
         form = JoinPrivateForm()
 

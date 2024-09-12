@@ -1,5 +1,10 @@
 <div class="container mt-5">
     <h1 class="mb-4 h1-custom">Available Rooms</h1>
+    {% if error %}
+        <div class="row w-100 justify-content-center">
+            <h2 class="h2-custom text-center">{{ error }}</h2>
+        </div>
+    {% endif %}
     <table class="table table-bordered">
         <thead>
             <tr>
