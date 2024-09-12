@@ -21,3 +21,6 @@ class Room(models.Model):
 
     def __str__(self):
         return f"{self.room_id} {self.user1} {self.user2}"
+    
+    class Meta:
+        ordering = ['room_id']
