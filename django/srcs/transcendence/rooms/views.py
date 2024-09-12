@@ -46,16 +46,15 @@ def rooms_create(request):
             }
             if 'HX-Request' in request.headers:
                 response = render(request, 'rooms/rooms_detail.html', context)
-                response['HX-Push-Url'] = f"/rooms/{room_id}"
-                return response
+                
             else:
                 response = render(request, 'rooms/rooms_detail_full.html', context)
-                response['HX-Push-Url'] = f"/rooms/{room_id}"
-                return response
-        else:
-            return HttpResponseForbidden()
+            response['HX-Push-Url'] = f"/rooms/{room_id}"
+            return response
+    else:
+        form = RoomForm()
 
-    form = RoomForm()
+    
 
     if 'HX-Request' in request.headers:
         return render(request, 'rooms/rooms_create.html', {'form': form})
@@ -111,12 +110,10 @@ def rooms_join_private(request):
                 }
                 if 'HX-Request' in request.headers:
                     response = render(request, 'rooms/rooms_detail.html', context)
-                    response['HX-Push-Url'] = f"/rooms/{room_id}"
-                    return response
                 else:
                     response = render(request, 'rooms/rooms_detail_full.html', context)
-                    response['HX-Push-Url'] = f"/rooms/{room_id}"
-                    return response
+                response['HX-Push-Url'] = f"/rooms/{room_id}"
+                return response
             except Room.DoesNotExist:
                 form.add_error('room_id', "Invalid room id")
     else:
