@@ -1,11 +1,11 @@
 from django.shortcuts import render, get_object_or_404
 from rooms.models import Room
-import random
+import random, threading
 import string
-from .forms import RoomForm
+from .forms import RoomForm, JoinPrivateForm
 from django.http import HttpResponseForbidden
 
-room_ids = {}
+rooms_lock = threading.Lock()
 
 def rooms_view(request):
     if 'HX-Request' in request.headers:
@@ -20,25 +20,15 @@ def generate_room_id():
             return room_id 
 
 def rooms_create(request):
-    global room_ids
-
     if request.method == 'POST':
-        try:
-            room_id = room_ids[request.user.username]
-        except:
-            return HttpResponseForbidden()
-
         form = RoomForm(request.POST)
 
-        if (Room.objects.filter(room_id=room_id).exists()):
-            return HttpResponseForbidden()
-    
         if form.is_valid():
             game_mode = form.cleaned_data['game_mode']
             is_public = form.cleaned_data['is_public']
 
-            del room_ids[request.user.username]
-            
+            rooms_lock.acquire()
+            room_id = generate_room_id()
             room = Room.objects.create(
                 game_mode=game_mode,
                 room_id=room_id,
@@ -48,32 +38,32 @@ def rooms_create(request):
                 user3=None,
                 user4=None,
             )
+            rooms_lock.release()
+
             context = {
                 'room' : room,
                 'game_mode_human' : room.get_game_mode_display(),
             }
             if 'HX-Request' in request.headers:
-                return render(request, 'rooms/rooms_detail.html', context)
+                response = render(request, 'rooms/rooms_detail.html', context)
+                
             else:
-                return render(request, 'rooms/rooms_detail_full.html', context)
-        else:
-            return HttpResponseForbidden()
-
-    form = RoomForm()
-    room_id = generate_room_id()
-    room_ids[request.user.username] = room_id
-
+                response = render(request, 'rooms/rooms_detail_full.html', context)
+            response['HX-Push-Url'] = f"/rooms/{room_id}"
+            return response
+    else:
+        form = RoomForm()
 
     if 'HX-Request' in request.headers:
-        return render(request, 'rooms/rooms_create.html', {'form': form, 'room_id': room_id})
+        return render(request, 'rooms/rooms_create.html', {'form': form})
     else:
-        return render(request, 'rooms/rooms_create_full.html', {'form': form, 'room_id': room_id})
+        return render(request, 'rooms/rooms_create_full.html', {'form': form})
 
 def rooms_detail(request, room_id):
     room = get_object_or_404(Room, room_id=room_id)
     context = {
         'room' : room,
-		'game_mode_human' : room.get_game_mode_display(),
+        'game_mode_human' : room.get_game_mode_display(),
     }
 
     if 'HX-Request' in request.headers:
@@ -105,7 +95,29 @@ def rooms_join_public(request):
         return render(request, 'rooms/rooms_join_public_full.html', context)
     
 def rooms_join_private(request):
-    if 'HX-Request' in request.headers:
-        return render(request, 'rooms/rooms_join_private.html')
+    if request.method == 'POST':
+        form = JoinPrivateForm(request.POST)
+    
+        if form.is_valid():
+            room_id = form.cleaned_data['room_id']
+            try:
+                room = Room.objects.get(room_id=room_id)
+                context = {
+                    'room' : room,
+                    'game_mode_human' : room.get_game_mode_display(),
+                }
+                if 'HX-Request' in request.headers:
+                    response = render(request, 'rooms/rooms_detail.html', context)
+                else:
+                    response = render(request, 'rooms/rooms_detail_full.html', context)
+                response['HX-Push-Url'] = f"/rooms/{room_id}"
+                return response
+            except Room.DoesNotExist:
+                form.add_error('room_id', "Invalid room id")
     else:
-        return render(request, 'rooms/rooms_join_private_full.html')
+        form = JoinPrivateForm()
+
+    if 'HX-Request' in request.headers:
+        return render(request, 'rooms/rooms_join_private.html', {'form': form})
+    else:
+        return render(request, 'rooms/rooms_join_private_full.html', {'form': form})
