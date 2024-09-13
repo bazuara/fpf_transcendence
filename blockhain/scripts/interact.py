@@ -13,7 +13,7 @@ else:
     print("Failed to connect")
 
 # Get the contract ABI and address
-with open('build/contracts/Tournament.json') as f:
+with open('/app/build/contracts/Tournament.json') as f:
     contract_json = json.load(f)
     contract_abi = contract_json['abi']
 
