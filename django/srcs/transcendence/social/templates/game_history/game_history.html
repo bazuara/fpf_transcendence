@@ -3,10 +3,10 @@
     <table class="table table-hover custom-border-color table-bordered table-fixed">
     <thead>
         <tr>
-            <th>Team 1</th>
-            <th>Score Team 1</th>
-            <th>Score Team 2</th>
-            <th>Team 2</th>
+            <th class="align-middle text-center">Team 1</th>
+            <th class="align-middle text-center">Score Team 1</th>
+            <th class="align-middle text-center">Score Team 2</th>
+            <th class="align-middle text-center">Team 2</th>
         </tr>
     </thead>
     <tbody>
@@ -14,10 +14,10 @@
             {% if games1v1 %}
                 {% for game in games1v1 %}
                 <tr>
-                    <td>{{ game.user1 }}</td>
-                    <td>{{ game.score1 }}</td>
-                    <td>{{ game.score2 }}</td>
-                    <td>{{ game.user3 }}</td>
+                    <td class="align-middle text-center">{{ game.user1 }}</td>
+                    <td class="align-middle text-center">{{ game.score1 }}</td>
+                    <td class="align-middle text-center">{{ game.score2 }}</td>
+                    <td class="align-middle text-center">{{ game.user3 }}</td>
                 </tr>
                 {% endfor %}
             {% else %}
@@ -36,10 +36,10 @@
     <table class="table table-hover custom-border-color table-bordered table-fixed">
     <thead>
         <tr>
-            <th>Team 1</th>
-            <th>Score Team 1</th>
-            <th>Score Team 2</th>
-            <th>Team 2</th>
+            <th class="align-middle text-center">Team 1</th>
+            <th class="align-middle text-center">Score Team 1</th>
+            <th class="align-middle text-center">Score Team 2</th>
+            <th class="align-middle text-center">Team 2</th>
         </tr>
     </thead>
     <tbody>
@@ -47,10 +47,10 @@
             {% if games2v2 %}
                 {% for game in games2v2 %}
                 </tr>
-                    <td>{{ game.user1 }} {{ game.user2 }}</td>
-                    <td>{{ game.score1 }}</td>
-                    <td>{{ game.score2 }}</td>
-                    <td>{{ game.user3 }} {{ game.user4 }}</td>
+                    <td class="align-middle text-center">{{ game.user1 }} {{ game.user2 }}</td>
+                    <td class="align-middle text-center">{{ game.score1 }}</td>
+                    <td class="align-middle text-center">{{ game.score2 }}</td>
+                    <td class="align-middle text-center">{{ game.user3 }} {{ game.user4 }}</td>
                 </tr>
                 {% endfor %}
             {% else %}
