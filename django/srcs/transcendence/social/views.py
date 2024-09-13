@@ -30,7 +30,7 @@ def social_view(request, name):
     games = get_user_games(profile_user)
 
     context['games1v1'] = games.filter(user2=None)
-    context['games2v2'] = games.filter(user2=not None)
+    context['games2v2'] = games.exclude(user2=None)
 
     # Return different templates based on whether it's an HTMX request
     if 'HX-Request' in request.headers:
@@ -52,7 +52,7 @@ def profile_view(request, name):
         games = get_user_games(profile_user)
 
         context['games1v1'] = games.filter(user2=None)
-        context['games2v2'] = games.filter(user2=not None)
+        context['games2v2'] = games.exclude(user2=None)
     
     if 'HX-Request' in request.headers:
         return render(request, 'profile/profile_info.html', context)
@@ -74,7 +74,7 @@ def change_alias(request, name):
         games = get_user_games(profile_user)
 
         context['games1v1'] = games.filter(user2=None)
-        context['games2v2'] = games.filter(user2=not None)
+        context['games2v2'] = games.exclude(user2=None)
 
     # Ensure the logged-in user can only change their own alias
     if authenticated_user.username != profile_user.name:
@@ -117,7 +117,7 @@ def change_avatar(request, name):
         games = get_user_games(profile_user)
 
         context['games1v1'] = games.filter(user2=None)
-        context['games2v2'] = games.filter(user2=not None)
+        context['games2v2'] = games.exclude(user2=None)
 
     if authenticated_user.username != profile_user.name:
         context['error_msg'] = "You are not allowed to change this user's avatar."
@@ -157,7 +157,7 @@ def game_history_view(request, name):
     games = get_user_games(profile_user)
 
     context['games1v1'] = games.filter(user2=None)
-    context['games2v2'] = games.filter(user2=not None)
+    context['games2v2'] = games.exclude(user2=None)
 
     if 'HX-Request' in request.headers:
         return render(request, 'game_history/game_history.html', context)
