@@ -13,7 +13,7 @@
     }
 
     .tournament .round {
-        font-size: .75em;
+        font-size: 1em;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -34,7 +34,7 @@
     .first-four {
         border: 1px solid #888;
         border-radius: 1em;
-        background-color: lightgray;
+        background-color: #000000;
         padding: 0 1em;
     }
 
@@ -59,34 +59,40 @@
     ul.seed li.game-left span:first-child,
     ul.seed li.game-right span:last-child {
         font-size: 0.5em;
+        color: #28df28;
+        font-family: 'Handjet';
     }
 
     li.game-right {
         text-align: right;
-        border-left: 1px solid #aaa;
+        border-left: 1px solid #28df28;
+        color: #28df28;
+        font-family: 'Handjet';
     }
 
     li.game-left {
-        border-right: 1px solid #aaa;
+        border-right: 1px solid #28df28;
+        color: #28df28;
+        font-family: 'Handjet';
     }
 
     li.game-bottom {
-        border-bottom: 1px solid #aaa;
+        border-bottom: 1px solid #28df28;
     }
 
     li.game-top {
         border: none;
-        border-bottom: 1px solid #aaa;
+        border-bottom: 1px solid #28df28;
     }
 
     li.game-left.spacer {
-        border-right: 1px solid #aaa;
+        border-right: 1px solid #28df28;
         min-height: 5px;
         padding-right:.25em;
     }
 
     li.game-right.spacer {
-        border-left: 1px solid #aaa;
+        border-left: 1px solid #28df28;
         min-height: 5px;
         padding-left:.25em;
         text-align: left;
@@ -96,10 +102,12 @@
         text-align: center;
         padding-top: 1em;
         padding-bottom: 1em;
-        border: 1px solid #aaa;
+        border: 1px solid #28df28;
         margin-top: 1em;
         margin-bottom: 1em;
         font-weight:bold;
+        color: #28df28;
+        font-family: 'Handjet';
     }
 
     .finals .centered {
@@ -117,34 +125,23 @@
     .body-first-child {
         margin-top: -45px;
     }
-
-    #tournamentBrackets {
-        position: absolute;
-        width: 300px;
-        height: 200px;
-        z-index: 15;
-        top: 50%;
-        left: 50%;
-        margin: -100px 0 0 -150px;
-        background: red;
-    }
 </style>
-<div class="container-fluid full-height d-flex justify-content-center align-items-center">
-    <h2 class="h2-custom ml-10">Tournament #{{ tournament.tournament_id }}</h2>
-    <div class="tournament-container">
+<div class="container-fluid full-height d-flex justify-content-center align-items-center flex-column">
+    <h2 class="h2-custom">Tournament #{{ tournament.tournament_id }}</h2>
+    <div class="tournament-container mt-5">
         <section>
             <div id="outPopUp">
                 <div class='body-first-child tournament first-four'>
                 <ul class='round round-1'>
                     <li class='spacer'>&nbsp;</li>
-                    <li class='game-left game-top'>{{ tournament.user1.name }} (Score:{{ tournament.game_12.score1 }})</li>
+                    <li class='game-left game-top'>{{ tournament.user1.name }} (Score: {{ tournament.game_12.score1 }})</li>
                     <li class='game-left spacer'>&nbsp;</li>
-                    <li class='game-left game-bottom'>{{ tournament.user3.name }} (Score:{{ tournament.game_12.score2 }})</li>
+                    <li class='game-left game-bottom'>{{ tournament.user2.name }} (Score: {{ tournament.game_12.score2 }})</li>
                     <li class='spacer'>&nbsp;</li>
                 </ul>
                 <ul class='round semi-final'>
                     <li class='spacer'>&nbsp;</li>
-                    <li class='game-left game-top'>{{ winner_left }} (Score:{{ tournament.game_final.score1 }})</li>
+                    <li class='game-left game-top'>{{ winner_left }} (Score: {{ tournament.game_final.score1 }})</li>
                     <li class='spacer'>&nbsp;</li>
                 </ul>
                 <ul class='round finals'>
@@ -154,21 +151,21 @@
                 </ul>
                 <ul class='round semi-final'>
                     <li class='spacer'>&nbsp;</li>
-                    <li class='game-right game-top'>{{ winner_right }} (Score:{{ tournament.game_final.score2 }})</li>
+                    <li class='game-right game-top'>{{ winner_right }} (Score: {{ tournament.game_final.score2 }})</li>
                     <li class='spacer'>&nbsp;</li>
                 </ul>
                 <ul class='round round-1'>
                     <li class='spacer'>&nbsp;</li>
-                    <li class='game-right game-top'>{{ tournament.user1.name }} (Score:{{ tournament.game_34.score1 }})</li>
+                    <li class='game-right game-top'>{{ tournament.user3.name }} (Score: {{ tournament.game_34.score1 }})</li>
                     <li class='game-right spacer'>&nbsp;</li>
-                    <li class='game-right game-bottom'>{{ tournament.user3.name }} (Score:{{ tournament.game_34.score2 }})</li>
+                    <li class='game-right game-bottom'>{{ tournament.user4.name }} (Score: {{ tournament.game_34.score2 }})</li>
                     <li class='spacer'>&nbsp;</li>
                 </ul>
                 </div>
             </div>
         </section>
-        <div class="col-md-6">
-            <button id = "buttonReady" class="btn btn-outline-custom btn-lg">Ready</button>
-        </div>
+    </div>
+    <div class="md-2 mt-2">
+        <button id = "buttonReady" class="btn btn-outline-custom btn-lg">Ready</button>
     </div>
 </div>
