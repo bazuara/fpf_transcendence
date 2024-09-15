@@ -4,7 +4,7 @@ import random
 import string
 
 from channels.generic.websocket import WebsocketConsumer
-from .models import Room
+from .models import Room, Tournament
 from social.models import User as OurUser
 from game.models import Game
 from asgiref.sync import async_to_sync
@@ -12,6 +12,7 @@ from asgiref.sync import async_to_sync
 lock_dict = {}
 global_dict_lock = threading.Lock()
 global_games_lock = threading.Lock()
+global_tournaments_lock = threading.Lock()
 
 def acquire_lock(key):
     global_dict_lock.acquire()
@@ -36,6 +37,13 @@ def generate_game_id():
         game_id = ''.join(random.choices(string.digits, k=30))
         if not Game.objects.filter(game_id=game_id).exists():
             return game_id
+
+def generate_tournament_id():
+    while True:
+        tournament_id = ''.join(random.choices(string.digits, k=6))
+        if not Tournament.objects.filter(tournament_id=tournament_id).exists():
+            return tournament_id
+
 
 class RoomConsumer(WebsocketConsumer):
 
@@ -94,12 +102,16 @@ class RoomConsumer(WebsocketConsumer):
             match ourUser:
                 case room.user1:
                     room.user1 = None
+                    room.user1_ready = False
                 case room.user2:
                     room.user2 = None
+                    room.user2_ready = False
                 case room.user3:
                     room.user3 = None
+                    room.user3_ready = False
                 case room.user4:
                     room.user4 = None
+                    room.user4_ready = False
                 case _:
                     raise Exception
             room.save()
@@ -131,7 +143,7 @@ class RoomConsumer(WebsocketConsumer):
             release_lock(self.room_id)
 
     def ready(self, event):
-        self.send(json.dumps({"redirect": True, "game_id": event["game_id"]}))
+        self.send(json.dumps({"redirect": True, "game_mode": event["game_mode"], "next_id": event["next_id"]}))
 
     def assignUserReady(self, ready, ourUser, room):
         match ourUser:
@@ -165,22 +177,36 @@ class RoomConsumer(WebsocketConsumer):
             room.save()
 
             if self.allUsersReady(room):
-                global_games_lock.acquire()
-                game_id = generate_game_id()
-                try:
-                    Game.objects.create(
-                        game_id=game_id,
-                        user1=room.user1,
-                        user2=room.user2,
-                        user3=room.user3,
-                        user4=room.user4,
-                    )
-                    Room.objects.get(room_id=self.room_id).delete()
-                    del lock_dict[self.room_id]
-                    async_to_sync(self.channel_layer.group_send) (
-                        self.group_name, {"type": "ready", "game_id": game_id}
-                    )
-                finally:
-                    global_games_lock.release()
+                if room.game_mode == "T":
+                    global_tournaments_lock.acquire()
+                    try:
+                        next_id = generate_tournament_id()
+                        Tournament.objects.create(
+                            tournament_id=next_id,
+                            user1=room.user1,
+                            user2=room.user2,
+                            user3=room.user3,
+                            user4=room.user4,
+                        )
+                    finally:
+                        global_tournaments_lock.release()
+                else:
+                    global_games_lock.acquire()
+                    try:
+                        next_id = generate_game_id()
+                        Game.objects.create(
+                            game_id=next_id,
+                            user1=room.user1,
+                            user2=room.user2,
+                            user3=room.user3,
+                            user4=room.user4,
+                        )
+                    finally:
+                        global_games_lock.release()
+                del lock_dict[self.room_id]
+                async_to_sync(self.channel_layer.group_send) (
+                    self.group_name, {"type": "ready", "game_mode": room.game_mode, "next_id": next_id}
+                )
+                Room.objects.get(room_id=self.room_id).delete()
         finally:
             release_lock(self.room_id)
