@@ -176,21 +176,6 @@ def tournament_room(request, tournament_id):
         'tournament': tournament,
     }
 
-    if (tournament.game_12 and tournament.game_12.score1 > tournament.game_12.score2):
-        context['winner_left'] = tournament.game_12.user1.name
-    elif tournament.game_12:
-        context['winner_left'] = tournament.game_12.user3.name
-
-    if (tournament.game_34 and tournament.game_34.score1 > tournament.game_34.score2):
-        context['winner_right'] = tournament.game_34.user1.name
-    elif tournament.game_34:
-        context['winner_right'] = tournament.game_34.user3.name
-
-    if (tournament.game_final and tournament.game_final.score1 > tournament.game_final.score2):
-        context['winner_final'] = tournament.game_final.user1.name
-    elif tournament.game_final:
-        context['winner_final'] = tournament.game_final.user3.name
-
     if 'HX-Request' in request.headers:
         return render(request, 'tournament_room/tournament_room.html', context)
     else:
