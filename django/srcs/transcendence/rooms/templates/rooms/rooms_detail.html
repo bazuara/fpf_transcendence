@@ -57,7 +57,10 @@
         roomSocket.onmessage = function(e) {
             state = JSON.parse(e.data)
             if (state.redirect === true) {
-                redirector.setAttribute("hx-get", "/game/" + state.game_id)
+                if (state.game_mode === "T")
+                    redirector.setAttribute("hx-get", "/rooms/tournament/" + state.next_id)
+                else
+                    redirector.setAttribute("hx-get", "/game/" + state.next_id)
                 htmx.process(redirector)
                 redirector.dispatchEvent(new Event('redirectEvent'));
                 return
