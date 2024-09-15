@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from rooms.models import Room
+from rooms.models import Room, Tournament
 import random, threading
 import string
 from .forms import RoomForm, JoinPrivateForm
@@ -168,3 +168,15 @@ def rooms_join_private(request):
         return render(request, 'rooms/rooms_join_private.html', {'form': form})
     else:
         return render(request, 'rooms/rooms_join_private_full.html', {'form': form})
+
+def tournament_room(request, tournament_id):
+    tournament = get_object_or_404(Tournament, tournament_id=tournament_id)
+
+    context = {
+        'tournament': tournament,
+    }
+
+    if 'HX-Request' in request.headers:
+        return render(request, 'tournament_room/tournament_room.html', context)
+    else:
+        return render(request, 'tournament_room/tournament_room_full.html', context)

@@ -1,0 +1,43 @@
+<div class="container-fluid full-height d-flex justify-content-center align-items-center flex-column">
+    <h2 class="h2-custom">Tournament #{{ tournament.tournament_id }}</h2>
+    <div class="tournament-container mt-5">
+        <section>
+            <div id="outPopUp">
+                <div class='body-first-child tournament first-four'>
+                <ul class='round round-1'>
+                    <li class='spacer'>&nbsp;</li>
+                    <li class='game-left game-top'>{{ tournament.user1.name }} (Score: {{ tournament.game_12.score1 }})</li>
+                    <li class='game-left spacer'>&nbsp;</li>
+                    <li class='game-left game-bottom'>{{ tournament.user2.name }} (Score: {{ tournament.game_12.score2 }})</li>
+                    <li class='spacer'>&nbsp;</li>
+                </ul>
+                <ul class='round semi-final'>
+                    <li class='spacer'>&nbsp;</li>
+                    <li class='game-left game-top'>{{ winner_left }} (Score: {{ tournament.game_final.score1 }})</li>
+                    <li class='spacer'>&nbsp;</li>
+                </ul>
+                <ul class='round finals'>
+                    <li class='spacer'>&nbsp;</li>
+                    <li class='game final'>Winner: {{ winner_final }}</li>
+                    <li class='spacer'>&nbsp;</li>
+                </ul>
+                <ul class='round semi-final'>
+                    <li class='spacer'>&nbsp;</li>
+                    <li class='game-right game-top'>{{ winner_right }} (Score: {{ tournament.game_final.score2 }})</li>
+                    <li class='spacer'>&nbsp;</li>
+                </ul>
+                <ul class='round round-1'>
+                    <li class='spacer'>&nbsp;</li>
+                    <li class='game-right game-top'>{{ tournament.user3.name }} (Score: {{ tournament.game_34.score1 }})</li>
+                    <li class='game-right spacer'>&nbsp;</li>
+                    <li class='game-right game-bottom'>{{ tournament.user4.name }} (Score: {{ tournament.game_34.score2 }})</li>
+                    <li class='spacer'>&nbsp;</li>
+                </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="md-2 mt-2">
+        <button id = "buttonReady" class="btn btn-outline-custom btn-lg">Ready</button>
+    </div>
+</div>

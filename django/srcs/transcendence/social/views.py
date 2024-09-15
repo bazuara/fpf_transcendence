@@ -1,9 +1,19 @@
 from django.contrib.auth import logout
 from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Q
 from social.forms import ChangeAliasForm, ChangeAvatarForm, ManageFriendsForm
 from social.models import User as OurUser
 from social.anonymization import clear_user_data
+from game.models import Game
+
+def get_user_games(profile_user):
+    return Game.objects.filter(
+        Q(user1=profile_user) |
+        Q(user2=profile_user) |
+        Q(user3=profile_user) |
+        Q(user4=profile_user)
+        )
 
 def social_view(request, name):
     # Fetch OurUser from social.models
@@ -16,6 +26,11 @@ def social_view(request, name):
         'profile_user'      : profile_user,         # OurUser instance
         'authenticated_user': authenticated_user    # DjangoUser instance
     }
+
+    games = get_user_games(profile_user)
+
+    context['games1v1'] = games.filter(user2=None)
+    context['games2v2'] = games.exclude(user2=None)
 
     # Return different templates based on whether it's an HTMX request
     if 'HX-Request' in request.headers:
@@ -32,6 +47,12 @@ def profile_view(request, name):
         'profile_user'      : profile_user,         # OurUser instance
         'authenticated_user': authenticated_user,   # DjangoUser instance
     }
+
+    if not 'HX-Request' in request.headers:
+        games = get_user_games(profile_user)
+
+        context['games1v1'] = games.filter(user2=None)
+        context['games2v2'] = games.exclude(user2=None)
     
     if 'HX-Request' in request.headers:
         return render(request, 'profile/profile_info.html', context)
@@ -48,6 +69,12 @@ def change_alias(request, name):
         'authenticated_user': authenticated_user,   # DjangoUser instance
         'error_msg'         : None,
     }
+
+    if not 'HX-Request' in request.headers:
+        games = get_user_games(profile_user)
+
+        context['games1v1'] = games.filter(user2=None)
+        context['games2v2'] = games.exclude(user2=None)
 
     # Ensure the logged-in user can only change their own alias
     if authenticated_user.username != profile_user.name:
@@ -86,6 +113,12 @@ def change_avatar(request, name):
         'error_msg'         : None,
     }
 
+    if not 'HX-Request' in request.headers:
+        games = get_user_games(profile_user)
+
+        context['games1v1'] = games.filter(user2=None)
+        context['games2v2'] = games.exclude(user2=None)
+
     if authenticated_user.username != profile_user.name:
         context['error_msg'] = "You are not allowed to change this user's avatar."
         if 'HX-Request' in request.headers:
@@ -120,6 +153,11 @@ def game_history_view(request, name):
         'profile_user'      : profile_user,         # OurUser instance
         'authenticated_user': authenticated_user,   # DjangoUser instance
     }
+
+    games = get_user_games(profile_user)
+
+    context['games1v1'] = games.filter(user2=None)
+    context['games2v2'] = games.exclude(user2=None)
 
     if 'HX-Request' in request.headers:
         return render(request, 'game_history/game_history.html', context)

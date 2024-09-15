@@ -6,6 +6,7 @@ from .views import (
     rooms_join_public,
     rooms_join_private,
     rooms_detail,
+    tournament_room,
 )
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
     path('rooms/join/public', rooms_join_public, name='rooms_join_public'),
     path('rooms/join/private', rooms_join_private, name='rooms_join_private'),
     path('rooms/<str:room_id>', rooms_detail, name='rooms_detail'),
+    path('rooms/tournament/<str:tournament_id>', tournament_room, name='tournament_room'),
 ]
