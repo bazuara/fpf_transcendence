@@ -15,12 +15,12 @@ class Command(createsuperuser.Command):
 
     def handle(self, *args, **options):
         username = options.get('username')
-        password = options.get('password') or os.getenv('DJANGO_ROOT_PASSWORD', '')
+        password = options.get('password')
         database = options.get('database')
 
         UserModel = get_user_model()
 
-        if UserModel._default_manager.db_manager(database).filter(username=username).exists():
+        if UserModel.objects.filter(username=username).exists():
             print(f"User '{username}' already exists. Superuser creation skipped.")
             return
 
