@@ -7,6 +7,7 @@ from django.http import HttpResponseForbidden
 from datetime import datetime
 from django.utils import timezone
 from apscheduler.schedulers.background import BackgroundScheduler
+from .consumers import lock_dict
 
 rooms_lock = threading.Lock()
 # This error msg will be used when joining both private/public rooms
@@ -21,9 +22,10 @@ def delete_empty_rooms():
     print("Deleting empty rooms...")
     time_now = timezone.now()
     empty_rooms = Room.objects.filter(user1=None, user2=None, user3=None, user4=None)
-
     for room in empty_rooms:
         if (time_now - room.updated_at).total_seconds() > 30:
+            if room.room_id in lock_dict:
+                del lock_dict[room.room_id]
             room.delete()
 
 def rooms_view(request):
