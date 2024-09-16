@@ -13,11 +13,13 @@ PADDLE_SIZE = 50
 PADDLE_MOVE = 5
 PADDLE_SEGMENTS = 8
 BALL_SPEED_INCREMENT = 1.2
-BALL_SPEED_INITIAL = 3
+BALL_SPEED_INITIAL = 4
 BALL_RADIUS = 5
 ANGLE_MIN = math.pi / 6
 MAX_SPEED = 2222
-MAX_FPS = 80
+MAX_FPS = 60
+MAX_GAME_DURATION = 15 * 60 #in seconds
+MAX_SCORE = 7
 
 #PRECOMPUTATIONS, DONT CHANGE
 ANGLE_PER_SEGMENT = (math.pi / 2 - ANGLE_MIN) / (PADDLE_SEGMENTS / 2 - 1)
@@ -37,6 +39,7 @@ class GameHandler():
         self.resetPositions(-1)
         self.score = [0, 0]
         self.lastTime = MIN_PERIOD
+        self.startTime = time.time()
         self.game_id = game_id
         self.group_name = "game_" + self.game_id
         threading.Thread(target=self.startGame, daemon=True).start()
@@ -54,14 +57,25 @@ class GameHandler():
             endTime = time.time()
             ft_sleep(MIN_PERIOD - (endTime - initialTime))
             self.lastTime = time.time() - initialTime
-        async_to_sync(get_channel_layer().group_send) (
-            self.group_name, {"type": "end.game"}
-        )
-        #write in db
+        if (self.score[0] == self.score[1]):
+            self.score[0] += 1
+        self.notifyEndGame()
         self.storeResult()
 
     def gameEnded(self):
-        return self.score[0] > 6 or self.score[1] > 6
+        return self.score[0] >= MAX_SCORE or self.score[1] >= MAX_SCORE or time.time() - self.startTime > MAX_GAME_DURATION
+
+    def notifyEndGame(self):
+        game = Game.objects.get(game_id=self.game_id)
+        winner = game.user1.alias if self.score[0] > self.score[1] else game.user3.alias
+        timeout = time.time() - self.startTime > MAX_GAME_DURATION
+        
+        message = "Timeout" if timeout else "Game ended"
+        message += ", Winner: " + winner
+
+        async_to_sync(get_channel_layer().group_send) (
+            self.group_name, {"type": "end.game", "message": message}
+        )
 
     def moveX(self):
         xpos = self.ball_pos[0] + self.ball_vector[0] * self.lastTime * MAX_FPS

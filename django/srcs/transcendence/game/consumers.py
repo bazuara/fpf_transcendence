@@ -76,7 +76,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.send(event["state"])
 
     async def end_game(self, event):
-        await self.send("end")
+        await self.send(event["message"])
 
     @sync_to_async
     def set_user_connected(self, ourUser, game):

@@ -1,17 +1,17 @@
 <div id="canvasContainer">
-  <canvas id="backgroundPongCanvas"> </canvas> 
-  <canvas id="pongCanvas"> </canvas>
+	<canvas id="backgroundPongCanvas"> </canvas> 
+	<canvas id="pongCanvas"> </canvas>
 </div>
 <div class="col-md-4">
-	<h2 id = "headerGameEnd" style="display: none;"> Game ended </h2>
+	<h2 id = "headerGameEnd" style="display: none;"></h2>
 </div>
 <div class="col-md-4">
 	<button id = "buttonRooms" style="display: none;" hx-get="/rooms" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg w-100">Go to Rooms</button>
 </div>
 <div class="col-md-4">
 	<button id = "buttonHome" style="display: none;" hx-get="/rooms" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg w-100">Go to Home</button>
-
 </div>
+
 <script>
 
     async function waitPathname() {
@@ -87,9 +87,10 @@
 		}
 
 		chatSocket.onmessage = function(e) {
-			if (e.data == "end") {
+			if (e.data.startsWith("Game ended") || e.data.startsWith("Timeout")) {
 				buttonHome.setAttribute("style", "")
 				buttonRooms.setAttribute("style", "")
+				headerGameEnd.innerHTML = e.data
 				headerGameEnd.setAttribute("style", "")
 				return
 			}
