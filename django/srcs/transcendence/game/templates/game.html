@@ -1,5 +1,6 @@
 <div id="canvasContainer">
-    <canvas id="pongCanvas"> </canvas>
+  <canvas id="backgroundPongCanvas"> </canvas> 
+  <canvas id="pongCanvas"> </canvas>
 </div>
 <div class="col-md-4">
 	<h2 id = "headerGameEnd" style="display: none;"> Game ended </h2>
@@ -9,6 +10,7 @@
 </div>
 <div class="col-md-4">
 	<button id = "buttonHome" style="display: none;" hx-get="/rooms" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg w-100">Go to Home</button>
+
 </div>
 <script>
 
@@ -20,9 +22,11 @@
 	async function start() {
 		await waitPathname()
 
-		const canvas = document.getElementById("pongCanvas");
+		const backgroundCanvas = document.getElementById("backgroundPongCanvas");
+		const interactiveCanvas = document.getElementById("pongCanvas");
 		const canvasContainer = document.getElementById("canvasContainer");
-		const ctx = canvas.getContext("2d");
+		const backgroundCtx = backgroundCanvas.getContext("2d");
+		const interactiveCtx = interactiveCanvas.getContext("2d");
 
 		//colors for background and objects
 
@@ -41,7 +45,7 @@
 		let paddleHeight = defaultPaddleHeight;
 		let paddleWidth = 10;
 		let leftPaddleX = 0;
-		let rightPaddleX = canvas.width - paddleWidth;
+		let rightPaddleX = interactiveCanvas.width - paddleWidth;
 		let scoreHeight = 550;
 		let relativeHeight = 1;
 		let relativeWidth = 1;
@@ -90,7 +94,8 @@
 				return
 			}
 			decodeState(e.data);
-			renderGame(gameState);
+			removeElems(gameState)
+			renderPartialGame(gameState);
 		}
 
 		chatSocket.onclose = function(e) {
@@ -164,60 +169,69 @@
 				"paddle1": parseInt(values[2], 10),
 				"paddle2": parseInt(values[3], 10),
 				"ball": [
-					parseInt(values[4], 10),
-					parseInt(values[5], 10)
+					values[4],
+					values[5]
 				]
 			};
 		}
 
 		function drawPaddle1(paddle) {
 			const paddleY = paddle * relativeHeight;
-			ctx.fillRect(leftPaddleX, paddleY, paddleWidth, paddleHeight);
+			interactiveCtx.fillRect(leftPaddleX, paddleY, paddleWidth, paddleHeight);
 		}
 
 		function drawPaddle2(paddle) {
 			const paddleY = paddle * relativeHeight;
-			ctx.fillRect(rightPaddleX, paddleY, paddleWidth, paddleHeight);
+			interactiveCtx.fillRect(rightPaddleX, paddleY, paddleWidth, paddleHeight);
 		}
 		
 		function drawBall(ball) {
-			ctx.beginPath();
+			interactiveCtx.beginPath();
 			const ballPosX = paddleWidth + (ball[0] * relativeWidth);
 			const ballPosY = ball[1] * relativeHeight;
-			ctx.arc(ballPosX, ballPosY, ballRadius, 0, 2 * Math.PI);
-			ctx.fill();
-			ctx.closePath();
+			interactiveCtx.arc(ballPosX, ballPosY, ballRadius, 0, 2 * Math.PI);
+			interactiveCtx.fill();
+			interactiveCtx.closePath();
 		}
 
 		function drawScore1(score1) {
-			ctx.font = fontSize + ' Arial';
-			ctx.fillText(score1, canvas.width / 4, scoreHeight);
+			interactiveCtx.font = fontSize + ' Handjet';
+			interactiveCtx.fillText(score1, interactiveCanvas.width / 4, scoreHeight);
 		}
 
 		function drawScore2(score2) {
-			ctx.font = fontSize + ' Arial';
-			ctx.fillText(score2, 3 * canvas.width / 4, scoreHeight);
+			interactiveCtx.font = fontSize + ' Handjet';
+			interactiveCtx.fillText(score2, 3 * interactiveCanvas.width / 4, scoreHeight);
 		}
 
 		function drawField() {
 			//draw goal lines
-			ctx.fillRect(paddleWidth, 0, 1, 5 * canvas.height / 6);
-			ctx.fillRect(rightPaddleX, 0, 1, 5 * canvas.height / 6);
+			backgroundCtx.fillRect(paddleWidth, 0, 1, 5 * backgroundCanvas.height / 6);
+			backgroundCtx.fillRect(rightPaddleX, 0, 1, 5 * backgroundCanvas.height / 6);
 
 			//draw middle line
-			ctx.fillRect(canvas.width / 2, 0, 1, 5 * canvas.height / 6);
+			backgroundCtx.fillRect(backgroundCanvas.width / 2, 0, 1, 5 * backgroundCanvas.height / 6);
 
 			//draw top and bottom limits
-			ctx.fillRect(0, 0, canvas.width, 1);
-			ctx.fillRect(0, 5 * canvas.height / 6, canvas.width, 1);
+			backgroundCtx.fillRect(0, 0, backgroundCanvas.width, 1);
+			backgroundCtx.fillRect(0, 5 * backgroundCanvas.height / 6, backgroundCanvas.width, 1);
 		}
 
 		function renderGame(gameState) {
-			ctx.fillStyle = backgroundColor;
-			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			backgroundCtx.fillStyle = backgroundColor;
+			backgroundCtx.fillRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
 			
-			ctx.fillStyle = decorColor;
+			backgroundCtx.fillStyle = decorColor;
 			drawField();
+			renderPartialGame(gameState)
+		}
+
+		function removeElems(gameState) {
+			interactiveCtx.clearRect(0, 0, interactiveCanvas.width, interactiveCanvas.height);
+		}
+
+		function renderPartialGame(gameState) {
+			interactiveCtx.fillStyle = decorColor;
 			drawPaddle1(gameState.paddle1);
 			drawPaddle2(gameState.paddle2);
 			drawBall(gameState.ball);
@@ -227,7 +241,6 @@
 
 		function resizeCanvas() {
 			const navHeight = document.getElementById("navbar").clientHeight;
-			console.log(navHeight);
 			const windowAspectRatio = window.innerWidth / (window.innerHeight - navHeight);
 			const canvasAspectRatio = 9 / 6;
 			let canvasWidth, canvasHeight;
@@ -243,15 +256,17 @@
 			canvasContainer.style.width = canvasWidth + 'px';
 			canvasContainer.style.height = canvasHeight + 'px';
 
-			canvas.width = canvasWidth;
-			canvas.height = canvasHeight;
+			interactiveCanvas.width = canvasWidth;
+			interactiveCanvas.height = canvasHeight;
+			backgroundCanvas.width = canvasWidth;
+			backgroundCanvas.height = canvasHeight;
 
-			relativeWidth = (canvas.width - (2 * paddleWidth)) / fieldWidth;
-			relativeHeight = (5 * canvas.height / 6) / fieldHeight;
+			relativeWidth = (interactiveCanvas.width - (2 * paddleWidth)) / fieldWidth;
+			relativeHeight = (5 * interactiveCanvas.height / 6) / fieldHeight;
 			scoreHeight = 5.5 * canvasHeight / 6;
 			paddleWidth =  defaultPaddleWidth * relativeWidth;
-			relativeWidth = (canvas.width - (2 * paddleWidth)) / fieldWidth;
-			rightPaddleX = canvas.width - paddleWidth;
+			relativeWidth = (interactiveCanvas.width - (2 * paddleWidth)) / fieldWidth;
+			rightPaddleX = interactiveCanvas.width - paddleWidth;
 			ballRadius = defaultBallRadius * relativeHeight;
 			paddleHeight = defaultPaddleHeight * relativeHeight;
 			fontSize = (defaultFontSize * relativeHeight) + 'px';
@@ -261,7 +276,7 @@
 		}
 
 		window.addEventListener('resize', resizeCanvas);
-    	resizeCanvas();
+		resizeCanvas();
 	}
 	start()
 
