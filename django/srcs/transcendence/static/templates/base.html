@@ -191,6 +191,8 @@
 			width: 100%; /* Canvas takes up the full width of the container */
 			height: auto; /* Maintain aspect ratio */
 			display: block; /* Remove default inline-block space */
+			position: absolute; /* Make canvas able to be layered on top of each other */
+			background-color: transparent; /* Make canvas transparent so they can render through each other*/
 		}
 
         .btn-custom {
