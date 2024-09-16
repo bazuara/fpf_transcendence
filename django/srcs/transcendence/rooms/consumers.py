@@ -71,12 +71,11 @@ class RoomConsumer(WebsocketConsumer):
                     room.user4 = ourUser
                 else:
                     raise Exception
+            room.save()
         except:
             return
         finally:
             release_lock(self.room_id)
-
-        room.save()
 
         async_to_sync(self.channel_layer.group_add) (self.group_name, self.channel_name)
         self.accept()

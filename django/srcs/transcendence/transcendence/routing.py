@@ -3,8 +3,10 @@ from channels.routing import URLRouter
 
 from rooms.routing import websocket_urlpatterns as rooms_websocket_urlpatterns
 from social.routing import websocket_urlpatterns as social_websocket_urlpatterns
+from game.routing import websocket_urlpatterns as game_websocket_urlpatterns
 
 websocket_urlpatterns = [
     path('', URLRouter(rooms_websocket_urlpatterns)),
     path('', URLRouter(social_websocket_urlpatterns)),
+    path('', URLRouter(game_websocket_urlpatterns)),
 ]
