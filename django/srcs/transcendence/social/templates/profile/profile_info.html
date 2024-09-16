@@ -1,7 +1,7 @@
 <!-- Image Container -->
 <div class="position-relative w-100" style="padding-top: 100%;">
     {% if profile_user.avatar %}
-    <img src="{{ profile_user.avatar.url }}" alt="{{ profile_user.name }}'s avatar" class="user-avatar img-fluid position-absolute top-0 start-0 w-100 h-100 " >
+    <img src="{{ profile_user.avatar.url }}" alt="{{ profile_user.name }}'s avatar" class="user-avatar img-fluid position-absolute top-0 start-0 w-100 h-100">
     {% elif profile_user.intra_image %}
     <img src="{{ profile_user.intra_image }}" alt="{{ profile_user.name }}'s default avatar" class="user-avatar img-fluid position-absolute top-0 start-0 w-100 h-100">
     {% else %}

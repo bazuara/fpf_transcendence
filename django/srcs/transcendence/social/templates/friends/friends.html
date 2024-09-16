@@ -14,21 +14,21 @@
     <table class="table table-hover custom-border-color table-bordered table-fixed">
         <thead>
             <tr>
-                <th class="th-custom">Name</th>
-                <th class="th-custom">Winrate</th>
-                <th class="th-custom">Status</th>
-                <th class="th-custom">Wins/Losses/Total</th>
-                <th class="th-custom">Remove Friend</th>
+                <th>Name</th>
+                <th>Winrate</th>
+                <th>Status</th>
+                <th>Wins/Losses/Total</th>
+                <th>Remove Friend</th>
             </tr>
         </thead>
         <tbody>
             {% for friend in friend_list %}
             <tr>
-                <td class="td-custom"><a href="" hx-get="{% url 'social' friend.name %}" hx-target="#content-div" hx-push-url="true">{{ friend.name }}</a></td>
-                <td class="td-custom">{{ friend.win_ratio }}%</td>
-                <td class="td-custom">{% if friend.socket_ctr != 0 %}Online{% else %}Offline{% endif %}</td>
-                <td class="td-custom">{{ friend.wins }}W/{{ friend.loses }}L/{{ friend.games_played }}T</td>
-                <td class="td-custom">
+                <td><a href="" hx-get="{% url 'social' friend.name %}" hx-target="#content-div" hx-push-url="true">{{ friend.name }}</a></td>
+                <td>{{ friend.win_ratio }}%</td>
+                <td>{% if friend.socket_ctr != 0 %}Online{% else %}Offline{% endif %}</td>
+                <td>{{ friend.wins }}W/{{ friend.loses }}L/{{ friend.games_played }}T</td>
+                <td>
                     <form   method="post"
                             hx-post="{% url 'friends' profile_user.name %}"
                             hx-target="#social-right">
@@ -57,10 +57,10 @@
         <tbody>
             {% for friend in friend_list %}
             <tr>
-                <td class="td-custom"><a href="" hx-get="{% url 'social' friend.name %}" hx-target="#content-div" hx-push-url="true">{{ friend.name }}</a></td>
-                <td class="td-custom">{{ friend.win_ratio }}%</td>
-                <td class="td-custom">{% if friend.socket_ctr != 0 %}Online{% else %}Offline{% endif %}</td>
-                <td class="td-custom">{{ friend.wins }}W/{{ friend.loses }}L/{{ friend.games_played }}T</td>
+                <td><a href="" hx-get="{% url 'social' friend.name %}" hx-target="#content-div" hx-push-url="true">{{ friend.name }}</a></td>
+                <td>{{ friend.win_ratio }}%</td>
+                <td>{% if friend.socket_ctr != 0 %}Online{% else %}Offline{% endif %}</td>
+                <td>{{ friend.wins }}W/{{ friend.loses }}L/{{ friend.games_played }}T</td>
             </tr>
             {% endfor %}
         </tbody>
