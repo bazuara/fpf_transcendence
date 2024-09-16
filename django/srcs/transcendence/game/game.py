@@ -5,6 +5,8 @@ import threading
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from .models import Game
+from django.utils import timezone
 
 BOARD_SIZE = [800, 500]
 PADDLE_SIZE = 50
@@ -29,19 +31,18 @@ HALF_PADDLE_SEGMENTS = PADDLE_SEGMENTS // 2
 BOARD_LENGTH_MINUS_PADDLE = BOARD_SIZE[1] - PADDLE_SIZE
 
 
-#TODO check wether need to thread safe
-#TODO asyncio thread
 #ball_pos is center
 class GameHandler():
-    def __init__(self, group_name):
+    def __init__(self, game_id):
         self.resetPositions(-1)
         self.score = [0, 0]
         self.lastTime = MIN_PERIOD
-        self.group_name = group_name
+        self.game_id = game_id
+        self.group_name = "game_" + self.game_id
         threading.Thread(target=self.startGame, daemon=True).start()
 
     def startGame(self):
-        while True:
+        while not self.gameEnded():
             initialTime = time.time()
             self.moveY()
             self.moveX()
@@ -53,6 +54,14 @@ class GameHandler():
             endTime = time.time()
             ft_sleep(MIN_PERIOD - (endTime - initialTime))
             self.lastTime = time.time() - initialTime
+        async_to_sync(get_channel_layer().group_send) (
+            self.group_name, {"type": "end.game"}
+        )
+        #write in db
+        self.storeResult()
+
+    def gameEnded(self):
+        return self.score[0] > 6 or self.score[1] > 6
 
     def moveX(self):
         xpos = self.ball_pos[0] + self.ball_vector[0] * self.lastTime * MAX_FPS
@@ -125,6 +134,21 @@ class GameHandler():
         if (segment >= HALF_PADDLE_SEGMENTS):
             segment -= 1
         return math.pi / 2 - (ANGLE_MIN + segment * ANGLE_PER_SEGMENT)
+    
+    def storeResult(self):
+        game = Game.objects.get(game_id=self.game_id)
+        game.score1 = self.score[0]
+        game.score2 = self.score[1]
+        game.end_time = timezone.now()
+        if (self.score[0] > self.score[1]):
+            game.user1.wins = game.user1.wins + 1
+            game.user3.loses = game.user3.loses + 1
+        else:
+            game.user3.wins = game.user3.wins + 1
+            game.user1.loses = game.user1.loses + 1
+        game.user1.save()
+        game.user3.save()
+        game.save()
 
 
 def vectorNorm(vec):

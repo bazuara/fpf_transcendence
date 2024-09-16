@@ -1,6 +1,16 @@
 <div id="canvasContainer">
-	<canvas id="backgroundPongCanvas"> </canvas> 
-	<canvas id="pongCanvas"> </canvas>
+  <canvas id="backgroundPongCanvas"> </canvas> 
+  <canvas id="pongCanvas"> </canvas>
+</div>
+<div class="col-md-4">
+	<h2 id = "headerGameEnd" style="display: none;"> Game ended </h2>
+</div>
+<div class="col-md-4">
+	<button id = "buttonRooms" style="display: none;" hx-get="/rooms" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg w-100">Go to Rooms</button>
+</div>
+<div class="col-md-4">
+	<button id = "buttonHome" style="display: none;" hx-get="/rooms" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg w-100">Go to Home</button>
+
 </div>
 <script>
 
@@ -60,6 +70,10 @@
 		let keyPressed = {};  //tracks which keys are pressed
 		let keyInterval = null; //stores the interval for the active key
 
+		const buttonRooms = document.getElementById("buttonRooms")
+		const buttonHome = document.getElementById("buttonHome")
+		const headerGameEnd = document.getElementById("headerGameEnd")
+
 		const chatSocket = new WebSocket(
 			'ws://'
 			+ window.location.host
@@ -73,6 +87,12 @@
 		}
 
 		chatSocket.onmessage = function(e) {
+			if (e.data == "end") {
+				buttonHome.setAttribute("style", "")
+				buttonRooms.setAttribute("style", "")
+				headerGameEnd.setAttribute("style", "")
+				return
+			}
 			decodeState(e.data);
 			removeElems(gameState)
 			renderPartialGame(gameState);
