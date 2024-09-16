@@ -1,10 +1,10 @@
-import random, string
 from django.contrib.auth import logout
 from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from social.forms import ChangeAliasForm, ChangeAvatarForm, ManageFriendsForm
 from social.models import User as OurUser
+from social.anonymization import clear_user_data
 from game.models import Game
 
 def get_user_games(profile_user):
@@ -209,36 +209,6 @@ def friends_view(request, name):
 
 
 def anonymize_view(request, name):
-    def generate_random_string_with_uppercase():
-        uppercase_letter = random.choice(string.ascii_uppercase)
-        remaining_characters = ''.join(random.choices(string.ascii_letters + string.digits, k=9))
-        random_position = random.randint(0, 9)
-        random_text = remaining_characters[:random_position] + uppercase_letter + remaining_characters[random_position:]
-        return random_text
-
-    def gen_random_name():
-        random_text = generate_random_string_with_uppercase()
-        user = OurUser.objects.filter(name=random_text).first()
-        if not user:
-            return random_text
-        else:
-            gen_random_name()
-
-    def clear_user_data(user):
-        new_name = gen_random_name()
-        if user.avatar:
-            user.avatar.delete()
-            user.avatar = None
-        user.intra_image = None
-        user.name = new_name
-        user.alias = new_name
-
-        users_with_user_as_friend = OurUser.objects.filter(friends=user)
-        for foreign_user in users_with_user_as_friend:
-            foreign_user.friends.remove(user)
-        user.friends.clear()
-        user.save()
-
     profile_user = get_object_or_404(OurUser, name=name)
     authenticated_user = request.user
 
