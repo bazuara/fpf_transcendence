@@ -67,8 +67,10 @@ class GameConsumer(AsyncWebsocketConsumer):
 
 
     async def receive(self, text_data):
-        games_dict[self.game_id].setPaddlePos(self.player_n, text_data)
-
+        try:
+            games_dict[self.game_id].setPaddlePos(self.player_n, text_data)
+        except:
+            pass
 
     async def state_update(self, event):
         await self.send(event["state"])
