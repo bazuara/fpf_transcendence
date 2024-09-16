@@ -1,7 +1,15 @@
-	<div id="canvasContainer">
-		<canvas id="pongCanvas"> </canvas> 
-	</div>
-	<script>
+<div id="canvasContainer">
+    <canvas id="pongCanvas"> </canvas> 
+</div>
+<script>
+
+    async function waitPathname() {
+        while (window.location.pathname.startsWith("/rooms"))
+            await setTimeout(()=>{}, 1)
+    }
+
+	async function start() {
+		await waitPathname()
 
 		const canvas = document.getElementById("pongCanvas");
 		const canvasContainer = document.getElementById("canvasContainer");
@@ -26,7 +34,7 @@
 		let leftPaddleX = 0;
 		let rightPaddleX = canvas.width - paddleWidth;
 		let scoreHeight = 550;
-		let	relativeHeight = 1;
+		let relativeHeight = 1;
 		let relativeWidth = 1;
 		let ballRadius = defaultBallRadius;
 		let fontSize = defaultFontSize + 'px';
@@ -48,18 +56,20 @@
 		let activeKey = null; //tracks the currently active key (either 'w' or 's')
 		let keyPressed = {};  //tracks which keys are pressed
 		let keyInterval = null; //stores the interval for the active key
-	
+
 		const chatSocket = new WebSocket(
 			'ws://'
 			+ window.location.host
-			+ '/ws/keylog'
+			+ '/ws/game/'
+			+ window.location.pathname.split('/').filter(Boolean).pop()
+			+ '/'
 		);
 		
 		chatSocket.onopen = function(e) {
 			console.log("Connection opened");
 		}
 
-		chatSocket.onmessage = function(e) {	
+		chatSocket.onmessage = function(e) {
 			decodeState(e.data);
 			renderGame(gameState);
 		}
@@ -232,7 +242,8 @@
 		}
 
 		window.addEventListener('resize', resizeCanvas);
+    	resizeCanvas();
+	}
+	start()
 
-		resizeCanvas();
-
-	</script>
+</script>
