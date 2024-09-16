@@ -10,6 +10,7 @@ contract Tournament {
         string player_id_4;
         string score_match_1_2;
         string score_match_3_4;
+        string score_match_final;
     }
 
     Match[] public matches;
@@ -21,7 +22,8 @@ contract Tournament {
         string memory player_id_3,
         string memory player_id_4,
         string memory score_match_1_2,
-        string memory score_match_3_4
+        string memory score_match_3_4,
+        string memory score_match_final
     ) public {
         matches.push(Match(
             tournament_id,
@@ -30,7 +32,8 @@ contract Tournament {
             player_id_3,
             player_id_4,
             score_match_1_2,
-            score_match_3_4
+            score_match_3_4,
+            score_match_final
         ));
     }
 

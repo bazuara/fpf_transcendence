@@ -36,6 +36,7 @@ def save_tournament(data):
         data["player_id_4"],
         data["score_match_1_2"],
         data["score_match_3_4"],
+        data["score_match_final"]
     ).transact()
 
     # Wait for transaction to be mined
@@ -56,7 +57,8 @@ tournament_data = {
     "player_id_3": "player_id_3",
     "player_id_4": "player_id_4",
     "score_match_1_2": "1-0",
-    "score_match_3_4": "1-0"
+    "score_match_3_4": "1-0",
+    "score_match_final": "1-0"
 }
 
 tournament_data_2 = {
@@ -66,7 +68,8 @@ tournament_data_2 = {
     "player_id_3": "player_id_3",
     "player_id_4": "player_id_4",
     "score_match_1_2": "1-0",
-    "score_match_3_4": "1-0"
+    "score_match_3_4": "1-0",
+    "score_match_final": "1-0"
 }
 
 tournament_data_3 = {
@@ -76,7 +79,8 @@ tournament_data_3 = {
     "player_id_3": "player_id_3",
     "player_id_4": "player_id_4",
     "score_match_1_2": "1-0",
-    "score_match_3_4": "1-0"
+    "score_match_3_4": "1-0",
+    "score_match_final": "1-0"
 }
 
 # Save the tournament data
