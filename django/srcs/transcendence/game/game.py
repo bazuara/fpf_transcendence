@@ -69,11 +69,8 @@ class GameHandler():
         game = Game.objects.get(game_id=self.game_id)
         winner = game.user1.alias if self.score[0] > self.score[1] else game.user3.alias
         timeout = time.time() - self.startTime > MAX_GAME_DURATION
-
-        if timeout:
-            message = "Timeout"
-        else:
-            message = "Game ended"
+        
+        message = "Timeout" if timeout else "Game ended"
         message += ", Winner: " + winner
 
         async_to_sync(get_channel_layer().group_send) (
