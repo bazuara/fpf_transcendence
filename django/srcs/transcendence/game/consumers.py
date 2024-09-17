@@ -39,6 +39,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.user = self.scope["user"]
 
         if not self.user:
+            self.close()
             return
 
         await acquire_lock(self.game_id)
@@ -54,6 +55,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
             await game.asave()
         except:
+            self.close()
             return
         finally:
             await release_lock(self.game_id)

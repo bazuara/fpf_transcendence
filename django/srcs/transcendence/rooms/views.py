@@ -7,7 +7,7 @@ from django.http import HttpResponseForbidden
 from datetime import datetime
 from django.utils import timezone
 from apscheduler.schedulers.background import BackgroundScheduler
-from .consumers import lock_dict
+from .consumers_room import lock_dict
 
 rooms_lock = threading.Lock()
 # This error msg will be used when joining both private/public rooms

@@ -30,9 +30,13 @@ class Room(models.Model):
 class Tournament(models.Model):
     tournament_id = models.CharField(primary_key=True, max_length=6) #should be base 10 code
     user1         = models.ForeignKey(OurUser, on_delete=models.PROTECT, related_name='tournaments_as_user1')
+    user1_ready   = models.BooleanField(default=False)
     user2         = models.ForeignKey(OurUser, on_delete=models.PROTECT, related_name='tournaments_as_user2')
+    user2_ready   = models.BooleanField(default=False)
     user3         = models.ForeignKey(OurUser, on_delete=models.PROTECT, related_name='tournaments_as_user3')
+    user3_ready   = models.BooleanField(default=False)
     user4         = models.ForeignKey(OurUser, on_delete=models.PROTECT, related_name='tournaments_as_user4')
+    user4_ready   = models.BooleanField(default=False)
     game_12       = models.ForeignKey(Game, on_delete=models.PROTECT, null=True, blank=True, related_name='tournaments_as_game12')
     game_34       = models.ForeignKey(Game, on_delete=models.PROTECT, null=True, blank=True, related_name='tournaments_as_game34')
     game_final    = models.ForeignKey(Game, on_delete=models.PROTECT, null=True, blank=True, related_name='tournaments_as_gamefinal')
