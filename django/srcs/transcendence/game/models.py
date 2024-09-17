@@ -15,10 +15,10 @@ class Game(models.Model):
     score1          = models.PositiveIntegerField(default = 0)
     score2          = models.PositiveIntegerField(default = 0)
     game_started    = models.BooleanField(default=False)
-    end_time        = models.DateField(null=True)
+    end_time        = models.DateTimeField(null=True)
 
     def __str__(self):
         return f"{self.game_id} Team 1 {self.score1} / {self.score2} Team 2"
 
     class Meta:
-        ordering = ['game_id']
+        ordering = ['-end_time']
