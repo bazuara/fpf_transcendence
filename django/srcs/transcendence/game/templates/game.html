@@ -64,11 +64,9 @@
 			]
 		};
 
-		//key delay
-		const repeatDelay = 16; //delay in millis
+		//key control
 		let activeKey = null; //tracks the currently active key (either 'w' or 's')
 		let keyPressed = {};  //tracks which keys are pressed
-		let keyInterval = null; //stores the interval for the active key
 
 		const buttonRooms = document.getElementById("buttonRooms")
 		const buttonHome = document.getElementById("buttonHome")
@@ -107,23 +105,12 @@
 			console.log("WebSocket error: ", error);
 		}
 
-		function startSendingKey(key) {
-			if (keyInterval) {
-				clearInterval(keyInterval);
-			}
-			keyInterval = setInterval(() => {
-				chatSocket.send(key);
-			}, repeatDelay);
-		}
-
-		//this will detect when the window loses focus, clearing intervals and keypresses.
+		//this will detect when the window loses focus, sending a ' ' state clear and clearing keypresses.
 		window.addEventListener('blur', function() {
-			if (keyInterval)
-				clearInterval(keyInterval);
-			keyInterval = null;
-			activeKey = null;
 			keyPressed['w'] = false;
 			keyPressed['s'] = false;
+			activeKey = null;
+			chatSocket.send(' ');
 		});
 
 		document.addEventListener('keyup', function(event) {
@@ -131,16 +118,14 @@
 
 			if (key === 'w' || key === 's') {
 				keyPressed[key] = false;
-				clearInterval(keyInterval);
-				keyInterval = null;
-				activeKey = null;
-
-				//check if the other key is still pressed, and start sending its keylogs
 				const otherKey = key === 'w' ? 's' : 'w';
-				if (keyPressed[otherKey]) {
+
+				if (keyPressed[otherKey]) { // if the other key is still pressed after lifting one, send that key
 					activeKey = otherKey;
 					chatSocket.send(otherKey);
-					startSendingKey(otherKey);
+				} else { // else send a space ' ' for state clear
+					activeKey = null;
+					chatSocket.send(' ');
 				}
 			}
 		});
@@ -151,13 +136,11 @@
 			if ((key === 'w' || key === 's') && !keyPressed[key]) {
 				keyPressed[key] = true;
 
-				if (activeKey === null) { //start sending keylogs if no other key is active
+				if (activeKey === null) { // if no key was prevously pressed send key state
 					activeKey = key;
 					chatSocket.send(key);
-					startSendingKey(key);
-				} else if (activeKey !== key) { //stop sending keylogs if another key is pressed
-					clearInterval(keyInterval);
-					keyInterval = null;
+				} else if (activeKey !== key) { //send space ' ' for state clear
+					chatSocket.send(' ');
 				}
 			}
 		});

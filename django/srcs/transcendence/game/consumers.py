@@ -68,7 +68,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         try:
-            games_dict[self.game_id].setPaddlePos(self.player_n, text_data)
+            games_dict[self.game_id].setPaddleMove(self.player_n, text_data)
         except:
             pass
 
