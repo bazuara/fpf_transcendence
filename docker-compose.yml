@@ -77,7 +77,6 @@ services:
     command: truffle migrate --network development
     volumes:
       - ./blockchain/build:/app/build
-      - ./blockchain/output:/app/output
     depends_on:
       ganache:
         condition: service_healthy
