@@ -35,14 +35,15 @@ BOARD_LENGTH_MINUS_PADDLE = BOARD_SIZE[1] - PADDLE_SIZE
 
 #ball_pos is center
 class GameHandler():
-    def __init__(self, game_id):
+    def __init__(self, game_id, multiplayer):
         self.resetPositions(-1)
         self.score = [0, 0]
-        self.paddles_move = [" ", " "]
+        self.paddles_move = [" ", " ", " ", " "]
         self.lastTime = MIN_PERIOD
         self.startTime = time.time()
         self.game_id = game_id
         self.group_name = "game_" + self.game_id
+        self.multiplayer = multiplayer
         threading.Thread(target=self.startGame, daemon=True).start()
 
     def startGame(self):
@@ -70,10 +71,15 @@ class GameHandler():
     def notifyEndGame(self):
         game = Game.objects.get(game_id=self.game_id)
         winner = game.user1.alias if self.score[0] > self.score[1] else game.user3.alias
+        if self.multiplayer:
+            winner2 = game.user2.alias if self.score[0] > self.score[1] else game.user4.alias
         timeout = time.time() - self.startTime > MAX_GAME_DURATION
         
         message = "Timeout" if timeout else "Game ended"
-        message += ", Winner: " + winner
+        if not self.multiplayer:
+            message += ", Winner: " + winner
+        else:
+            message += ", Winners: " + winner + ", " + winner2
 
         async_to_sync(get_channel_layer().group_send) (
             self.group_name, {"type": "end.game", "message": message}
@@ -137,14 +143,21 @@ class GameHandler():
 
     def movePaddles(self):
         for id in range(2):
-            if (self.paddles_move[id] == "w" or self.paddles_move[id] == "s"):
+            if not self.multiplayer:
+                key = self.paddles_move[id]
+            else:
+                if self.paddles_move[id] == self.paddles_move[id + 2]:
+                    key = self.paddles_move[id]
+                else:
+                    key = " "
+            if key == "w" or key == "s":
                 movement = PADDLE_MOVE * self.lastTime * MAX_FPS
-                if (self.paddles_move[id] == "w"):
+                if key == "w":
                     if (self.paddles_pos[id] - movement < 0):
                         self.paddles_pos[id] = 0
                     else:
                         self.paddles_pos[id] -= movement
-                elif (self.paddles_move[id] == "s"):
+                elif key == "s":
                     if (self.paddles_pos[id] + movement > BOARD_LENGTH_MINUS_PADDLE):
                         self.paddles_pos[id] = BOARD_LENGTH_MINUS_PADDLE
                     else:

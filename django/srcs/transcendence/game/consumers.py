@@ -50,7 +50,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
             if game.user1_connected and game.user3_connected and not game.game_started:
                 game.game_started = True
-                games_dict[self.game_id] = GameHandler(self.game_id)
+                games_dict[self.game_id] = GameHandler(self.game_id, game.game_mode == "2")
 
             await game.asave()
         except:
@@ -78,13 +78,25 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def end_game(self, event):
         await self.send(event["message"])
 
+    async def game_ready(self, game):
+        if game.game_mode == "1" or game.game_mode == "T":
+            return game.user1_connected and game.user3_connected and not game.game_started
+        return game.user1_connected and game.user2_connected and game.user3_connected and game.user4_connected and not game.game_started
+
     @sync_to_async
     def set_user_connected(self, ourUser, game):
-        if game.user1 == ourUser:
-            self.player_n = 0
-            game.user1_connected = True
-        elif game.user3 == ourUser:
-            self.player_n = 1
-            game.user3_connected = True
-        else:
-            raise Exception
+        match ourUser:
+            case game.user1:
+                self.player_n = 0
+                game.user1_connected = True
+            case game.user2:
+                self.player_n = 2
+                game.user2_connected = True
+            case game.user3:
+                self.player_n = 1
+                game.user3_connected = True
+            case game.user4:
+                self.player_n = 3
+                game.user4_connected = True
+            case _:
+                raise Exception
