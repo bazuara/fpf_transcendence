@@ -2,4 +2,4 @@
 *.pyc
 static_files/
 migrations/
-dbdata
+postgres/dbdata/data
