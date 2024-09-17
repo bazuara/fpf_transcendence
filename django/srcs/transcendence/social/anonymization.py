@@ -16,7 +16,7 @@ def anonymize_inactive_users():
     time_now = timezone.now()
     all_users = OurUser.objects.filter(anonymized=False, socket_ctr=0)
     for user in all_users:
-        if (time_now - user.updated_at) > timedelta(years=1):
+        if (time_now - user.updated_at) > timedelta(days=365):
             print(f"deleting: {user}")
             clear_user_data(user)
 
