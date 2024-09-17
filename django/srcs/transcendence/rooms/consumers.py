@@ -195,6 +195,7 @@ class RoomConsumer(WebsocketConsumer):
                         next_id = generate_game_id()
                         Game.objects.create(
                             game_id=next_id,
+                            game_mode=room.game_mode,
                             user1=room.user1,
                             user2=room.user2,
                             user3=room.user3,
