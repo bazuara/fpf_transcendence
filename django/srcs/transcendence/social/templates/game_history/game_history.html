@@ -13,14 +13,14 @@
         <tr>
             {% if games1v1 %}
                 {% for game in games1v1 %}
-                {% if game.end_time %}
+                    {% if game.end_time %}
                 <tr>
                     <td class="align-middle text-center"><a href="" hx-get="{% url 'social' game.user1.name %}" hx-target="#content-div" hx-push-url="true">{{ game.user1.name }}</a></td>
                     <td class="align-middle text-center">{{ game.score1 }}</td>
                     <td class="align-middle text-center">{{ game.score2 }}</td>
                     <td class="align-middle text-center"><a href="" hx-get="{% url 'social' game.user3.name %}" hx-target="#content-div" hx-push-url="true">{{ game.user3.name }}</a></td>
                 </tr>
-                {% endif %}
+                    {% endif %}
                 {% endfor %}
             {% else %}
                 <tr>
@@ -48,14 +48,14 @@
         <tr>
             {% if games2v2 %}
                 {% for game in games2v2 %}
-                {% if game.end_time %}
+                    {% if game.end_time %}
                 </tr>
                     <td class="align-middle text-center"><a href="" hx-get="{% url 'social' game.user1.name %}" hx-target="#content-div" hx-push-url="true">{{ game.user1.name }}</a> <a href="" hx-get="{% url 'social' game.user2.name %}" hx-target="#content-div" hx-push-url="true">{{ game.user2.name }}</a></td>
                     <td class="align-middle text-center">{{ game.score1 }}</td>
                     <td class="align-middle text-center">{{ game.score2 }}</td>
                     <td class="align-middle text-center"><a href="" hx-get="{% url 'social' game.user3.name %}" hx-target="#content-div" hx-push-url="true">{{ game.user3.name }}</a> <a href="" hx-get="{% url 'social' game.user4.name %}" hx-target="#content-div" hx-push-url="true">{{ game.user4.name }}</a></td>
                 </tr>
-                {% endif %}
+                    {% endif %}
                 {% endfor %}
             {% else %}
                 <tr>
