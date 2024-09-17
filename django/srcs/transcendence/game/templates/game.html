@@ -72,7 +72,7 @@
 		const buttonHome = document.getElementById("buttonHome")
 		const headerGameEnd = document.getElementById("headerGameEnd")
 
-		const chatSocket = new WebSocket(
+		const gameSocket = new WebSocket(
 			'ws://'
 			+ window.location.host
 			+ '/ws/game/'
@@ -80,11 +80,11 @@
 			+ '/'
 		);
 		
-		chatSocket.onopen = function(e) {
+		gameSocket.onopen = function(e) {
 			console.log("Connection opened");
 		}
 
-		chatSocket.onmessage = function(e) {
+		gameSocket.onmessage = function(e) {
 			if (e.data.startsWith("Game ended") || e.data.startsWith("Timeout")) {
 				buttonHome.setAttribute("style", "")
 				buttonRooms.setAttribute("style", "")
@@ -97,23 +97,24 @@
 			renderPartialGame(gameState);
 		}
 
-		chatSocket.onclose = function(e) {
+		gameSocket.onclose = function(e) {
 			console.error('Connection closed');
 		}
 
-		chatSocket.onerror = function(error) {
+		gameSocket.onerror = function(error) {
 			console.log("WebSocket error: ", error);
 		}
 
-		//this will detect when the window loses focus, sending a ' ' state clear and clearing keypresses.
-		window.addEventListener('blur', function() {
-			keyPressed['w'] = false;
+        //this will detect when the window loses focus, sending a ' ' state clear and clearing keypresses.
+        function blur() {
+            keyPressed['w'] = false;
 			keyPressed['s'] = false;
 			activeKey = null;
-			chatSocket.send(' ');
-		});
+            if (gameSocket.readyState === WebSocket.OPEN)
+			    gameSocket.send(' ');
+        }
 
-		document.addEventListener('keyup', function(event) {
+        function keyup(event) {
 			const key = event.key;
 
 			if (key === 'w' || key === 's') {
@@ -122,28 +123,32 @@
 
 				if (keyPressed[otherKey]) { // if the other key is still pressed after lifting one, send that key
 					activeKey = otherKey;
-					chatSocket.send(otherKey);
+					gameSocket.send(otherKey);
 				} else { // else send a space ' ' for state clear
 					activeKey = null;
-					chatSocket.send(' ');
+					gameSocket.send(' ');
 				}
 			}
-		});
+		}
 
-		document.addEventListener('keydown', (event) => {
-			const key = event.key;
+        function keydown(event) {
+            const key = event.key;
 
-			if ((key === 'w' || key === 's') && !keyPressed[key]) {
-				keyPressed[key] = true;
+            if ((key === 'w' || key === 's') && !keyPressed[key]) {
+                keyPressed[key] = true;
 
-				if (activeKey === null) { // if no key was prevously pressed send key state
-					activeKey = key;
-					chatSocket.send(key);
-				} else if (activeKey !== key) { //send space ' ' for state clear
-					chatSocket.send(' ');
-				}
-			}
-		});
+                if (activeKey === null) { // if no key was prevously pressed send key state
+                    activeKey = key;
+                    gameSocket.send(key);
+                } else if (activeKey !== key) { //send space ' ' for state clear
+                    gameSocket.send(' ');
+                }
+            }
+        }
+
+		window.addEventListener('blur', blur);
+		document.addEventListener('keyup', keyup);
+		document.addEventListener('keydown', keydown);
 
 		function decodeState(rawState) {
 			values = rawState.split(' ');
@@ -259,9 +264,23 @@
 			renderGame(gameState)
 		}
 
+        function move_away(event) {
+            blur()
+            gameSocket.close()
+            window.removeEventListener('blur', blur);
+            document.removeEventListener('keyup', keyup);
+            document.removeEventListener('keydown', keydown);
+            window.removeEventListener('resize', resizeCanvas)
+            window.removeEventListener('load', resizeCanvas);
+            document.body.removeEventListener('htmx:beforeRequest', move_away)
+            window.removeEventListener('popstate', move_away)
+        }
+
 		window.addEventListener('resize', resizeCanvas);
+		window.addEventListener('load', resizeCanvas);
+        document.body.addEventListener('htmx:beforeRequest', move_away)
+        window.addEventListener('popstate', move_away);
 		resizeCanvas();
-		window.onload = resizeCanvas;
 	}
 	start()
 
