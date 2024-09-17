@@ -28,3 +28,9 @@ def game_view(request, game_id):
         return render(request, 'game.html')
     else:
         return render(request, 'game_full.html')
+
+def game_local_view(request):
+    if 'HX-Request' in request.headers:
+        return render(request, 'game_local.html')
+    else:
+        return render(request, 'game_local_full.html')
