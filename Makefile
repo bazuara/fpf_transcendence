@@ -1,7 +1,4 @@
-DATADB = $(PWD)/postgres/dbdata
-
 up:
-	@mkdir -p $(DATADB)
 	docker compose build 
 	docker compose up
 
