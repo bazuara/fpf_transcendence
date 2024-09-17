@@ -38,6 +38,7 @@ class GameHandler():
     def __init__(self, game_id):
         self.resetPositions(-1)
         self.score = [0, 0]
+        self.paddles_move = [" ", " "]
         self.lastTime = MIN_PERIOD
         self.startTime = time.time()
         self.game_id = game_id
@@ -47,6 +48,7 @@ class GameHandler():
     def startGame(self):
         while not self.gameEnded():
             initialTime = time.time()
+            self.movePaddles()
             self.moveY()
             self.moveX()
             async_to_sync(get_channel_layer().group_send) (
@@ -130,15 +132,23 @@ class GameHandler():
 
         self.ball_vector = [math.cos(random_angle) * BALL_SPEED_INITIAL, math.sin(random_angle) * BALL_SPEED_INITIAL]
 
-    def setPaddlePos(self, id, key):
-        if (key == "w"):
-            if (self.paddles_pos[id] - PADDLE_MOVE < 0):
-                return
-            self.paddles_pos[id] -= PADDLE_MOVE
-        elif (key == "s"):
-            if (self.paddles_pos[id] + PADDLE_MOVE > BOARD_LENGTH_MINUS_PADDLE):
-                return
-            self.paddles_pos[id] += PADDLE_MOVE
+    def setPaddleMove(self, id, key):
+        self.paddles_move[id] = key
+
+    def movePaddles(self):
+        for id in range(2):
+            if (self.paddles_move[id] == "w" or self.paddles_move[id] == "s"):
+                movement = PADDLE_MOVE * self.lastTime * MAX_FPS
+                if (self.paddles_move[id] == "w"):
+                    if (self.paddles_pos[id] - movement < 0):
+                        self.paddles_pos[id] = 0
+                    else:
+                        self.paddles_pos[id] -= movement
+                elif (self.paddles_move[id] == "s"):
+                    if (self.paddles_pos[id] + movement > BOARD_LENGTH_MINUS_PADDLE):
+                        self.paddles_pos[id] = BOARD_LENGTH_MINUS_PADDLE
+                    else:
+                        self.paddles_pos[id] += movement
 
     def segmentToAngle(self, segment):
         if (segment < 0):
