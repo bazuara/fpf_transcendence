@@ -1,5 +1,5 @@
 <div id="canvasContainer">
-    <canvas id="backgroundPongCanvas"> </canvas> 
+    <canvas id="backgroundPongCanvas"> </canvas>
     <canvas id="pongCanvas"> </canvas>
 </div>
 <div class="col-md-4">
@@ -79,7 +79,7 @@
             + window.location.pathname.split('/').filter(Boolean).pop()
             + '/'
         );
-        
+
         gameSocket.onopen = function(e) {
             console.log("Connection opened");
         }
@@ -173,7 +173,7 @@
             const paddleY = paddle * relativeHeight;
             interactiveCtx.fillRect(rightPaddleX, paddleY, paddleWidth, paddleHeight);
         }
-        
+
         function drawBall(ball) {
             interactiveCtx.beginPath();
             const ballPosX = paddleWidth + (ball[0] * relativeWidth);
