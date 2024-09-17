@@ -6,7 +6,6 @@ services:
     volumes:
       - django_volume:/srcs
       - ./blockchain/scripts:/blockchain/scripts
-      - ./blockchain/output:/blockchain/output
       - ./blockchain/build:/blockchain/build
     ports:
       - 5000:443
@@ -107,6 +106,10 @@ volumes:
       device: $PWD/postgres/dbdata
   
   ganache_data:
-
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $PWD/blockchain/ganache_data
 networks:
   tran-net:

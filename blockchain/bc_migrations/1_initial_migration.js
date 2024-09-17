@@ -19,7 +19,7 @@ module.exports = async function (deployer) {
         // Print the contract address
         console.log('Contract deployed at address: ' + deployedTournament.address);
         // save the contract address on a file
-        fs.writeFileSync('/app/output/contract_address.txt', deployedTournament.address, 'utf8');
+        fs.writeFileSync('/app/build/contract_address.txt', deployedTournament.address, 'utf8');
     } catch (error) {
         console.log('Error: ' + error + ' File path: ' + file);
     }

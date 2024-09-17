@@ -19,7 +19,7 @@ with open('/blockchain/build/contracts/Tournament.json') as f:
 
 # contract_address = '0x6B130A87fD200bEb185Eb5426144E7f473AF9Ef9' # get from deploying with truffle
 # read contract adrress from file
-with open('/blockchain/output/contract_address.txt', 'r') as file:
+with open('/blockchain/build/contract_address.txt', 'r') as file:
     contract_address = file.read().replace('\n', '')
 contract = web3.eth.contract(address=contract_address, abi=contract_abi)
 

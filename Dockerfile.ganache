@@ -1,4 +1,0 @@
-FROM trufflesuite/ganache-cli:v6.12.2
-
-# install curl
-RUN apk add --no-cache curl
