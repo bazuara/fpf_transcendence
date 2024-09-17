@@ -34,7 +34,7 @@ def clear_user_data(user):
         if not user:
             return random_text
         else:
-            gen_random_name()
+            return gen_random_name()
 
     # Delete avatar and intra_image
     if user.avatar:

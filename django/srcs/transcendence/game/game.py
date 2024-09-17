@@ -35,19 +35,21 @@ BOARD_LENGTH_MINUS_PADDLE = BOARD_SIZE[1] - PADDLE_SIZE
 
 #ball_pos is center
 class GameHandler():
-    def __init__(self, game_id, multiplayer):
+    def __init__(self, game_id, group_name, multiplayer, local):
         self.resetPositions(-1)
         self.score = [0, 0]
         self.paddles_move = [" ", " ", " ", " "]
         self.lastTime = MIN_PERIOD
         self.startTime = time.time()
         self.game_id = game_id
-        self.group_name = "game_" + self.game_id
+        self.group_name = group_name
         self.multiplayer = multiplayer
+        self.local = local
+        self.kill = False
         threading.Thread(target=self.startGame, daemon=True).start()
 
     def startGame(self):
-        while not self.gameEnded():
+        while not self.gameEnded() and not self.kill:
             initialTime = time.time()
             self.movePaddles()
             self.moveY()
@@ -60,17 +62,23 @@ class GameHandler():
             endTime = time.time()
             ft_sleep(MIN_PERIOD - (endTime - initialTime))
             self.lastTime = time.time() - initialTime
+        if self.kill:
+            return
         if (self.score[0] == self.score[1]):
             self.score[0] += 1
         self.notifyEndGame()
-        self.storeResult()
+        if not self.local:
+            self.storeResult()
 
     def gameEnded(self):
         return self.score[0] >= MAX_SCORE or self.score[1] >= MAX_SCORE or time.time() - self.startTime > MAX_GAME_DURATION
 
     def notifyEndGame(self):
-        game = Game.objects.get(game_id=self.game_id)
-        winner = game.user1.alias if self.score[0] > self.score[1] else game.user3.alias
+        if self.local:
+            winner = "player left" if self.score[0] > self.score[1] else "player right"
+        else:
+            game = Game.objects.get(game_id=self.game_id)
+            winner = game.user1.alias if self.score[0] > self.score[1] else game.user3.alias
         if self.multiplayer:
             winner2 = game.user2.alias if self.score[0] > self.score[1] else game.user4.alias
         timeout = time.time() - self.startTime > MAX_GAME_DURATION
@@ -186,6 +194,9 @@ class GameHandler():
         game.user1.save()
         game.user3.save()
         game.save()
+
+    def killGame(self):
+        self.kill = True
 
 
 def vectorNorm(vec):

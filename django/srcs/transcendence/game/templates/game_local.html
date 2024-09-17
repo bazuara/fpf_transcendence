@@ -65,7 +65,8 @@
         };
 
         //key control
-        let activeKey = null; //tracks the currently active key (either 'w' or 's')
+        let activeKeyLeft = null; //tracks the currently active key (either 'w' or 's')
+        let activeKeyRight = null;
         let keyPressed = {};  //tracks which keys are pressed
 
         const buttonRooms = document.getElementById("buttonRooms")
@@ -75,9 +76,7 @@
         const gameSocket = new WebSocket(
             'ws://'
             + window.location.host
-            + '/ws/game/'
-            + window.location.pathname.split('/').filter(Boolean).pop()
-            + '/'
+            + '/ws/game/local/'
         );
         
         gameSocket.onopen = function(e) {
@@ -99,7 +98,7 @@
 
         gameSocket.onclose = function(e) {
             console.error('Connection closed');
-        }
+        }    
 
         gameSocket.onerror = function(error) {
             console.log("WebSocket error: ", error);
@@ -109,9 +108,13 @@
         function blur() {
             keyPressed['w'] = false;
             keyPressed['s'] = false;
-            activeKey = null;
+            keyPressed['ArrowUp'] = false;
+            keyPressed['ArrowDown'] = false;
+            activeKeyLeft = null;
+            activeKeyRight = null;
             if (gameSocket.readyState === WebSocket.OPEN)
                 gameSocket.send(' ');
+                gameSocket.send('-');
         }
 
         function keyup(event) {
@@ -121,12 +124,25 @@
                 keyPressed[key] = false;
                 const otherKey = key === 'w' ? 's' : 'w';
 
-                if (keyPressed[otherKey]) { // if the other key is still pressed after lifting one, send that key
-                    activeKey = otherKey;
+                if (keyPressed[otherKey]) {
+                    activeKeyLeft = otherKey;
                     gameSocket.send(otherKey);
-                } else { // else send a space ' ' for state clear
-                    activeKey = null;
+                } else {
+                    activeKeyLeft = null;
                     gameSocket.send(' ');
+                }
+            }
+            else if (key === 'ArrowUp' || key === 'ArrowDown') {
+                event.preventDefault();
+                keyPressed[key] = false;
+                const otherKey = key === 'ArrowUp' ? 'ArrowDown' : 'ArrowUp';
+
+                if (keyPressed[otherKey]) {
+                    activeKeyRight = otherKey;
+                    gameSocket.send(otherKey);
+                } else {
+                    activeKeyRight = null;
+                    gameSocket.send('-');
                 }
             }
         }
@@ -137,11 +153,22 @@
             if ((key === 'w' || key === 's') && !keyPressed[key]) {
                 keyPressed[key] = true;
 
-                if (activeKey === null) { // if no key was prevously pressed send key state
-                    activeKey = key;
+                if (activeKeyLeft === null) {
+                    activeKeyLeft = key;
                     gameSocket.send(key);
-                } else if (activeKey !== key) { //send space ' ' for state clear
+                } else if (activeKeyLeft !== key) {
                     gameSocket.send(' ');
+                }
+            }
+            else if ((key === 'ArrowUp' || key === 'ArrowDown') && !keyPressed[key]) {
+                event.preventDefault();
+                keyPressed[key] = true;
+
+                if (activeKeyRight === null) {
+                    activeKeyRight = key;
+                    gameSocket.send(key);
+                } else if (activeKeyRight !== key) {
+                    gameSocket.send('-');
                 }
             }
         }
@@ -230,12 +257,12 @@
 
         function resizeCanvas() {
             const navHeight = document.getElementById("navbar").clientHeight;
-            const windowAspectRatio = window.innerWidth / (window.innerHeight - navHeight);
+            const windowAspectRatio = window.innerWidth / (window.innerHeight - navHeight - 23);
             const canvasAspectRatio = 9 / 6;
             let canvasWidth, canvasHeight;
 
             if (windowAspectRatio > canvasAspectRatio) { // window is wider than the canvas ratio
-                canvasHeight = window.innerHeight - navHeight;
+                canvasHeight = window.innerHeight - navHeight - 23;
                 canvasWidth = canvasHeight * canvasAspectRatio;
             } else { // window is taller than the canvas ratio
                 canvasWidth = window.innerWidth;
