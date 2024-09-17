@@ -13,7 +13,7 @@ def get_user_games(profile_user):
         Q(user2=profile_user) |
         Q(user3=profile_user) |
         Q(user4=profile_user)
-        )
+        ).exclude(game_mode="T")
 
 def social_view(request, name):
     # Fetch OurUser from social.models
