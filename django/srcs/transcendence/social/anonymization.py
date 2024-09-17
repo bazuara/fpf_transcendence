@@ -8,7 +8,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 def start():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(anonymize_inactive_users, 'interval', minutes=10)
+    scheduler.add_job(anonymize_inactive_users, 'interval', days=1)
     scheduler.start()
 
 def anonymize_inactive_users():
@@ -16,7 +16,7 @@ def anonymize_inactive_users():
     time_now = timezone.now()
     all_users = OurUser.objects.filter(anonymized=False, socket_ctr=0)
     for user in all_users:
-        if (time_now - user.updated_at) > timedelta(hours=1):
+        if (time_now - user.updated_at) > timedelta(years=1):
             print(f"deleting: {user}")
             clear_user_data(user)
 
