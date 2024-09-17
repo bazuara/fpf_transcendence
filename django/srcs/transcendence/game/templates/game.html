@@ -1,15 +1,15 @@
 <div id="canvasContainer">
-	<canvas id="backgroundPongCanvas"> </canvas> 
-	<canvas id="pongCanvas"> </canvas>
+    <canvas id="backgroundPongCanvas"> </canvas>
+    <canvas id="pongCanvas"> </canvas>
 </div>
 <div class="col-md-4">
-	<h2 id = "headerGameEnd" style="display: none;"></h2>
+    <h2 id = "headerGameEnd" style="display: none;"></h2>
 </div>
 <div class="col-md-4">
-	<button id = "buttonRooms" style="display: none;" hx-get="/rooms" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg w-100">Go to Rooms</button>
+    <button id = "buttonRooms" style="display: none;" hx-get="/rooms" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg w-100">Go to Rooms</button>
 </div>
 <div class="col-md-4">
-	<button id = "buttonHome" style="display: none;" hx-get="/rooms" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg w-100">Go to Home</button>
+    <button id = "buttonHome" style="display: none;" hx-get="/rooms" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg w-100">Go to Home</button>
 </div>
 
 <script>
@@ -19,117 +19,117 @@
             await setTimeout(()=>{}, 1)
     }
 
-	async function start() {
-		await waitPathname()
+    async function start() {
+        await waitPathname()
 
-		const backgroundCanvas = document.getElementById("backgroundPongCanvas");
-		const interactiveCanvas = document.getElementById("pongCanvas");
-		const canvasContainer = document.getElementById("canvasContainer");
-		const backgroundCtx = backgroundCanvas.getContext("2d");
-		const interactiveCtx = interactiveCanvas.getContext("2d");
+        const backgroundCanvas = document.getElementById("backgroundPongCanvas");
+        const interactiveCanvas = document.getElementById("pongCanvas");
+        const canvasContainer = document.getElementById("canvasContainer");
+        const backgroundCtx = backgroundCanvas.getContext("2d");
+        const interactiveCtx = interactiveCanvas.getContext("2d");
 
-		//colors for background and objects
+        //colors for background and objects
 
-		const backgroundColor = 'black';
-		const decorColor = '#28df28';
+        const backgroundColor = 'black';
+        const decorColor = '#28df28';
 
-		//default values of the gamespace
-		const defaultPaddleHeight = 50;
-		const defaultPaddleWidth = 10;
-		const defaultBallRadius = 5;
-		const fieldHeight = 500;
-		const fieldWidth = 800;
-		const defaultFontSize = 32;
+        //default values of the gamespace
+        const defaultPaddleHeight = 50;
+        const defaultPaddleWidth = 10;
+        const defaultBallRadius = 5;
+        const fieldHeight = 500;
+        const fieldWidth = 800;
+        const defaultFontSize = 32;
 
-		//scaled values variables (initialized here, modified upon window resize)
-		let paddleHeight = defaultPaddleHeight;
-		let paddleWidth = 10;
-		let leftPaddleX = 0;
-		let rightPaddleX = interactiveCanvas.width - paddleWidth;
-		let scoreHeight = 550;
-		let relativeHeight = 1;
-		let relativeWidth = 1;
-		let ballRadius = defaultBallRadius;
-		let fontSize = defaultFontSize + 'px';
+        //scaled values variables (initialized here, modified upon window resize)
+        let paddleHeight = defaultPaddleHeight;
+        let paddleWidth = 10;
+        let leftPaddleX = 0;
+        let rightPaddleX = interactiveCanvas.width - paddleWidth;
+        let scoreHeight = 550;
+        let relativeHeight = 1;
+        let relativeWidth = 1;
+        let ballRadius = defaultBallRadius;
+        let fontSize = defaultFontSize + 'px';
 
-		//global variable for stroing the gamestate
-		let gameState = {
-			"score1": 0,
-			"score2": 0,
-			"paddle1": (fieldHeight - paddleHeight) / 2,
-			"paddle2": (fieldHeight - paddleHeight) / 2,
-			"ball": [
-				fieldWidth / 2,
-				fieldHeight / 2
-			]
-		};
+        //global variable for stroing the gamestate
+        let gameState = {
+            "score1": 0,
+            "score2": 0,
+            "paddle1": (fieldHeight - paddleHeight) / 2,
+            "paddle2": (fieldHeight - paddleHeight) / 2,
+            "ball": [
+                fieldWidth / 2,
+                fieldHeight / 2
+            ]
+        };
 
-		//key control
-		let activeKey = null; //tracks the currently active key (either 'w' or 's')
-		let keyPressed = {};  //tracks which keys are pressed
+        //key control
+        let activeKey = null; //tracks the currently active key (either 'w' or 's')
+        let keyPressed = {};  //tracks which keys are pressed
 
-		const buttonRooms = document.getElementById("buttonRooms")
-		const buttonHome = document.getElementById("buttonHome")
-		const headerGameEnd = document.getElementById("headerGameEnd")
+        const buttonRooms = document.getElementById("buttonRooms")
+        const buttonHome = document.getElementById("buttonHome")
+        const headerGameEnd = document.getElementById("headerGameEnd")
 
-		const gameSocket = new WebSocket(
-			'ws://'
-			+ window.location.host
-			+ '/ws/game/'
-			+ window.location.pathname.split('/').filter(Boolean).pop()
-			+ '/'
-		);
-		
-		gameSocket.onopen = function(e) {
-			console.log("Connection opened");
-		}
+        const gameSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/game/'
+            + window.location.pathname.split('/').filter(Boolean).pop()
+            + '/'
+        );
 
-		gameSocket.onmessage = function(e) {
-			if (e.data.startsWith("Game ended") || e.data.startsWith("Timeout")) {
-				buttonHome.setAttribute("style", "")
-				buttonRooms.setAttribute("style", "")
-				headerGameEnd.innerHTML = e.data
-				headerGameEnd.setAttribute("style", "")
-				return
-			}
-			decodeState(e.data);
-			removeElems(gameState)
-			renderPartialGame(gameState);
-		}
+        gameSocket.onopen = function(e) {
+            console.log("Connection opened");
+        }
 
-		gameSocket.onclose = function(e) {
-			console.error('Connection closed');
-		}
+        gameSocket.onmessage = function(e) {
+            if (e.data.startsWith("Game ended") || e.data.startsWith("Timeout")) {
+                buttonHome.setAttribute("style", "")
+                buttonRooms.setAttribute("style", "")
+                headerGameEnd.innerHTML = e.data
+                headerGameEnd.setAttribute("style", "")
+                return
+            }
+            decodeState(e.data);
+            removeElems(gameState)
+            renderPartialGame(gameState);
+        }
 
-		gameSocket.onerror = function(error) {
-			console.log("WebSocket error: ", error);
-		}
+        gameSocket.onclose = function(e) {
+            console.error('Connection closed');
+        }
+
+        gameSocket.onerror = function(error) {
+            console.log("WebSocket error: ", error);
+        }
 
         //this will detect when the window loses focus, sending a ' ' state clear and clearing keypresses.
         function blur() {
             keyPressed['w'] = false;
-			keyPressed['s'] = false;
-			activeKey = null;
+            keyPressed['s'] = false;
+            activeKey = null;
             if (gameSocket.readyState === WebSocket.OPEN)
-			    gameSocket.send(' ');
+                gameSocket.send(' ');
         }
 
         function keyup(event) {
-			const key = event.key;
+            const key = event.key;
 
-			if (key === 'w' || key === 's') {
-				keyPressed[key] = false;
-				const otherKey = key === 'w' ? 's' : 'w';
+            if (key === 'w' || key === 's') {
+                keyPressed[key] = false;
+                const otherKey = key === 'w' ? 's' : 'w';
 
-				if (keyPressed[otherKey]) { // if the other key is still pressed after lifting one, send that key
-					activeKey = otherKey;
-					gameSocket.send(otherKey);
-				} else { // else send a space ' ' for state clear
-					activeKey = null;
-					gameSocket.send(' ');
-				}
-			}
-		}
+                if (keyPressed[otherKey]) { // if the other key is still pressed after lifting one, send that key
+                    activeKey = otherKey;
+                    gameSocket.send(otherKey);
+                } else { // else send a space ' ' for state clear
+                    activeKey = null;
+                    gameSocket.send(' ');
+                }
+            }
+        }
 
         function keydown(event) {
             const key = event.key;
@@ -146,123 +146,123 @@
             }
         }
 
-		window.addEventListener('blur', blur);
-		document.addEventListener('keyup', keyup);
-		document.addEventListener('keydown', keydown);
+        window.addEventListener('blur', blur);
+        document.addEventListener('keyup', keyup);
+        document.addEventListener('keydown', keydown);
 
-		function decodeState(rawState) {
-			values = rawState.split(' ');
-			gameState = {
-				"score1": parseInt(values[0], 10),
-				"score2": parseInt(values[1], 10),
-				"paddle1": parseInt(values[2], 10),
-				"paddle2": parseInt(values[3], 10),
-				"ball": [
-					values[4],
-					values[5]
-				]
-			};
-		}
+        function decodeState(rawState) {
+            values = rawState.split(' ');
+            gameState = {
+                "score1": parseInt(values[0], 10),
+                "score2": parseInt(values[1], 10),
+                "paddle1": parseInt(values[2], 10),
+                "paddle2": parseInt(values[3], 10),
+                "ball": [
+                    values[4],
+                    values[5]
+                ]
+            };
+        }
 
-		function drawPaddle1(paddle) {
-			const paddleY = paddle * relativeHeight;
-			interactiveCtx.fillRect(leftPaddleX, paddleY, paddleWidth, paddleHeight);
-		}
+        function drawPaddle1(paddle) {
+            const paddleY = paddle * relativeHeight;
+            interactiveCtx.fillRect(leftPaddleX, paddleY, paddleWidth, paddleHeight);
+        }
 
-		function drawPaddle2(paddle) {
-			const paddleY = paddle * relativeHeight;
-			interactiveCtx.fillRect(rightPaddleX, paddleY, paddleWidth, paddleHeight);
-		}
-		
-		function drawBall(ball) {
-			interactiveCtx.beginPath();
-			const ballPosX = paddleWidth + (ball[0] * relativeWidth);
-			const ballPosY = ball[1] * relativeHeight;
-			interactiveCtx.arc(ballPosX, ballPosY, ballRadius, 0, 2 * Math.PI);
-			interactiveCtx.fill();
-			interactiveCtx.closePath();
-		}
+        function drawPaddle2(paddle) {
+            const paddleY = paddle * relativeHeight;
+            interactiveCtx.fillRect(rightPaddleX, paddleY, paddleWidth, paddleHeight);
+        }
 
-		function drawScore1(score1) {
-			interactiveCtx.font = fontSize + ' Handjet';
-			interactiveCtx.fillText(score1, interactiveCanvas.width / 4, scoreHeight);
-		}
+        function drawBall(ball) {
+            interactiveCtx.beginPath();
+            const ballPosX = paddleWidth + (ball[0] * relativeWidth);
+            const ballPosY = ball[1] * relativeHeight;
+            interactiveCtx.arc(ballPosX, ballPosY, ballRadius, 0, 2 * Math.PI);
+            interactiveCtx.fill();
+            interactiveCtx.closePath();
+        }
 
-		function drawScore2(score2) {
-			interactiveCtx.font = fontSize + ' Handjet';
-			interactiveCtx.fillText(score2, 3 * interactiveCanvas.width / 4, scoreHeight);
-		}
+        function drawScore1(score1) {
+            interactiveCtx.font = fontSize + ' Handjet';
+            interactiveCtx.fillText(score1, interactiveCanvas.width / 4, scoreHeight);
+        }
 
-		function drawField() {
-			//draw goal lines
-			backgroundCtx.fillRect(paddleWidth, 0, 1, 5 * backgroundCanvas.height / 6);
-			backgroundCtx.fillRect(rightPaddleX, 0, 1, 5 * backgroundCanvas.height / 6);
+        function drawScore2(score2) {
+            interactiveCtx.font = fontSize + ' Handjet';
+            interactiveCtx.fillText(score2, 3 * interactiveCanvas.width / 4, scoreHeight);
+        }
 
-			//draw middle line
-			backgroundCtx.fillRect(backgroundCanvas.width / 2, 0, 1, 5 * backgroundCanvas.height / 6);
+        function drawField() {
+            //draw goal lines
+            backgroundCtx.fillRect(paddleWidth, 0, 1, 5 * backgroundCanvas.height / 6);
+            backgroundCtx.fillRect(rightPaddleX, 0, 1, 5 * backgroundCanvas.height / 6);
 
-			//draw top and bottom limits
-			backgroundCtx.fillRect(0, 0, backgroundCanvas.width, 1);
-			backgroundCtx.fillRect(0, 5 * backgroundCanvas.height / 6, backgroundCanvas.width, 1);
-		}
+            //draw middle line
+            backgroundCtx.fillRect(backgroundCanvas.width / 2, 0, 1, 5 * backgroundCanvas.height / 6);
 
-		function renderGame(gameState) {
-			backgroundCtx.fillStyle = backgroundColor;
-			backgroundCtx.fillRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
-			
-			backgroundCtx.fillStyle = decorColor;
-			drawField();
-			renderPartialGame(gameState)
-		}
+            //draw top and bottom limits
+            backgroundCtx.fillRect(0, 0, backgroundCanvas.width, 1);
+            backgroundCtx.fillRect(0, 5 * backgroundCanvas.height / 6, backgroundCanvas.width, 1);
+        }
 
-		function removeElems(gameState) {
-			interactiveCtx.clearRect(0, 0, interactiveCanvas.width, interactiveCanvas.height);
-		}
+        function renderGame(gameState) {
+            backgroundCtx.fillStyle = backgroundColor;
+            backgroundCtx.fillRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
 
-		function renderPartialGame(gameState) {
-			interactiveCtx.fillStyle = decorColor;
-			drawPaddle1(gameState.paddle1);
-			drawPaddle2(gameState.paddle2);
-			drawBall(gameState.ball);
-			drawScore1(gameState.score1);
-			drawScore2(gameState.score2);
-		}
+            backgroundCtx.fillStyle = decorColor;
+            drawField();
+            renderPartialGame(gameState)
+        }
 
-		function resizeCanvas() {
-			const navHeight = document.getElementById("navbar").clientHeight;
-			const windowAspectRatio = window.innerWidth / (window.innerHeight - navHeight);
-			const canvasAspectRatio = 9 / 6;
-			let canvasWidth, canvasHeight;
+        function removeElems(gameState) {
+            interactiveCtx.clearRect(0, 0, interactiveCanvas.width, interactiveCanvas.height);
+        }
 
-			if (windowAspectRatio > canvasAspectRatio) { // window is wider than the canvas ratio
-				canvasHeight = window.innerHeight - navHeight;
-				canvasWidth = canvasHeight * canvasAspectRatio;
-			} else { // window is taller than the canvas ratio
-				canvasWidth = window.innerWidth;
-				canvasHeight = canvasWidth / canvasAspectRatio - navHeight;
-			}
+        function renderPartialGame(gameState) {
+            interactiveCtx.fillStyle = decorColor;
+            drawPaddle1(gameState.paddle1);
+            drawPaddle2(gameState.paddle2);
+            drawBall(gameState.ball);
+            drawScore1(gameState.score1);
+            drawScore2(gameState.score2);
+        }
 
-			canvasContainer.style.width = canvasWidth + 'px';
-			canvasContainer.style.height = canvasHeight + 'px';
+        function resizeCanvas() {
+            const navHeight = document.getElementById("navbar").clientHeight;
+            const windowAspectRatio = window.innerWidth / (window.innerHeight - navHeight);
+            const canvasAspectRatio = 9 / 6;
+            let canvasWidth, canvasHeight;
 
-			interactiveCanvas.width = canvasWidth;
-			interactiveCanvas.height = canvasHeight;
-			backgroundCanvas.width = canvasWidth;
-			backgroundCanvas.height = canvasHeight;
+            if (windowAspectRatio > canvasAspectRatio) { // window is wider than the canvas ratio
+                canvasHeight = window.innerHeight - navHeight;
+                canvasWidth = canvasHeight * canvasAspectRatio;
+            } else { // window is taller than the canvas ratio
+                canvasWidth = window.innerWidth;
+                canvasHeight = canvasWidth / canvasAspectRatio - navHeight;
+            }
 
-			relativeWidth = (interactiveCanvas.width - (2 * paddleWidth)) / fieldWidth;
-			relativeHeight = (5 * interactiveCanvas.height / 6) / fieldHeight;
-			scoreHeight = 5.5 * canvasHeight / 6;
-			paddleWidth =  defaultPaddleWidth * relativeWidth;
-			relativeWidth = (interactiveCanvas.width - (2 * paddleWidth)) / fieldWidth;
-			rightPaddleX = interactiveCanvas.width - paddleWidth;
-			ballRadius = defaultBallRadius * relativeHeight;
-			paddleHeight = defaultPaddleHeight * relativeHeight;
-			fontSize = (defaultFontSize * relativeHeight) + 'px';
+            canvasContainer.style.width = canvasWidth + 'px';
+            canvasContainer.style.height = canvasHeight + 'px';
 
-			//redraw content after resizing
-			renderGame(gameState)
-		}
+            interactiveCanvas.width = canvasWidth;
+            interactiveCanvas.height = canvasHeight;
+            backgroundCanvas.width = canvasWidth;
+            backgroundCanvas.height = canvasHeight;
+
+            relativeWidth = (interactiveCanvas.width - (2 * paddleWidth)) / fieldWidth;
+            relativeHeight = (5 * interactiveCanvas.height / 6) / fieldHeight;
+            scoreHeight = 5.5 * canvasHeight / 6;
+            paddleWidth =  defaultPaddleWidth * relativeWidth;
+            relativeWidth = (interactiveCanvas.width - (2 * paddleWidth)) / fieldWidth;
+            rightPaddleX = interactiveCanvas.width - paddleWidth;
+            ballRadius = defaultBallRadius * relativeHeight;
+            paddleHeight = defaultPaddleHeight * relativeHeight;
+            fontSize = (defaultFontSize * relativeHeight) + 'px';
+
+            //redraw content after resizing
+            renderGame(gameState)
+        }
 
         function move_away(event) {
             blur()
@@ -276,12 +276,12 @@
             window.removeEventListener('popstate', move_away)
         }
 
-		window.addEventListener('resize', resizeCanvas);
-		window.addEventListener('load', resizeCanvas);
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('load', resizeCanvas);
         document.body.addEventListener('htmx:beforeRequest', move_away)
         window.addEventListener('popstate', move_away);
-		resizeCanvas();
-	}
-	start()
+        resizeCanvas();
+    }
+    start()
 
 </script>
