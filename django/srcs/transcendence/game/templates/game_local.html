@@ -260,12 +260,12 @@
 
         function resizeCanvas() {
             const navHeight = document.getElementById("navbar").clientHeight;
-            const windowAspectRatio = window.innerWidth / (window.innerHeight - navHeight);
+            const windowAspectRatio = window.innerWidth / (window.innerHeight - 96);
             const canvasAspectRatio = 9 / 6;
             let canvasWidth, canvasHeight;
 
             if (windowAspectRatio > canvasAspectRatio) { // window is wider than the canvas ratio
-                canvasHeight = window.innerHeight - navHeight;
+                canvasHeight = window.innerHeight - 96;
                 canvasWidth = canvasHeight * canvasAspectRatio;
             } else { // window is taller than the canvas ratio
                 canvasWidth = window.innerWidth;
