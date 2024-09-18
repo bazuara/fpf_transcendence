@@ -6,31 +6,31 @@
                 <div class='body-first-child tournament first-four'>
                 <ul class='round round-1'>
                     <li class='spacer'>&nbsp;</li>
-                    <li class='game-left game-top'>{{ tournament.user1.name }} (Score: {{ tournament.game_12.score1 }})</li>
+                    <li class='game-left game-top' id="player1"></li>
                     <li class='game-left spacer'>&nbsp;</li>
-                    <li class='game-left game-bottom'>{{ tournament.user2.name }} (Score: {{ tournament.game_12.score2 }})</li>
+                    <li class='game-left game-bottom'id="player2"></li>
                     <li class='spacer'>&nbsp;</li>
                 </ul>
                 <ul class='round semi-final'>
                     <li class='spacer'>&nbsp;</li>
-                    <li class='game-left game-top'>{{ winner_left }} (Score: {{ tournament.game_final.score1 }})</li>
+                    <li class='game-left game-top' id="winner_left"></li>
                     <li class='spacer'>&nbsp;</li>
                 </ul>
                 <ul class='round finals'>
                     <li class='spacer'>&nbsp;</li>
-                    <li class='game final'>Winner: {{ winner_final }}</li>
+                    <li class='game final' id="winner_final">Winner:</li>
                     <li class='spacer'>&nbsp;</li>
                 </ul>
                 <ul class='round semi-final'>
                     <li class='spacer'>&nbsp;</li>
-                    <li class='game-right game-top'>{{ winner_right }} (Score: {{ tournament.game_final.score2 }})</li>
+                    <li class='game-right game-top' id="winner_right"></li>
                     <li class='spacer'>&nbsp;</li>
                 </ul>
                 <ul class='round round-1'>
                     <li class='spacer'>&nbsp;</li>
-                    <li class='game-right game-top'>{{ tournament.user3.name }} (Score: {{ tournament.game_34.score1 }})</li>
+                    <li class='game-right game-top' id="player3"></li>
                     <li class='game-right spacer'>&nbsp;</li>
-                    <li class='game-right game-bottom'>{{ tournament.user4.name }} (Score: {{ tournament.game_34.score2 }})</li>
+                    <li class='game-right game-bottom' id="player4"></li>
                     <li class='spacer'>&nbsp;</li>
                 </ul>
                 </div>
@@ -38,6 +38,93 @@
         </section>
     </div>
     <div class="md-2 mt-2">
-        <button id = "buttonReady" class="btn btn-outline-custom btn-lg">Ready</button>
+        <button id = "buttonReadyTournament" style="display: none;" class="btn btn-outline-custom btn-lg">Ready</button>
+        <button id = "buttonGoHome" style="display: none;" hx-get="{% url 'welcome' %}" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg">Go home</button>
     </div>
+    <div id="redirectorTournament" hx-target="#content-div" hx-push-url="true" hx-trigger="redirectTournamentEvent" hx-get=""></div>
 </div>
+
+<script>
+    async function waitPathname() {
+        while (!window.location.pathname.startsWith('/rooms/tournament/'))
+            await setTimeout(()=>{}, 1);
+    }
+    
+    async function start() {
+        await waitPathname();
+        const readyButtonTournament = document.getElementById("buttonReadyTournament");
+        const goHomeButton          = document.getElementById("buttonGoHome");
+        const redirectorTournament  = document.getElementById("redirectorTournament");
+        const player1               = document.getElementById("player1");
+        const player2               = document.getElementById("player2");
+        const player3               = document.getElementById("player3");
+        const player4               = document.getElementById("player4");
+        const winner_left           = document.getElementById("winner_left");
+        const winner_right          = document.getElementById("winner_right");
+        const winner_final          = document.getElementById("winner_final");
+
+        const tournamentSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/rooms/tournament/'
+            + window.location.pathname.split('/').pop()
+            + '/'
+        );
+
+        function handleReadyButtonTournament() {
+            if (readyButtonTournament.textContent === "Ready") {
+                readyButtonTournament.textContent = "Cancel"
+                tournamentSocket.send("ready")
+            }
+            else {
+                readyButtonTournament.textContent = "Ready"
+                tournamentSocket.send("cancel")
+            }
+        }
+
+        readyButtonTournament.addEventListener('click', handleReadyButtonTournament);
+
+        tournamentSocket.onmessage = function(e) {
+            state = JSON.parse(e.data);
+            if (state.redirect === true && (state.selfplayer === state.player1 || state.selfplayer === state.player2)) {
+                redirectorTournament.setAttribute("hx-get", "/game/" + state.next_id)
+                htmx.process(redirectorTournament)
+                redirectorTournament.dispatchEvent(new Event('redirectTournamentEvent'));
+                return ;
+            }
+            else if (state.redirect === false) {
+                player1.textContent = "" + (state.user1 ? state.user1 : "") + (state.score_12_1 !== undefined ? "(Score: " + state.score_12_1 + ")" : "");
+                player2.textContent = "" + (state.user2 ? state.user2 : "") + (state.score_12_2 !== undefined ? "(Score: " + state.score_12_2 + ")" : "");
+                player3.textContent = "" + (state.user3 ? state.user3 : "") + (state.score_34_1 !== undefined ? "(Score: " + state.score_34_1 + ")" : "");
+                player4.textContent = "" + (state.user4 ? state.user4 : "") + (state.score_34_2 !== undefined ? "(Score: " + state.score_34_2 + ")" : "");
+                winner_left.textContent  = "" + (state.winner_12 ? state.winner_12 : "") + (state.score_final_1 !== undefined ? "(Score: " + state.score_final_1 + ")" : "")
+                winner_right.textContent = "" + (state.winner_34 ? state.winner_34 : "") + (state.score_final_2 !== undefined ? "(Score: " + state.score_final_2 + ")" : "")
+                winner_final.textContent = "" + (state.winner_final ? "Winner: " + state.winner_final : "")
+                if (!state.show_button) {
+                    readyButtonTournament.style.display = 'none';
+                    goHomeButton.style.display = '';
+                } else if (state.show_button) {
+                    readyButtonTournament.style.display = '';
+                    goHomeButton.style.display = 'none';
+                }
+            }
+        }
+    
+        tournamentSocket.onerror = function(error) {
+            console.log("WebSocket error: ", error);
+        }
+            
+        function move_away(event) {
+            tournamentSocket.close();
+            document.body.removeEventListener('htmx:beforeRequest', move_away);
+            window.removeEventListener('popstate', move_away);
+            readyButtonTournament.removeEventListener('click', handleReadyButtonTournament);
+        }
+
+        document.body.addEventListener('htmx:beforeRequest', move_away);
+        window.addEventListener('popstate', move_away);
+    }
+
+    start()
+
+</script>

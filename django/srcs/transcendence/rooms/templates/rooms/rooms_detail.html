@@ -65,10 +65,8 @@
                 redirector.dispatchEvent(new Event('redirectEvent'));
                 return
             }
-            data1 = "" + (state.user1 ? state.user1 + "\n" : "") + (state.user2 ? state.user2 : "")
-            data2 = "" + (state.user3 ? state.user3 + "\n" : "") + (state.user4 ? state.user4 : "")
-            team1.textContent = data1
-            team2.textContent = data2
+            team1.textContent = "" + (state.user1 ? state.user1 + "\n" : "") + (state.user2 ? state.user2 : "")
+            team2.textContent = "" + (state.user3 ? state.user3 + "\n" : "") + (state.user4 ? state.user4 : "")
         }
     
         roomSocket.onerror = function(error) {

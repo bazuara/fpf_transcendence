@@ -12,7 +12,8 @@ from asgiref.sync import async_to_sync
 lock_dict = {}
 global_dict_lock = threading.Lock()
 global_games_lock = threading.Lock()
-global_tournaments_lock = threading.Lock()
+
+from .consumers_tournament import global_tournaments_lock
 
 def acquire_lock(key):
     global_dict_lock.acquire()
