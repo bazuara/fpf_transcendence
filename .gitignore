@@ -3,3 +3,4 @@
 static_files/
 migrations/
 postgres/dbdata/data
+blockchain/build/
