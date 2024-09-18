@@ -162,8 +162,6 @@ class TournamentConsumer(WebsocketConsumer):
             self.winner_34 = tournament.game_34.user1 if tournament.game_34.score1 > tournament.game_34.score2 else tournament.game_34.user3
             self.winner_12_ready = tournament.user1_ready if self.winner_12 == tournament.user1 else tournament.user2_ready
             self.winner_34_ready = tournament.user3_ready if self.winner_34 == tournament.user3 else tournament.user4_ready
-            print(f"winner_12: {self.winner_12} and winner_12_ready: {self.winner_12_ready}, "
-                f"winner_34: {self.winner_34} and winner_34_ready: {self.winner_34_ready}")
             return self.winner_12_ready and self.winner_34_ready
 
         return False

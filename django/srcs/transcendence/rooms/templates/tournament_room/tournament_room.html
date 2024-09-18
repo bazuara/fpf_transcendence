@@ -86,7 +86,6 @@
 
         tournamentSocket.onmessage = function(e) {
             state = JSON.parse(e.data);
-            console.log(state);
             if (state.redirect === true && (state.selfplayer === state.player1 || state.selfplayer === state.player2)) {
                 redirectorTournament.setAttribute("hx-get", "/game/" + state.next_id)
                 htmx.process(redirectorTournament)
