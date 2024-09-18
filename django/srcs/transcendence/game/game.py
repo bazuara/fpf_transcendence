@@ -85,9 +85,9 @@ class GameHandler():
         
         message = "Timeout" if timeout else "Game ended"
         if not self.multiplayer:
-            message += ", Winner: " + winner
+            message += "<br>Winner: " + winner
         else:
-            message += ", Winners: " + winner + ", " + winner2
+            message += "<br>Winners: " + winner + ", " + winner2
 
         async_to_sync(get_channel_layer().group_send) (
             self.group_name, {"type": "end.game", "message": message}

@@ -2,14 +2,17 @@
     <canvas id="backgroundPongCanvas"> </canvas>
     <canvas id="pongCanvas"> </canvas>
 </div>
-<div class="col-md-4">
-    <h2 id = "headerGameEnd" style="display: none;"></h2>
-</div>
-<div class="col-md-4">
-    <button id = "buttonRooms" style="display: none;" hx-get="/rooms" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg w-100">Go to Rooms</button>
-</div>
-<div class="col-md-4">
-    <button id = "buttonHome" style="display: none;" hx-get="/" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg w-100">Go to Home</button>
+
+<div class="row justify-content-center">
+    <div class="col-12 text-center">
+        <h2 id="headerGameEnd" style="display: none;"></h2>
+    </div>
+    <div class="col-5 mx-2">
+        <button id="buttonRooms" style="display: none;" hx-get="/rooms" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg w-100">Rooms</button>
+    </div>
+    <div class="col-5 mx-2">
+        <button id="buttonHome" style="display: none;" hx-get="/" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg w-100">Welcome</button>
+    </div>
 </div>
 
 <script>
@@ -230,12 +233,12 @@
 
         function resizeCanvas() {
             const navHeight = document.getElementById("navbar").clientHeight;
-            const windowAspectRatio = window.innerWidth / (window.innerHeight - navHeight);
+            const windowAspectRatio = window.innerWidth / (window.innerHeight - 96);
             const canvasAspectRatio = 9 / 6;
             let canvasWidth, canvasHeight;
 
             if (windowAspectRatio > canvasAspectRatio) { // window is wider than the canvas ratio
-                canvasHeight = window.innerHeight - navHeight;
+                canvasHeight = window.innerHeight - 96;
                 canvasWidth = canvasHeight * canvasAspectRatio;
             } else { // window is taller than the canvas ratio
                 canvasWidth = window.innerWidth;
