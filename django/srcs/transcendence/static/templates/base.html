@@ -37,6 +37,11 @@
         connectOnlineWs();
     </script>
     <style>
+
+        :root {
+            --navbar-height: 56px; /* Define the variable */
+        }
+
         html, body {
             background-color: #000000;
             color: #28df28;
@@ -49,8 +54,13 @@
             flex-direction: column;
         }
 
+        #navbar {
+            min-height: var(--navbar-height);
+        }
+
         .content {
             flex: 1;
+            margin-top: calc(var(--navbar-height) + 5px);
         }
 
         .our-green {
@@ -95,34 +105,6 @@
             color: #ffffff;
         }
 
-        .span-made-by {
-            display: block;
-            font-family: "Handjet";
-            color: #28df28;
-            white-space: nowrap;
-            width: 50ch; 
-            position: absolute;
-            top: 15%;
-            left: 53%;
-            font-size: 250%;
-            transform: translate(-50%, -50%);
-            overflow: hidden;
-        }
-
-        .span-titulo2 {
-            display: block;
-            font-family: "Handjet";
-            color: #28df28;
-            white-space: nowrap;
-            width: 16ch; 
-            position: absolute;
-            top: 15%;
-            left: 53%;
-            font-size: 250%;
-            transform: translate(-50%, -50%);
-            overflow: hidden;
-        }
-
         .span-welcome {
             display: block;
             font-family: "Handjet";
@@ -138,33 +120,6 @@
             overflow: hidden;
         }
 
-        .span-titulo {
-            display: block;
-            font-family: "Handjet";
-            color: #28df28;
-            white-space: nowrap;
-            width: 12ch; 
-            position: absolute;
-            top: 20%;
-            left: 53%;
-            font-size: 200%;
-            transform: translate(-50%, -50%);
-            overflow: hidden;
-        }
-
-        .span-texto {
-            display: block;
-            font-family: "Handjet";
-            color: #28df28;
-            white-space: nowrap;
-            width: 20ch; 
-            position: absolute;
-            top: 30%;
-            left: 53%;
-            font-size: 150%;
-            transform: translate(-50%, -50%);
-            overflow: hidden;
-        }
         @keyframes typing {
             from { width: 0 }
         }
@@ -348,11 +303,13 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top px-3" id="navbar">
-        <a class="navbar-brand"  hx-get="{% url 'welcome' %}" hx-target="#content-div" hx-push-url="true">
-            <div button type="button" class="btn btn-outline-custom btn-lg" data-i18n="Analytics">
-                Welcome
-            </div>
-        </a>
+        <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+                <a class="nav-link" hx-get="{% url 'welcome' %}" hx-target="#content-div" hx-push-url="true">
+                    <div class="btn btn-outline-custom btn-lg">Welcome</div>
+                </a>
+            </li>
+        </ul>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -360,39 +317,39 @@
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link" hx-get="{% url 'rooms' %}" hx-target="#content-div" hx-push-url="true">
-                        <div button type="button" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">Rooms</div>
+                        <div button type="button" class="btn btn-outline-custom btn-lg">Rooms</div>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" hx-get=" " hx-target="#content-div" hx-push-url="true">
-                        <div button type="button" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">Tournaments</div>
+                    <a class="nav-link" hx-get="" hx-target="#content-div" hx-push-url="true">
+                        <div button type="button" class="btn btn-outline-custom btn-lg">Tournaments</div>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" hx-get="{% url 'social' user.username %}" hx-target="#content-div" hx-push-url="true">
-                        <div button type="button" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">Social</div>
+                        <div button type="button" class="btn btn-outline-custom btn-lg">Social</div>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" hx-get="{% url 'how_to_play' %}" hx-target="#content-div" hx-push-url="true">
-                        <div button type="button" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">How To Play</div>
+                        <div button type="button" class="btn btn-outline-custom btn-lg">How To Play</div>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" hx-get="{% url 'about' %}" hx-target="#content-div" hx-push-url="true">
-                        <div button type="button" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">About</div>
+                        <div button type="button" class="btn btn-outline-custom btn-lg">About</div>
                     </a>
                 </li>
             </ul>
             <form action="{% url 'logout' %}" method="post" class="d-flex ms-auto">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-outline-custom btn-lg"  data-i18n="Analytics">Logout</button>
+                <button type="submit" class="btn btn-outline-custom btn-lg">Logout</button>
             </form>
         </div>
     </nav>
 
     <!-- Block to insert from another view -->
-    <div class="content mt-5 pt-5">
+    <div class="content pt-5">
         <div class="" id="content-div" hx-history-elt>
             {% block content %}
             {% endblock content %}
