@@ -13,21 +13,28 @@ def get_tournaments():
     if web3.is_connected():
         print("Connected to Ethereum")
     else:
-        print("Failed to connect")
+        raise Exception("Failed to connect to Ethereum")
 
-    # Get the contract ABI and address
-    with open('/blockchain/build/contracts/Tournament.json') as f:
-        contract_json = json.load(f)
-        contract_abi = contract_json['abi']
+    # Get the contract ABI and address if file is not openable, raise an exception
+    try:
+        with open('/blockchain/build/contracts/Tournament.json', 'r') as f:
+            contract_json = json.load(f)
+            contract_abi = contract_json['abi']
+    except:
+        raise Exception("Failed to load contract ABI")
 
-    # contract_address = '0x6B130A87fD200bEb185Eb5426144E7f473AF9Ef9' # get from deploying with truffle
-    # read contract adress from file
-    with open('/blockchain/build/contract_address.txt', 'r') as file:
-        contract_address = file.read().replace('\n', '')
-    contract = web3.eth.contract(address=contract_address, abi=contract_abi)
+    # read contract address from file
+    try:
+        with open('/blockchain/build/contract_address.txt', 'r') as file:
+            contract_address = file.read().replace('\n', '')
+        contract = web3.eth.contract(address=contract_address, abi=contract_abi)
+    except:
+        raise Exception("Failed to load contract address")
 
     # Set the default account
     web3.eth.default_account = web3.eth.accounts[0]
+    
+    # Fetch the tournaments
     matches = contract.functions.getMatches().call()
     return matches
 
@@ -37,7 +44,6 @@ def tournament_view(request):
     tournaments_parsed = []
 
     for t in tournaments:
-        # t has the following structure ('xxxxxxx', 'player_id_1', 'player_id_2', 'player_id_3', 'player_id_4', '1-0', '1-0', '1-0')
         t_parsed = {
             'tournament_id': t[0],
             'user1': OurUser.objects.get(id=int(t[1])),
@@ -60,6 +66,4 @@ def tournament_view(request):
         return render(request, 'tournaments/tournaments.html', context)
     else:
         return render(request, 'tournaments/tournaments_full.html', context)
-    
-
     
