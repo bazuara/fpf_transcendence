@@ -37,6 +37,7 @@ class OnlineConsumer(AsyncWebsocketConsumer):
                 await release_lock(self.user.username)
                 await self.accept()
             except OurUser.DoesNotExist:
+                await self.close()
                 pass
 
     async def disconnect(self, close_code):

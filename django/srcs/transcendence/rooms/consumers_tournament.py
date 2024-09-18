@@ -102,34 +102,40 @@ class TournamentConsumer(WebsocketConsumer):
 
         try:
             tournament = Tournament.objects.get(tournament_id=self.tournament_id)
+            ourUser = OurUser.objects.get(name=self.user.username)
             state = {
                 "redirect": False,
+                "show_button": True,
+                "user1": tournament.user1.alias,
+                "user2": tournament.user2.alias,
+                "user3": tournament.user3.alias,
+                "user4": tournament.user4.alias,
             }
 
-            if tournament.user1 is not None:
-                state["user1"] = tournament.user1.alias
-            if tournament.user2 is not None:
-                state["user2"] = tournament.user2.alias
-            if tournament.user3 is not None:
-                state["user3"] = tournament.user3.alias
-            if tournament.user4 is not None:
-                state["user4"] = tournament.user4.alias
             if tournament.game_12 and tournament.game_12.end_time:
-                state["winner_12"] = tournament.game_12.user1.alias if tournament.game_12.score1 > tournament.game_12.score2 else tournament.game_12.user3.alias
+                state["winner_12"]  = tournament.game_12.user1.alias if tournament.game_12.score1 > tournament.game_12.score2 else tournament.game_12.user3.alias
                 state["score_12_1"] = tournament.game_12.score1
                 state["score_12_2"] = tournament.game_12.score2
+                if tournament.game_12.user1 == ourUser and tournament.game_12.score1 < tournament.game_12.score2:
+                    state["show_button"] = False
+                if tournament.game_12.user3 == ourUser and tournament.game_12.score1 > tournament.game_12.score2:
+                    state["show_button"] = False
             if tournament.game_34 and tournament.game_34.end_time:
-                state["winner_34"] = tournament.game_34.user1.alias if tournament.game_34.score1 > tournament.game_34.score2 else tournament.game_34.user3.alias
+                state["winner_34"]  = tournament.game_34.user1.alias if tournament.game_34.score1 > tournament.game_34.score2 else tournament.game_34.user3.alias
                 state["score_34_1"] = tournament.game_34.score1
                 state["score_34_2"] = tournament.game_34.score2
+                if tournament.game_34.user1 == ourUser and tournament.game_34.score1 < tournament.game_34.score2:
+                    state["show_button"] = False
+                if tournament.game_34.user3 == ourUser and tournament.game_34.score1 > tournament.game_34.score2:
+                    state["show_button"] = False
             if tournament.game_final and tournament.game_final.end_time:
-                state["winner_final"] = tournament.game_final.user1.alias if tournament.game_final.score1 > tournament.game_final.score2 else tournament.game_final.user3.alias
+                state["winner_final"]  = tournament.game_final.user1.alias if tournament.game_final.score1 > tournament.game_final.score2 else tournament.game_final.user3.alias
                 state["score_final_1"] = tournament.game_final.score1
                 state["score_final_2"] = tournament.game_final.score2
+                state["show_button"]   = False
             self.send(json.dumps(state))
         finally:
             release_lock(self.tournament_id)
-
 
     def assignUserReady(self, ready, ourUser, tournament):
         match ourUser:
@@ -154,14 +160,16 @@ class TournamentConsumer(WebsocketConsumer):
         if not tournament.game_final and tournament.game_12 and tournament.game_12.end_time and tournament.game_34 and tournament.game_34.end_time:
             self.winner_12 = tournament.game_12.user1 if tournament.game_12.score1 > tournament.game_12.score2 else tournament.game_12.user3
             self.winner_34 = tournament.game_34.user1 if tournament.game_34.score1 > tournament.game_34.score2 else tournament.game_34.user3
-            self.winner_12_ready = tournament.user1_ready if self.winner_12 is tournament.user1 else tournament.user2_ready
-            self.winner_34_ready = tournament.user3_ready if self.winner_34 is tournament.user3 else tournament.user4_ready
+            self.winner_12_ready = tournament.user1_ready if self.winner_12 == tournament.user1 else tournament.user2_ready
+            self.winner_34_ready = tournament.user3_ready if self.winner_34 == tournament.user3 else tournament.user4_ready
+            print(f"winner_12: {self.winner_12} and winner_12_ready: {self.winner_12_ready}, "
+                f"winner_34: {self.winner_34} and winner_34_ready: {self.winner_34_ready}")
             return self.winner_12_ready and self.winner_34_ready
 
         return False
 
     def game_ready(self, event):
-        self.send(json.dumps({"redirect": True, "player1": event["player1"], "player2": event["player2"], "next_id": event["next_id"], "selfplayer":  event["selfplayer"]}))
+        self.send(json.dumps({"redirect": True, "player1": event["player1"], "player2": event["player2"], "next_id": event["next_id"], "selfplayer": self.user.username}))
 
     def receive(self, text_data):
         acquire_lock(self.tournament_id)
@@ -192,7 +200,7 @@ class TournamentConsumer(WebsocketConsumer):
                 finally:
                     global_games_lock.release()
                 async_to_sync(self.channel_layer.group_send) (
-                    self.group_name, {"type": "game.ready", "player1": tournament.game_12.user1.name, "player2": tournament.game_12.user3.name, "next_id": next_id, "selfplayer": ourUser.name}
+                    self.group_name, {"type": "game.ready", "player1": tournament.user1.name, "player2": tournament.user2.name, "next_id": next_id}
                 )
                 tournament.user1_ready = False
                 tournament.user2_ready = False
@@ -213,7 +221,7 @@ class TournamentConsumer(WebsocketConsumer):
                 finally:
                     global_games_lock.release()
                 async_to_sync(self.channel_layer.group_send) (
-                    self.group_name, {"type": "game.ready", "player1": tournament.game_34.user1.name, "player2": tournament.game_34.user3.name, "next_id": next_id, "selfplayer": ourUser.name}
+                    self.group_name, {"type": "game.ready", "player1": tournament.user3.name, "player2": tournament.user4.name, "next_id": next_id}
                 )
                 tournament.user3_ready = False
                 tournament.user4_ready = False
@@ -234,7 +242,7 @@ class TournamentConsumer(WebsocketConsumer):
                 finally:
                     global_games_lock.release()
                 async_to_sync(self.channel_layer.group_send) (
-                    self.group_name, {"type": "game.ready", "player1": self.winner_12.name, "player2": self.winner_34.name, "next_id": next_id, "selfplayer": ourUser.name}
+                    self.group_name, {"type": "game.ready", "player1": self.winner_12.name, "player2": self.winner_34.name, "next_id": next_id}
                 )
                 tournament.save()
 

@@ -38,7 +38,8 @@
         </section>
     </div>
     <div class="md-2 mt-2">
-        <button id = "buttonReadyTournament" class="btn btn-outline-custom btn-lg">Ready</button>
+        <button id = "buttonReadyTournament" style="display: none;" class="btn btn-outline-custom btn-lg">Ready</button>
+        <button id = "buttonGoHome" style="display: none;" hx-get="{% url 'welcome' %}" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg">Go home</button>
     </div>
     <div id="redirectorTournament" hx-target="#content-div" hx-push-url="true" hx-trigger="redirectTournamentEvent" hx-get=""></div>
 </div>
@@ -52,6 +53,7 @@
     async function start() {
         await waitPathname();
         const readyButtonTournament = document.getElementById("buttonReadyTournament");
+        const goHomeButton          = document.getElementById("buttonGoHome");
         const redirectorTournament  = document.getElementById("redirectorTournament");
         const player1               = document.getElementById("player1");
         const player2               = document.getElementById("player2");
@@ -92,13 +94,20 @@
                 return ;
             }
             else if (state.redirect === false) {
-                player1.textContent = "" + (state.user1 ? state.user1 : "") + (state.score_12_1 ? "(Score: " + state.score_12_1 + ")" : "");
-                player2.textContent = "" + (state.user2 ? state.user2 : "") + (state.score_12_2 ? "(Score: " + state.score_12_2 + ")" : "");
-                player3.textContent = "" + (state.user3 ? state.user3 : "") + (state.score_34_1 ? "(Score: " + state.score_34_1 + ")" : "");
-                player4.textContent = "" + (state.user4 ? state.user4 : "") + (state.score_34_2 ? "(Score: " + state.score_34_2 + ")" : "");
-                winner_left.textContent  = "" + (state.winner_12 ? state.winner_12 : "") + (state.score_final_1 ? "(Score: " + state.score_final1 + ")" : "")
-                winner_right.textContent = "" + (state.winner_34 ? state.winner_34 : "") + (state.score_final_2 ? "(Score: " + state.score_final2 + ")" : "")
+                player1.textContent = "" + (state.user1 ? state.user1 : "") + (state.score_12_1 !== undefined ? "(Score: " + state.score_12_1 + ")" : "");
+                player2.textContent = "" + (state.user2 ? state.user2 : "") + (state.score_12_2 !== undefined ? "(Score: " + state.score_12_2 + ")" : "");
+                player3.textContent = "" + (state.user3 ? state.user3 : "") + (state.score_34_1 !== undefined ? "(Score: " + state.score_34_1 + ")" : "");
+                player4.textContent = "" + (state.user4 ? state.user4 : "") + (state.score_34_2 !== undefined ? "(Score: " + state.score_34_2 + ")" : "");
+                winner_left.textContent  = "" + (state.winner_12 ? state.winner_12 : "") + (state.score_final_1 !== undefined ? "(Score: " + state.score_final_1 + ")" : "")
+                winner_right.textContent = "" + (state.winner_34 ? state.winner_34 : "") + (state.score_final_2 !== undefined ? "(Score: " + state.score_final_2 + ")" : "")
                 winner_final.textContent = "" + (state.winner_final ? "Winner: " + state.winner_final : "")
+                if (!state.show_button) {
+                    readyButtonTournament.style.display = 'none';
+                    goHomeButton.style.display = '';
+                } else if (state.show_button) {
+                    readyButtonTournament.style.display = '';
+                    goHomeButton.style.display = 'none';
+                }
             }
         }
     
@@ -108,7 +117,7 @@
             
         function move_away(event) {
             tournamentSocket.close();
-            document.body.removeEventistener('htmx:beforeRequest', move_away);
+            document.body.removeEventListener('htmx:beforeRequest', move_away);
             window.removeEventListener('popstate', move_away);
             readyButtonTournament.removeEventListener('click', handleReadyButtonTournament);
         }
