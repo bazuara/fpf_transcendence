@@ -10,9 +10,7 @@ def get_tournaments():
     web3 = Web3(Web3.HTTPProvider(ganache_url))
 
     # Check if connection is successful
-    if web3.is_connected():
-        print("Connected to Ethereum")
-    else:
+    if not web3.isConnected():
         raise Exception("Failed to connect to Ethereum")
 
     # Get the contract ABI and address if file is not openable, raise an exception
