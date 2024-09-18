@@ -52,10 +52,10 @@ def get_tournaments():
 # Example JSON data
 tournament_data = {
     "tournament_id": "xxxxxxx",
-    "player_id_1": "player_id_1",
-    "player_id_2": "player_id_2",
-    "player_id_3": "player_id_3",
-    "player_id_4": "player_id_4",
+    "player_id_1": "1",
+    "player_id_2": "1",
+    "player_id_3": "1",
+    "player_id_4": "1",
     "score_match_1_2": "1-0",
     "score_match_3_4": "1-0",
     "score_match_final": "1-0"
@@ -63,10 +63,10 @@ tournament_data = {
 
 tournament_data_2 = {
     "tournament_id": "2xxxxxx",
-    "player_id_1": "player_id_1",
-    "player_id_2": "player_id_2",
-    "player_id_3": "player_id_3",
-    "player_id_4": "player_id_4",
+    "player_id_1": "1",
+    "player_id_2": "1",
+    "player_id_3": "1",
+    "player_id_4": "1",
     "score_match_1_2": "1-0",
     "score_match_3_4": "1-0",
     "score_match_final": "1-0"
@@ -74,10 +74,10 @@ tournament_data_2 = {
 
 tournament_data_3 = {
     "tournament_id": "3xxxxxx",
-    "player_id_1": "player_id_1",
-    "player_id_2": "player_id_2",
-    "player_id_3": "player_id_3",
-    "player_id_4": "player_id_4",
+    "player_id_1": "1",
+    "player_id_2": "1",
+    "player_id_3": "1",
+    "player_id_4": "1",
     "score_match_1_2": "1-0",
     "score_match_3_4": "1-0",
     "score_match_final": "1-0"
