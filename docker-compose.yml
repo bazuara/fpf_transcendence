@@ -5,6 +5,8 @@ services:
     env_file: .env
     volumes:
       - django_volume:/srcs
+      - ./blockchain/scripts:/blockchain/scripts
+      - ./blockchain/build:/blockchain/build
     ports:
       - 5000:443
     networks:
@@ -13,6 +15,8 @@ services:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      ganache:
         condition: service_healthy
   
   postgres:
@@ -44,6 +48,47 @@ services:
       start_period: 5s
       start_interval: 5s
 
+  ganache:
+    build:
+      context: ./blockchain
+      dockerfile: Dockerfile.ganache
+    container_name: ganache
+    command: ganache-cli -h 0.0.0.0 -p 8545 -i 5777
+    ports:
+      - "8545:8545"
+    networks:
+      - tran-net
+    volumes:
+      - ganache_data:/ganache_data
+    healthcheck:
+      test: ["CMD", "curl", "-s", "http://localhost:8545"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+      start_interval: 5s
+    restart: always
+
+  truffle:
+    build:
+      context: ./blockchain
+      dockerfile: Dockerfile.truffle
+    container_name: truffle
+    command: truffle migrate --network development
+    volumes:
+      - ./blockchain/build:/app/build
+    depends_on:
+      ganache:
+        condition: service_healthy
+    networks:
+      - tran-net
+    working_dir: /app
+    restart: on-failure
+    environment:
+      - HOST=ganache
+      - PORT=8545
+      - NETWORK_ID=5777
+
 volumes:
   django_volume:
     driver: local
@@ -58,6 +103,12 @@ volumes:
       o: bind
       type: none
       device: $PWD/postgres/dbdata
-
+  
+  ganache_data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: $PWD/blockchain/ganache_data
 networks:
   tran-net:

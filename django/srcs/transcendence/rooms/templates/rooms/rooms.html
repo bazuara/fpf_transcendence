@@ -8,6 +8,9 @@
                 <a hx-get="{% url 'rooms_join' %}" hx-target="#content-div" hx-push-url="true">
                     <button type="button" class="btn btn-outline-custom btn-lg"><h1>JOIN ROOM</h1></button>
                 </a>
+                <a hx-get="{% url 'game_local_view' %}" hx-target="#content-div" hx-push-url="true">
+                    <button type="button" class="btn btn-outline-custom btn-lg"><h1>LOCAL GAME</h1></button>
+                </a>
             </div>
         </div>
     </div>
