@@ -6,7 +6,7 @@ class Game(models.Model):
     GAME_MODES = [
         ("1", "1vs1"),
         ("2", "2vs2"),
-        ("T", "Torneo")
+        ("T", "Tournament")
     ]
     game_mode       = models.CharField(max_length=10, choices=GAME_MODES)
     game_id         = models.CharField(max_length=30, unique=True, primary_key=True) #should be base 10 code
