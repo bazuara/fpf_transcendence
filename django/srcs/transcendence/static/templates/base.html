@@ -54,8 +54,29 @@
             flex-direction: column;
         }
 
+        .table-bordered {
+            border-color: #28df28;
+            background-color: #181A1B;
+        }
+
         #navbar {
             min-height: var(--navbar-height);
+        }
+
+        #new-friend-name::placeholder {
+            color: #28df28;
+        } 
+
+        th {
+            background-color: #181A1B !important;
+            color:#28df28 !important;
+            font-family: Bebas Neue;
+        }
+
+        td {
+            background-color: #181A1B !important;
+            color:#28df28 !important;
+            font-family: Bebas Neue;
         }
 
         .content {
@@ -69,17 +90,14 @@
         }
 
         .h1-custom {
-            color: #28df28;
             font-family: 'Handjet';
         }
 
         .h2-custom{
-            color: #28df28;
             font-family: 'Handjet';
         }
 
         .p-custom {
-            color: #28df28;
             font-family: 'Handjet';
         }
 
@@ -108,7 +126,6 @@
         .span-welcome {
             display: block;
             font-family: "Handjet";
-            color: #28df28;
             white-space: nowrap;
             width: 7ch; 
             position: absolute;
@@ -298,6 +315,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Handjet:wght@100..900&display=swap" as="style" onload="this.rel='stylesheet'">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" as="style"  onload="this.rel='stylesheet'">
     <title>{{ title }}</title>
 </head>
 
