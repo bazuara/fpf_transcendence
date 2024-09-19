@@ -21,7 +21,7 @@ class Game(models.Model):
     score1          = models.PositiveIntegerField(default = 0)
     score2          = models.PositiveIntegerField(default = 0)
     game_started    = models.BooleanField(default=False)
-    end_time        = models.DateTimeField(null=True)
+    end_time        = models.DateTimeField(null=True, blank=True)
     cleared         = models.BooleanField(default=False)
     tournament_id   = models.CharField(max_length=6, null=True, blank=True) #should be base 10 code
 

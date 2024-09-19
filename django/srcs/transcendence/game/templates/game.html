@@ -82,7 +82,7 @@
         const headerGameEnd = document.getElementById("headerGameEnd")
 
         const gameSocket = new WebSocket(
-            'ws://'
+            'wss://'
             + window.location.host
             + '/ws/game/'
             + window.location.pathname.split('/').filter(Boolean).pop()
@@ -97,11 +97,11 @@
             if (e.data.startsWith("Game ended") || e.data.startsWith("Timeout")) {
                 headerGameEnd.innerHTML = e.data
                 headerGameEnd.setAttribute("style", "")
-                if (buttonTournament === undefined) {
+                if (buttonTournament) {
+                    buttonTournament.setAttribute("style", "")
+                } else {
                     buttonHome.setAttribute("style", "")
                     buttonRooms.setAttribute("style", "")
-                } else{
-                    buttonTournament.setAttribute("style", "")
                 }
                 return
             }
