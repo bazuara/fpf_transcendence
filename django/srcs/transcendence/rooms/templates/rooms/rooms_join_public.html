@@ -1,5 +1,5 @@
 <div class="container mt-5">
-    <h1 class="mb-4 h1-custom">Available Rooms</h1>
+    <h1 class="mb-4">Available Rooms</h1>
     {% if error %}
         <div class="row w-100 justify-content-center">
             <h2 class="h2-custom text-center">{{ error }}</h2>
@@ -45,7 +45,7 @@
                         {% endfor %}
                     </td>
                     <td>
-                        <button type="button" class="btn btn-primary" hx-get="{% url 'rooms_detail' room_id=room.room_id %}" hx-target="#content-div" hx-push-url="true">Join</button>
+                        <button type="button" class="btn btn-outline-custom" hx-get="{% url 'rooms_detail' room_id=room.room_id %}" hx-target="#content-div" hx-push-url="true">Join</button>
                     </td>
                 </tr>
                 {% endfor %}
