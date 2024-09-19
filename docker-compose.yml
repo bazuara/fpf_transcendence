@@ -5,7 +5,6 @@ services:
     env_file: .env
     volumes:
       - django_volume:/srcs
-      - ./blockchain/scripts:/blockchain/scripts
       - ./blockchain/build:/blockchain/build
     ports:
       - 5000:443
@@ -58,8 +57,6 @@ services:
       - "8545:8545"
     networks:
       - tran-net
-    volumes:
-      - ganache_data:/ganache_data
     healthcheck:
       test: ["CMD", "curl", "-s", "http://localhost:8545"]
       interval: 5s
@@ -103,12 +100,6 @@ volumes:
       o: bind
       type: none
       device: $PWD/postgres/dbdata
-  
-  ganache_data:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: $PWD/blockchain/ganache_data
+
 networks:
   tran-net:
