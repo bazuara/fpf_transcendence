@@ -193,6 +193,7 @@ class TournamentConsumer(WebsocketConsumer):
                         user2=None,
                         user3=tournament.user2,
                         user4=None,
+                        tournament_id=tournament.tournament_id,
                     )
                     tournament.game_12 = game
                 finally:
@@ -214,6 +215,7 @@ class TournamentConsumer(WebsocketConsumer):
                         user2=None,
                         user3=tournament.user4,
                         user4=None,
+                        tournament_id=tournament.tournament_id,
                     )
                     tournament.game_34 = game
                 finally:
@@ -235,6 +237,7 @@ class TournamentConsumer(WebsocketConsumer):
                         user2=None,
                         user3=self.winner_34,
                         user4=None,
+                        tournament_id=tournament.tournament_id,
                     )
                     tournament.game_final = game
                 finally:
