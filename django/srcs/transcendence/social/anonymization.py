@@ -3,13 +3,6 @@ from social.models import User as OurUser
 from django.contrib.sessions.models import Session
 from datetime import timedelta
 from django.utils import timezone
-from apscheduler.schedulers.background import BackgroundScheduler
-
-
-def start():
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(anonymize_inactive_users, 'interval', days=1)
-    scheduler.start()
 
 def anonymize_inactive_users():
     print("Anonymize Inactive Users")
