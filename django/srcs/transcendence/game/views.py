@@ -1,13 +1,7 @@
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from game.models import Game
-from apscheduler.schedulers.background import BackgroundScheduler
 from .consumers import lock_dict, games_dict
-
-def start():
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(delete_finished_games_dicts, 'interval', minutes=5)
-    scheduler.start()
 
 def delete_finished_games_dicts():
     print("Clearing finished games...")
