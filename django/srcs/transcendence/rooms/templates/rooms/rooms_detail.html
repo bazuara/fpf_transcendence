@@ -1,23 +1,23 @@
 <h1 class="text-center mb-4">Room Details</h1>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-6 d-flex flex-column align-items-center">
         <h2 class="h2-custom">Room ID</h2>
         <p class="p-custom">{{ room.room_id }}</p>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 d-flex flex-column align-items-center">
         <h2 class="h2-custom">Game Mode</h2>
         <p class="p-custom">{{ game_mode_human }}</p>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 d-flex flex-column align-items-center">
         <h2 class="h2-custom">Team 1</h2>
         <p id = "team1" class = "p-custom"></p>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 d-flex flex-column align-items-center">
         <h2 class="h2-custom">Team 2</h2>
         <p id = "team2" class = "p-custom"></p>
     </div>
-    <div class="col-md-6">
-        <button id = "buttonReady" class="btn btn-outline-custom btn-lg w-100">Ready</button>
+    <div>
+        <button id="buttonReady" class="btn btn-outline-custom btn-lg mx-auto d-block">Ready</button>
     </div>
     <div id="redirector" hx-target="#content-div" hx-push-url="true" hx-trigger="redirectEvent" hx-get=""></div>
 </div>
