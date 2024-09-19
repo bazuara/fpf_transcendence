@@ -6,7 +6,7 @@ from django.contrib.auth import logout
 
 EXEMPT_URLS = [
     # Add any URL paths here that should be exempt from the login requirement
-    '/admin/', '/landing/', '/login/', '/auth/callback/', '/check_login_status/', '/error/'
+    '/admin/', '/landing/', '/login/', '/auth/callback/', '/check_login_status/', '/error/', '/static_files/admin/'
 ]
 
 class LoginRequiredMiddleware:

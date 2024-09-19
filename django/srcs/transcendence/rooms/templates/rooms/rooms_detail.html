@@ -36,7 +36,7 @@
         const redirector = document.getElementById("redirector")
 
         const roomSocket = new WebSocket(
-            'ws://'
+            'wss://'
             + window.location.host
             + '/ws/rooms/'
             + window.location.pathname.split('/').pop()
