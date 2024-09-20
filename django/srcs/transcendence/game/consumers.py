@@ -75,10 +75,16 @@ class GameConsumer(AsyncWebsocketConsumer):
             pass
 
     async def state_update(self, event):
-        await self.send(event["state"])
+        try:
+            await self.send(event["state"])
+        except:
+            pass
 
     async def end_game(self, event):
-        await self.send(event["message"])
+        try:
+            await self.send(event["message"])
+        except:
+            pass
 
     async def game_ready(self, game):
         if game.game_mode == "1" or game.game_mode == "T":
@@ -141,7 +147,13 @@ class LocalGameConsumer(AsyncWebsocketConsumer):
             self.channel_handler.setPaddleMove(1, " ")
 
     async def state_update(self, event):
-        await self.send(event["state"])
+        try:
+            await self.send(event["state"])
+        except:
+            pass
 
     async def end_game(self, event):
-        await self.send(event["message"])
+        try:
+            await self.send(event["message"])
+        except:
+            pass
