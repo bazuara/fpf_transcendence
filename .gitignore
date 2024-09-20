@@ -1,7 +1,8 @@
-!static_files/media/.gitkeep
 .env
 *.pyc
 static_files/
+!static_files/media/.gitkeep
+!static_files/media/favicon/*
 migrations/
 postgres/dbdata/data
 blockchain/build/
