@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-otm3=!xw(s09l*+vjsg_acvro!un#f26-uprba_56j1&zxu!uc'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # Start with the base part of your hosts
 BASE_HOST = "42madrid.com"
@@ -82,6 +82,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Middleware to handle intra login
     'session_management.middleware.LoginRequiredMiddleware',
+    # Middleware for serving mimetypes
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 LOGIN_URL = '/landing/'
@@ -169,8 +171,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_URL = '/static_files/'  # This URL is used to refer to static files
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_files')  # Ensure this path exists and is used for collected static files
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Where media will be stored, profile avatars will be stored in /media/upload/
-MEDIA_URL = '/media/'  # URL for accessing media files
+MEDIA_URL = '/static_files/media/'  # URL for accessing media files
 MEDIA_ROOT = os.path.join(STATIC_ROOT, 'media')  # Directory where uploaded files are stored
 
 

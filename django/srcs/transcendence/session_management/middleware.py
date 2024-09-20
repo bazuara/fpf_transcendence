@@ -6,7 +6,7 @@ from django.contrib.auth import logout
 
 EXEMPT_URLS = [
     # Add any URL paths here that should be exempt from the login requirement
-    '/admin/', '/landing/', '/login/', '/auth/callback/', '/check_login_status/', '/error/'
+    '/admin/', '/landing/', '/login/', '/auth/callback/', '/check_login_status/', '/error/', '/static_files/admin/'
 ]
 
 class LoginRequiredMiddleware:
@@ -17,7 +17,7 @@ class LoginRequiredMiddleware:
         url_name = resolve(request.path_info).url_name
         if request.user.is_authenticated:
             if request.user.is_superuser:
-                if not request.path.startswith('/admin/'):
+                if not (request.path.startswith('/admin/') or request.path.startswith('/static_files/')):
                     return redirect('/admin/')
             our_user_instance = OurUser.objects.filter(name=request.user.username).first()
             if not our_user_instance and not request.user.is_superuser:

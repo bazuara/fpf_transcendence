@@ -1,4 +1,5 @@
 #!/bin/bash
+python3 manage.py collectstatic --noinput
 python3 manage.py makemigrations
 python3 manage.py migrate
 python3 manage.py reset_user_sockets_and_clear_rooms
@@ -11,4 +12,5 @@ while [ ! -f /blockchain/build/contract_address.txt ]; do
     echo "Waiting for smart contract deployment..."
     sleep 1
 done
-python3 manage.py runserver 0:443
+
+daphne -e ssl:443:privateKey=/key.pem:certKey=/cert.pem transcendence.asgi:application

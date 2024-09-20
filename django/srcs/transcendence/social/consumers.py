@@ -38,7 +38,8 @@ class OnlineConsumer(AsyncWebsocketConsumer):
                 await self.accept()
             except OurUser.DoesNotExist:
                 await self.close()
-                pass
+        else:
+            await self.close()
 
     async def disconnect(self, close_code):
         self.user = self.scope["user"]

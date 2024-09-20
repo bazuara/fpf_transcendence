@@ -13,6 +13,11 @@
     <div class="col-5 mx-2">
         <button id="buttonHome" style="display: none;" hx-get="/" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg w-100">Welcome</button>
     </div>
+    {% if tournament_id %}
+        <div class="col-5 mx-2">
+            <button id="buttonTournament" style="display: none;" hx-get="{% url 'tournament_room' tournament_id=tournament_id %}" hx-target="#content-div" hx-push-url="true" class="btn btn-outline-custom btn-lg w-100">Go back to tournament</button>
+        </div>
+    {% endif %}
 </div>
 
 <script>
@@ -73,10 +78,11 @@
 
         const buttonRooms = document.getElementById("buttonRooms")
         const buttonHome = document.getElementById("buttonHome")
+        const buttonTournament = document.getElementById("buttonTournament")
         const headerGameEnd = document.getElementById("headerGameEnd")
 
         const gameSocket = new WebSocket(
-            'ws://'
+            'wss://'
             + window.location.host
             + '/ws/game/'
             + window.location.pathname.split('/').filter(Boolean).pop()
@@ -89,10 +95,14 @@
 
         gameSocket.onmessage = function(e) {
             if (e.data.startsWith("Game ended") || e.data.startsWith("Timeout")) {
-                buttonHome.setAttribute("style", "")
-                buttonRooms.setAttribute("style", "")
                 headerGameEnd.innerHTML = e.data
                 headerGameEnd.setAttribute("style", "")
+                if (buttonTournament) {
+                    buttonTournament.setAttribute("style", "")
+                } else {
+                    buttonHome.setAttribute("style", "")
+                    buttonRooms.setAttribute("style", "")
+                }
                 return
             }
             decodeState(e.data);

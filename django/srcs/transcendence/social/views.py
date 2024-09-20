@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth import logout
 from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -127,9 +129,18 @@ def change_avatar(request, name):
             return render(request, 'social_template_full_full.html', context)
     
     if request.method == 'POST':
+        if profile_user.avatar:
+            old_avatar = profile_user.avatar.path
+        else:
+            old_avatar = None
         form = ChangeAvatarForm(request.POST, request.FILES, instance=profile_user)
         if form.is_valid():
+            if old_avatar and os.path.exists(old_avatar):
+                os.remove(old_avatar)
             form.save()
+            if not form.files:
+                profile_user.avatar = None
+                profile_user.save()
             if 'HX-Request' in request.headers:
                 return render(request, 'profile/profile_info.html', context)
             else:

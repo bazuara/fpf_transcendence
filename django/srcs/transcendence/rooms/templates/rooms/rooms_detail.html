@@ -1,26 +1,47 @@
-<h1 class="text-center mb-4">Room Details</h1>
-<div class="row">
-    <div class="col-md-6 d-flex flex-column align-items-center">
-        <h2 class="h2-custom">Room ID</h2>
-        <p class="p-custom">{{ room.room_id }}</p>
+<h1 class="h1-custom text-center mb-4">Room Details</h1>
+
+<div class="container">
+    <div class="row text-center mb-4">
+        <div class="col-md-6">
+            <h2 class="h2-custom">Room ID</h2>
+            <p class="p-custom">{{ room.room_id }}</p>
+        </div>
+        <div class="col-md-6">
+            <h2 class="h2-custom">Game Mode</h2>
+            <p class="p-custom">{{ game_mode_human }}</p>
+        </div>
     </div>
-    <div class="col-md-6 d-flex flex-column align-items-center">
-        <h2 class="h2-custom">Game Mode</h2>
-        <p class="p-custom">{{ game_mode_human }}</p>
+
+    {% if game_mode_human == "Tournament" %}
+    <div class="row text-center mb-4">
+        <div class="col-md-12">
+            <h2 class="h2-custom">Tournament Players</h2>
+            <p id="team1" class="p-custom"></p>
+            <p id="team2" class="p-custom"></p>
+        </div>
     </div>
-    <div class="col-md-6 d-flex flex-column align-items-center">
-        <h2 class="h2-custom">Team 1</h2>
-        <p id = "team1" class = "p-custom"></p>
+    {% else %}
+    <div class="row text-center mb-4">
+        <div class="col-md-6">
+            <h2 class="h2-custom">Team 1</h2>
+            <p id="team1" class="p-custom"></p>
+        </div>
+        <div class="col-md-6">
+            <h2 class="h2-custom">Team 2</h2>
+            <p id="team2" class="p-custom"></p>
+        </div>
     </div>
-    <div class="col-md-6 d-flex flex-column align-items-center">
-        <h2 class="h2-custom">Team 2</h2>
-        <p id = "team2" class = "p-custom"></p>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button id="buttonReady" class="btn btn-outline-custom btn-lg w-50">Ready</button>
+        </div>
     </div>
-    <div>
-        <button id="buttonReady" class="btn btn-outline-custom btn-lg mx-auto d-block">Ready</button>
-    </div>
-    <div id="redirector" hx-target="#content-div" hx-push-url="true" hx-trigger="redirectEvent" hx-get=""></div>
 </div>
+
+<div id="redirector" hx-target="#content-div" hx-push-url="true" hx-trigger="redirectEvent" hx-get=""></div>
+
 <script>
     async function waitPathname() {
         while (window.location.pathname === "/rooms/create")
@@ -32,18 +53,19 @@
 
         const team1 = document.getElementById("team1")
         const team2 = document.getElementById("team2")
+
         const readyButton = document.getElementById("buttonReady")
         const redirector = document.getElementById("redirector")
 
         const roomSocket = new WebSocket(
-            'ws://'
+            'wss://'
             + window.location.host
             + '/ws/rooms/'
             + window.location.pathname.split('/').pop()
             + '/'
         );
 
-        readyButton.addEventListener('click', function() {
+        function readyButtonEvent() {
             if (readyButton.textContent === "Ready") {
                 readyButton.textContent = "Cancel"
                 roomSocket.send("ready")
@@ -52,7 +74,9 @@
                 readyButton.textContent = "Ready"
                 roomSocket.send("cancel")
             }
-        });
+        }
+
+        readyButton.addEventListener('click', readyButtonEvent);
 
         roomSocket.onmessage = function(e) {
             state = JSON.parse(e.data)
@@ -65,8 +89,13 @@
                 redirector.dispatchEvent(new Event('redirectEvent'));
                 return
             }
-            team1.textContent = "" + (state.user1 ? state.user1 + "\n" : "") + (state.user2 ? state.user2 : "")
-            team2.textContent = "" + (state.user3 ? state.user3 + "\n" : "") + (state.user4 ? state.user4 : "")
+            {% if game_mode_human == "Tournament" %}
+                team1.innerHTML = (state.user1 ? state.user1 + "<br>" : "") + (state.user2 ? state.user2 + "<br>" : "")
+                team2.innerHTML = (state.user3 ? state.user3 + "<br>" : "") + (state.user4 ? state.user4 : "")
+            {% else %}
+                team1.innerHTML = (state.user1 ? state.user1 + "<br>" : "") + (state.user2 ? state.user2 : "")
+                team2.innerHTML = (state.user3 ? state.user3 + "<br>" : "") + (state.user4 ? state.user4 : "")
+            {% endif %}
         }
     
         roomSocket.onerror = function(error) {
@@ -75,6 +104,7 @@
             
         function move_away(event) {
             roomSocket.close()
+            readyButton.removeEventListener('click', readyButtonEvent);;
             document.body.removeEventListener('htmx:beforeRequest', move_away)
             window.removeEventListener('popstate', move_away)
         }

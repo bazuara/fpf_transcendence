@@ -55,6 +55,7 @@ class RoomConsumer(WebsocketConsumer):
         self.user = self.scope["user"]
 
         if not self.user:
+            self.close()
             return
         
         acquire_lock(self.room_id)
@@ -82,6 +83,7 @@ class RoomConsumer(WebsocketConsumer):
                     raise Exception
             room.save()
         except:
+            self.close()
             return
         finally:
             release_lock(self.room_id)

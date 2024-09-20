@@ -64,7 +64,7 @@
         const winner_final          = document.getElementById("winner_final");
 
         const tournamentSocket = new WebSocket(
-            'ws://'
+            'wss://'
             + window.location.host
             + '/ws/rooms/tournament/'
             + window.location.pathname.split('/').pop()

@@ -6,7 +6,7 @@ class Game(models.Model):
     GAME_MODES = [
         ("1", "1vs1"),
         ("2", "2vs2"),
-        ("T", "Torneo")
+        ("T", "Tournament")
     ]
     game_mode       = models.CharField(max_length=10, choices=GAME_MODES)
     game_id         = models.CharField(max_length=30, unique=True, primary_key=True) #should be base 10 code
@@ -21,8 +21,9 @@ class Game(models.Model):
     score1          = models.PositiveIntegerField(default = 0)
     score2          = models.PositiveIntegerField(default = 0)
     game_started    = models.BooleanField(default=False)
-    end_time        = models.DateTimeField(null=True)
+    end_time        = models.DateTimeField(null=True, blank=True)
     cleared         = models.BooleanField(default=False)
+    tournament_id   = models.CharField(max_length=6, null=True, blank=True) #should be base 10 code
 
     def __str__(self):
         return f"{self.game_id} Team 1 {self.score1} / {self.score2} Team 2"

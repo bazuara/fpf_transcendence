@@ -6,7 +6,7 @@ class Room(models.Model):
     GAME_MODES = [
         ("1", "1vs1"),
         ("2", "2vs2"),
-        ("T", "Torneo")
+        ("T", "Tournament")
     ]
     room_id     = models.CharField(primary_key=True, max_length=6) #should be base 10 code
     is_public   = models.BooleanField(default=False)
