@@ -9,7 +9,8 @@ class RoomForm(forms.ModelForm):
        
         game_mode = forms.ChoiceField(
             choices=Room.GAME_MODES,
-            widget=forms.Select(attrs={'class': 'form-select'}),
+            widget=forms.Select(attrs={
+                'class': 'form-select'}),
             label='Game Mode'
         )
         

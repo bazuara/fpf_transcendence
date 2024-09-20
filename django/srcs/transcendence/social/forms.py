@@ -6,6 +6,12 @@ class ChangeAliasForm(forms.ModelForm):
     class Meta:
         model = OurUser
         fields = ['alias']
+        widgets = {
+            'alias': forms.TextInput(attrs={
+                'style': 'color: #28df28; background-color: #181A1B; border-color: #181A1B;  font-family: "Bebas Neue", sans-serif',
+                'class': 'form-control',
+            }),
+        }
 
 class ChangeAvatarForm(forms.ModelForm):
     class Meta:

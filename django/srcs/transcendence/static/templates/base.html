@@ -35,6 +35,9 @@
     </script>
     <style>
 
+        a {
+            color: #28df28;
+        }
         :root {
             --navbar-height: 56px; /* Define the variable */
         }
@@ -48,11 +51,35 @@
             min-height: 100vh;
             overflow-x: hidden;
             display: flex;
+            font-family: 'Handjet' !important;
             flex-direction: column;
+        }
+
+        .p-custom {
+            font-size: 125%;
+            font-family: 'Bebas Neue';
+        }
+        .table-bordered {
+            border-color: #28df28;
+            background-color: #181A1B;
         }
 
         #navbar {
             min-height: var(--navbar-height);
+        }
+
+        #new-friend-name::placeholder {
+            color: #28df28;
+        } 
+
+        th {
+            background-color: #181A1B !important;
+            color:#28df28 !important;
+        }
+
+        td {
+            background-color: #181A1B !important;
+            color:#28df28 !important;
         }
 
         .content {
@@ -61,21 +88,6 @@
         }
 
         .our-green {
-            color: #28df28;
-            font-family: 'Handjet';
-        }
-
-        .h1-custom {
-            color: #28df28;
-            font-family: 'Handjet';
-        }
-
-        .h2-custom{
-            color: #28df28;
-            font-family: 'Handjet';
-        }
-
-        .p-custom {
             color: #28df28;
             font-family: 'Handjet';
         }
@@ -105,7 +117,6 @@
         .span-welcome {
             display: block;
             font-family: "Handjet";
-            color: #28df28;
             white-space: nowrap;
             width: 7ch; 
             position: absolute;
@@ -226,20 +237,17 @@
         ul.seed li.game-right span:last-child {
             font-size: 0.5em;
             color: #28df28;
-            font-family: 'Handjet';
         }
     
         li.game-right {
             text-align: right;
             border-left: 1px solid #28df28;
             color: #28df28;
-            font-family: 'Handjet';
         }
     
         li.game-left {
             border-right: 1px solid #28df28;
             color: #28df28;
-            font-family: 'Handjet';
         }
     
         li.game-bottom {
@@ -273,7 +281,6 @@
             margin-bottom: 1em;
             font-weight:bold;
             color: #28df28;
-            font-family: 'Handjet';
         }
     
         .finals .centered {
@@ -295,6 +302,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Handjet:wght@100..900&display=swap" as="style" onload="this.rel='stylesheet'">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" as="style"  onload="this.rel='stylesheet'">
     <title>{{ title }}</title>
 </head>
 
