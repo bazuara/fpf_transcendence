@@ -133,7 +133,9 @@ def logout_view(request):
 def landing_view(request):
     if request.user.is_authenticated:
         return redirect('welcome')
-    return render(request, 'landing.html')
+    response = render(request, 'landing.html')
+    response.headers['HX-Refresh'] = 'true'
+    return response
 
 def error_view(request):
     return render(request, 'error.html', {'error_msg' : request.GET.get('error_msg')})
