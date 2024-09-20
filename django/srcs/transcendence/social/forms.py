@@ -12,7 +12,7 @@ class ChangeAvatarForm(forms.ModelForm):
         model = OurUser
         fields = ['avatar']
         widgets = {
-            'avatar': forms.ClearableFileInput(attrs={
+            'avatar': forms.FileInput(attrs={
                 'accept'        : 'image/*',            # Restrict file types
                 'title'         : 'Error:',             # Tooltip text
                 'class'         : 'form-control',       # Custom CSS class
