@@ -140,12 +140,18 @@ class RoomConsumer(WebsocketConsumer):
                 state["user3"] = room.user3.alias
             if room.user4 is not None:
                 state["user4"] = room.user4.alias
-            self.send(json.dumps(state))
+            try:
+                self.send(json.dumps(state))
+            except:
+                pass
         finally:
             release_lock(self.room_id)
 
     def ready(self, event):
-        self.send(json.dumps({"redirect": True, "game_mode": event["game_mode"], "next_id": event["next_id"]}))
+        try:
+            self.send(json.dumps({"redirect": True, "game_mode": event["game_mode"], "next_id": event["next_id"]}))
+        except:
+            pass
 
     def assignUserReady(self, ready, ourUser, room):
         match ourUser:

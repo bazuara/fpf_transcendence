@@ -134,7 +134,10 @@ class TournamentConsumer(WebsocketConsumer):
                 state["score_final_1"] = tournament.game_final.score1
                 state["score_final_2"] = tournament.game_final.score2
                 state["show_button"]   = False
-            self.send(json.dumps(state))
+            try:
+                self.send(json.dumps(state))
+            except:
+                pass
         finally:
             release_lock(self.tournament_id)
 
@@ -168,7 +171,10 @@ class TournamentConsumer(WebsocketConsumer):
         return False
 
     def game_ready(self, event):
-        self.send(json.dumps({"redirect": True, "player1": event["player1"], "player2": event["player2"], "next_id": event["next_id"], "selfplayer": self.user.username}))
+        try:
+            self.send(json.dumps({"redirect": True, "player1": event["player1"], "player2": event["player2"], "next_id": event["next_id"], "selfplayer": self.user.username}))
+        except:
+            pass
 
     def receive(self, text_data):
         acquire_lock(self.tournament_id)
