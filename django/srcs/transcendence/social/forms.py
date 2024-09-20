@@ -1,5 +1,6 @@
 from django import forms
 from social.models import User as OurUser
+from django.core.exceptions import ValidationError
 
 
 class ChangeAliasForm(forms.ModelForm):
@@ -14,6 +15,8 @@ class ChangeAliasForm(forms.ModelForm):
         }
 
 class ChangeAvatarForm(forms.ModelForm):
+    MAX_FILE_SIZE = 15 * 1024 * 1024  # 15 MB
+
     class Meta:
         model = OurUser
         fields = ['avatar']
@@ -33,6 +36,15 @@ class ChangeAvatarForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+    
+    def clean_avatar(self):
+        avatar = self.cleaned_data.get('avatar')
+        
+        if avatar:
+            if avatar.size > self.MAX_FILE_SIZE:
+                raise ValidationError(f"Image size should not exceed 15 MB.")
+        
+        return avatar
 
 
 class ManageFriendsForm(forms.ModelForm):
