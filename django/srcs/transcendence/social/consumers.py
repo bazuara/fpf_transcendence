@@ -48,7 +48,8 @@ class OnlineConsumer(AsyncWebsocketConsumer):
             try:
                 await acquire_lock(self.user.username)
                 user = await OurUser.objects.aget(name=self.user.username)
-                user.socket_ctr -= 1
+                if user.socket_ctr > 0:
+                    user.socket_ctr -= 1
                 await user.asave()
                 await release_lock(self.user.username)
             except OurUser.DoesNotExist:

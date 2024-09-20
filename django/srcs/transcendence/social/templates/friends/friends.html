@@ -22,24 +22,30 @@
             </tr>
         </thead>
         <tbody>
-            {% for friend in friend_list %}
-            <tr>
-                <td><a href="" hx-get="{% url 'social' friend.name %}" hx-target="#content-div" hx-push-url="true">{{ friend.name }}</a></td>
-                <td>{{ friend.win_ratio }}%</td>
-                <td>{% if friend.socket_ctr != 0 %}Online{% else %}Offline{% endif %}</td>
-                <td>{{ friend.wins }}W/{{ friend.loses }}L/{{ friend.games_played }}T</td>
-                <td>
-                    <form   method="post"
-                            hx-post="{% url 'friends' profile_user.name %}"
-                            hx-target="#social-right">
-                        {% csrf_token %}
-                        <input type="hidden" name="user_id" value="{{ friend.id }}">
-                        <input type="hidden" name="action" value="delete">
-                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
+            {% if friend_list %}
+                {% for friend in friend_list %}
+                <tr>
+                    <td><a href="" hx-get="{% url 'social' friend.name %}" hx-target="#content-div" hx-push-url="true">{{ friend.name }}</a></td>
+                    <td>{{ friend.win_ratio }}%</td>
+                    <td>{% if friend.socket_ctr != 0 %}Online{% else %}Offline{% endif %}</td>
+                    <td>{{ friend.wins }}W/{{ friend.loses }}L/{{ friend.games_played }}T</td>
+                    <td>
+                        <form   method="post"
+                                hx-post="{% url 'friends' profile_user.name %}"
+                                hx-target="#social-right">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_id" value="{{ friend.id }}">
+                            <input type="hidden" name="action" value="delete">
+                            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">You have no friends</td>
+                </tr>
+            {% endif %}
         </tbody>
     </table>
 </div>
@@ -55,14 +61,20 @@
             </tr>
         </thead>
         <tbody>
-            {% for friend in friend_list %}
-            <tr>
-                <td><a href="" hx-get="{% url 'social' friend.name %}" hx-target="#content-div" hx-push-url="true">{{ friend.name }}</a></td>
-                <td>{{ friend.win_ratio }}%</td>
-                <td>{% if friend.socket_ctr != 0 %}Online{% else %}Offline{% endif %}</td>
-                <td>{{ friend.wins }}W/{{ friend.loses }}L/{{ friend.games_played }}T</td>
-            </tr>
-            {% endfor %}
+            {% if friend_list %}
+                {% for friend in friend_list %}
+                <tr>
+                    <td><a href="" hx-get="{% url 'social' friend.name %}" hx-target="#content-div" hx-push-url="true">{{ friend.name }}</a></td>
+                    <td>{{ friend.win_ratio }}%</td>
+                    <td>{% if friend.socket_ctr != 0 %}Online{% else %}Offline{% endif %}</td>
+                    <td>{{ friend.wins }}W/{{ friend.loses }}L/{{ friend.games_played }}T</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">Has no friends</td>
+                </tr>
+            {% endif %}
         </tbody>
     </table>
 </div>
