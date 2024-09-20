@@ -17,7 +17,7 @@ class LoginRequiredMiddleware:
         url_name = resolve(request.path_info).url_name
         if request.user.is_authenticated:
             if request.user.is_superuser:
-                if not request.path.startswith('/admin/') and not request.path.startswith('/static_files/'):
+                if not (request.path.startswith('/admin/') or request.path.startswith('/static_files/')):
                     return redirect('/admin/')
             our_user_instance = OurUser.objects.filter(name=request.user.username).first()
             if not our_user_instance and not request.user.is_superuser:
