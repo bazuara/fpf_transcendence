@@ -65,7 +65,7 @@
             + '/'
         );
 
-        readyButton.addEventListener('click', function() {
+        function readyButtonEvent() {
             if (readyButton.textContent === "Ready") {
                 readyButton.textContent = "Cancel"
                 roomSocket.send("ready")
@@ -74,7 +74,9 @@
                 readyButton.textContent = "Ready"
                 roomSocket.send("cancel")
             }
-        });
+        }
+
+        readyButton.addEventListener('click', readyButtonEvent);
 
         roomSocket.onmessage = function(e) {
             state = JSON.parse(e.data)
@@ -102,6 +104,7 @@
             
         function move_away(event) {
             roomSocket.close()
+            readyButton.removeEventListener('click', readyButtonEvent);;
             document.body.removeEventListener('htmx:beforeRequest', move_away)
             window.removeEventListener('popstate', move_away)
         }

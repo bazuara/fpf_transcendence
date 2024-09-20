@@ -49,6 +49,7 @@ class TournamentConsumer(WebsocketConsumer):
         self.user = self.scope["user"]
 
         if not self.user:
+            self.close()
             return
         
         acquire_lock(self.tournament_id)
