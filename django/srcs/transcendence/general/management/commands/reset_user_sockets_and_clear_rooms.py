@@ -7,14 +7,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         print("\033[93mExecuting reset_user_sockets_and_clear_rooms!\033[0m")
-        try:
-            print("Setting all socket_ctr to 0...")
-            OurUser.objects.all().update(socket_ctr=0)  
-        except:
-            print("No users!")
-        try:
-            print("Deleting rooms...")
-            Room.objects.all().delete()
-        except:
-            print("No rooms to delete!")
+        print("Setting all socket_ctr to 0...")
+        OurUser.objects.all().update(socket_ctr=0)  
+        print("Deleting rooms...")
+        Room.objects.all().delete()
         print("\033[92mTask complete!\033[0m")
