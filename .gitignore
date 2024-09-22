@@ -3,6 +3,7 @@
 static_files/
 !static_files/media/.gitkeep
 !static_files/media/favicon/*
-migrations/
+migrations/*
+!migrations/__init__.py
 postgres/dbdata/data
 blockchain/build/
