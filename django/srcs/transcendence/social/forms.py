@@ -1,3 +1,4 @@
+import string
 from django import forms
 from social.models import User as OurUser
 from django.core.exceptions import ValidationError
@@ -13,6 +14,12 @@ class ChangeAliasForm(forms.ModelForm):
                 'class': 'form-control',
             }),
         }
+    
+    def clean_alias(self):
+        alias = self.cleaned_data.get('alias')
+        if not alias.isalnum():
+            raise ValidationError(f"Invalid chars detected: Only alphanumerics chars allowed.")
+        return alias
 
 class ChangeAvatarForm(forms.ModelForm):
     MAX_FILE_SIZE = 15 * 1024 * 1024  # 15 MB
