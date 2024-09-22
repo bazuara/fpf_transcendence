@@ -1,4 +1,4 @@
-import string
+import re
 from django import forms
 from social.models import User as OurUser
 from django.core.exceptions import ValidationError
@@ -17,8 +17,8 @@ class ChangeAliasForm(forms.ModelForm):
     
     def clean_alias(self):
         alias = self.cleaned_data.get('alias')
-        if not alias.isalnum():
-            raise ValidationError(f"Invalid chars detected: Only alphanumerics chars allowed.")
+        if not re.match(r'^[a-zA-Z0-9\-]+$', alias):
+            raise ValidationError(f"Invalid chars detected: Only alphanumerics and minus chars allowed.")
         return alias
 
 class ChangeAvatarForm(forms.ModelForm):

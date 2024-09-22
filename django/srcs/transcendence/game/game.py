@@ -185,14 +185,15 @@ class GameHandler():
         game.score1 = self.score[0]
         game.score2 = self.score[1]
         game.end_time = timezone.now()
-        if (self.score[0] > self.score[1]):
-            game.user1.wins = game.user1.wins + 1
-            game.user3.loses = game.user3.loses + 1
-        else:
-            game.user3.wins = game.user3.wins + 1
-            game.user1.loses = game.user1.loses + 1
-        game.user1.save()
-        game.user3.save()
+        if game.game_mode != "T":
+            if (self.score[0] > self.score[1]):
+                game.user1.wins = game.user1.wins + 1
+                game.user3.loses = game.user3.loses + 1
+            else:
+                game.user3.wins = game.user3.wins + 1
+                game.user1.loses = game.user1.loses + 1
+            game.user1.save()
+            game.user3.save()
         game.save()
 
     def killGame(self):
